@@ -1,0 +1,124 @@
+@use "variables" as v;
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  height: max-content;
+
+  #Baniere {
+    background:
+      linear-gradient(0deg, v.$WhiteBase 1%, transparent),
+      var(--Baniere-Image) center / cover no-repeat;
+    height: 25vh;
+    width: 100%;
+  }
+
+  #Icon {
+    background: var(--Icon-Image) center / cover no-repeat;
+    height: 15vh;
+    aspect-ratio: 1;
+    position: absolute;
+    left: 5%;
+    top: 15vh;
+  }
+
+  section {
+    margin-top: 10px;
+    position: relative;
+    // top: 30vh;
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+
+    h1 {
+      &::after {
+        content: attr(data-placeholder);
+        color: v.$Groove;
+        opacity: 0.8;
+      }
+      &:not(:empty)::after {
+        content: "";
+      }
+    }
+
+    h1,
+    div {
+      &:focus {
+        outline: none;
+      }
+
+      &::selection {
+        background-color: v.$BlueLink;
+        padding: 2;
+      }
+      &::-moz-selection {
+        background-color: v.$BlueLink;
+        padding: 2px;
+      }
+    }
+
+    #Categories {
+      height: min-content;
+      li {
+        list-style-type: none;
+        width: 100%;
+
+        div {
+          .id {
+            p {
+              @include v.Rundeck;
+
+              &::first-letter {
+                text-transform: capitalize;
+              }
+            }
+
+            display: flex;
+            gap: 5px;
+            justify-content: start;
+            height: min-content;
+
+            img {
+              height: 1rem;
+              aspect-ratio: 1;
+            }
+          }
+
+          div {
+            width: 100%;
+            text-align: start;
+            align-items: center;
+
+            &::after {
+              content: attr(data-placeholder);
+              color: v.$Groove;
+              opacity: 0.8;
+            }
+            &:not(:empty)::after {
+              content: "";
+            }
+          }
+
+          height: min-content;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+      }
+    }
+
+    #wrapper {
+      display: flex;
+      flex-direction: column;
+      height: min-content;
+
+      & > * {
+        margin: 2vh;
+        min-height: 5vh;
+        height: min-content;
+      }
+    }
+  }
+}

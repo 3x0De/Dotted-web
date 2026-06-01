@@ -1,0 +1,47 @@
+@use "../variables" as v;
+
+details {
+  width: 80%;
+
+  summary {
+    list-style: none;
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    display: block;
+    outline: none;
+    position: relative;
+
+    width: 100%;
+    min-width: 3rem;
+    min-height: 1.2em;
+    padding-left: 24px;
+    cursor: text;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0.25rem;
+      left: 8px;
+      border-width: 5px 0 5px 6px;
+      border-style: solid;
+      border-color: transparent transparent transparent v.$Void;
+      transition: transform 0.1s ease;
+      pointer-events: none;
+    }
+
+    &[data-placeholder]:empty::before {
+      content: attr(data-placeholder);
+      color: v.$Groove;
+      position: absolute;
+      top: 0;
+      left: 24px;
+      pointer-events: none;
+    }
+  }
+
+  &[open] summary::after {
+    transform: rotate(90deg);
+  }
+}

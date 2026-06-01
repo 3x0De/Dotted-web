@@ -1,0 +1,28 @@
+@use "../variables" as v;
+
+@for $i from 1 to 7 {
+  h#{$i} {
+    @include v.HeliosBold;
+    color: v.$Void;
+
+    &:focus {
+      outline: none;
+      &::after {
+        content: attr(data-placeholder);
+        color: v.$Groove;
+        opacity: 0.8;
+      }
+    }
+    &:not(:empty)::after {
+      content: "";
+    }
+    &::selection {
+      background-color: v.$BlueLink;
+      padding: 2;
+    }
+    &::-moz-selection {
+      background-color: v.$BlueLink;
+      padding: 2px;
+    }
+  }
+}

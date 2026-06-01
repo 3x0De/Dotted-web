@@ -1,0 +1,11 @@
+@use "../variables" as v;
+
+#Cadre {
+  margin: auto;
+  color: v.$Void;
+  width: 85%;
+  height: max-content;
+  padding: 5%;
+  border-radius: 10px;
+  background-color: rgba(v.$Groove, 0.2);
+}

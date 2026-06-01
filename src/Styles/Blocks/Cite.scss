@@ -1,0 +1,41 @@
+@use "../variables" as v;
+
+.cite {
+  @include v.HeliosItalicBold;
+  * {
+    @include v.HeliosItalicBold;
+  }
+
+  color: v.$Void;
+  border-left: 5px solid v.$Void;
+  box-shadow:
+    0 1px 16px 0 v.$Smoke,
+    0 1px 20px 0 v.$Smoke;
+  border-radius: 0 5px 5px 0;
+  padding: 20px;
+  height: min-content;
+  min-width: 60%;
+  width: min-content;
+  max-width: 90%;
+  overflow-wrap: break-word;
+
+  &:focus {
+    outline: none;
+  }
+  &::after {
+    content: attr(data-placeholder);
+    color: v.$Groove;
+    opacity: 0.8;
+  }
+  &:not(:empty)::after {
+    content: "";
+  }
+  &::selection {
+    background-color: v.$BlueLink;
+    padding: 2;
+  }
+  &::-moz-selection {
+    background-color: v.$BlueLink;
+    padding: 2px;
+  }
+}
