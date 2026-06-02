@@ -8,8 +8,8 @@ import Menu from "./Menu";
 import Cadre from "./Cadre";
 import Cite from "./Cite";
 import Separateur from "./Separateur";
-import menuKebab from "../assets/Image/Block logo/kebabMenu.png";
-import bin from "../assets/Image/Block logo/bin.png";
+import menuKebab from "../assets/Image/Block logo/kebabMenu.svg";
+import bin from "../assets/Image/Block logo/bin.svg";
 
 function mergeRefs(...refs: Array<React.Ref<any> | undefined>) {
   return (element: any) => {
