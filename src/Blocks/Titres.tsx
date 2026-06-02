@@ -19,6 +19,7 @@ function H1({ innerRef, oninput, contenu }: TitreProps) {
     <h1
       ref={innerRef}
       contentEditable="true"
+      suppressContentEditableWarning={true}
       data-placeholder="Titre 1"
       onInput={(e: any) => {
         handleInput(e);
@@ -38,6 +39,7 @@ function H2({ innerRef, oninput, contenu }: TitreProps) {
     <h2
       ref={innerRef}
       contentEditable="true"
+      suppressContentEditableWarning={true}
       data-placeholder="Titre 2"
       onInput={(e: any) => {
         handleInput(e);
@@ -56,6 +58,7 @@ function H3({ innerRef, oninput, contenu }: TitreProps) {
     <h3
       ref={innerRef}
       contentEditable="true"
+      suppressContentEditableWarning={true}
       data-placeholder="Titre 3"
       onInput={(e: any) => {
         handleInput(e);
@@ -74,6 +77,7 @@ function H4({ innerRef, oninput, contenu }: TitreProps) {
     <h4
       ref={innerRef}
       contentEditable="true"
+      suppressContentEditableWarning={true}
       data-placeholder="Titre 4"
       onInput={(e: any) => {
         handleInput(e);
@@ -92,6 +96,7 @@ function H5({ innerRef, oninput, contenu }: TitreProps) {
     <h5
       ref={innerRef}
       contentEditable="true"
+      suppressContentEditableWarning={true}
       data-placeholder="Titre 5"
       onInput={(e: any) => {
         handleInput(e);
@@ -110,6 +115,7 @@ function H6({ innerRef, oninput, contenu }: TitreProps) {
     <h6
       ref={innerRef}
       contentEditable="true"
+      suppressContentEditableWarning={true}
       data-placeholder="Titre 6"
       onInput={(e: any) => {
         handleInput(e);

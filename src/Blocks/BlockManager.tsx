@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useDraggable, useDroppable } from "@dnd-kit/react";
 import "../Styles/Blocks/BlockManager.scss";
 import type { BlockItem, TypeMenu } from "../Types";
 import Titres from "./Titres";
@@ -10,6 +11,19 @@ import Separateur from "./Separateur";
 import menuKebab from "../assets/Image/Block logo/kebabMenu.png";
 import bin from "../assets/Image/Block logo/bin.png";
 
+function mergeRefs(...refs: Array<React.Ref<any> | undefined>) {
+  return (element: any) => {
+    refs.forEach((ref) => {
+      if (!ref) return;
+      if (typeof ref === "function") {
+        ref(element);
+      } else if (ref && "current" in ref) {
+        (ref as any).current = element;
+      }
+    });
+  };
+}
+
 interface Props {
   autoFocus?: boolean;
   type1?: string;
@@ -18,7 +32,9 @@ interface Props {
   onDelete?: (block: BlockItem) => void;
   onUpdate?: (id: string, newType: string, newContent: any) => void;
   addBlock?: (id: string) => void;
-  onFocusDone?: () => void; // 🟢 Ajouté
+  onFocusDone?: () => void;
+  idAFocus?: string | null;
+  setIdAFocus?: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 function Block({
@@ -30,58 +46,27 @@ function Block({
   onUpdate,
   addBlock,
   onFocusDone,
+  idAFocus,
+  setIdAFocus,
 }: Props) {
   const [ChoixEnCours, ChoixEnCoursState] = useState(false);
   const [ChoixEnCoursVide, ChoixEnCoursVideState] = useState(false);
   const [type, typeState] = useState(type1);
-
-  useEffect(() => {
-    if (autoFocus && editableRef.current) {
-      // 🟢 On attend que le navigateur ait fini de dessiner le DOM
-      const timer = setTimeout(() => {
-        if (editableRef.current) {
-          editableRef.current.focus();
-
-          // Placement du curseur à la fin
-          const range = document.createRange();
-          const sel = window.getSelection();
-          range.selectNodeContents(editableRef.current);
-          range.collapse(false);
-          sel?.removeAllRanges();
-          sel?.addRange(range);
-        }
-      }, 0);
-
-      // On prévient le parent pour reset le state global
-      if (onFocusDone) {
-        onFocusDone();
-      }
-
-      return () => clearTimeout(timer);
-    }
-  }, [autoFocus, onFocusDone]);
-
   const [indexSelectionne, indexSelectionneState] = useState(0);
-
   const [vraiContenu, vraiContenuState] = useState<any>(contenu);
-
   const editableRef = useRef<any>(null);
 
-  const listeTypes = [
-    "h1",
-    "h2",
-    "h3",
-    "h4",
-    "h5",
-    "h6",
-    "ul",
-    "ol",
-    "T0D0",
-    "Menu",
-    "C4DR3",
-    "C1T4Tion",
-    "Sep4r4teur",
-  ];
+  const {
+    isDragging,
+    handleRef,
+    ref: dragRef,
+  } = useDraggable({ id: blockItem.id });
+  const { ref: dropRef, isDropTarget } = useDroppable({
+    id: blockItem.id,
+    data: { currentBlock: blockItem },
+  });
+
+  const setCombinedRef = mergeRefs(dragRef, dropRef);
 
   useEffect(() => {
     vraiContenuState(contenu);
@@ -100,8 +85,43 @@ function Block({
   }, [ChoixEnCours]);
 
   useEffect(() => {
-    if (autoFocus && editableRef.current) editableRef.current.focus();
-  }, [autoFocus]);
+    const shouldFocus = autoFocus || idAFocus === blockItem.id;
+
+    if (shouldFocus && editableRef.current) {
+      const timer = setTimeout(() => {
+        if (editableRef.current) {
+          editableRef.current.focus();
+          const range = document.createRange();
+          const sel = window.getSelection();
+          range.selectNodeContents(editableRef.current);
+          range.collapse(false);
+          sel?.removeAllRanges();
+          sel?.addRange(range);
+        }
+      }, 0);
+
+      if (onFocusDone) onFocusDone();
+      if (setIdAFocus && idAFocus === blockItem.id) setIdAFocus(null);
+
+      return () => clearTimeout(timer);
+    }
+  }, [autoFocus, idAFocus, blockItem.id, onFocusDone, setIdAFocus]);
+
+  const listeTypes = [
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "ul",
+    "ol",
+    "T0D0",
+    "Menu",
+    "C4DR3",
+    "C1T4Tion",
+    "Sep4r4teur",
+  ];
 
   function Content(e: React.SyntheticEvent<HTMLDivElement>): void {
     const target = e.currentTarget;
@@ -109,14 +129,18 @@ function Block({
       target.innerHTML = "";
     } else if (
       target.innerHTML.includes("<br>") &&
-      type != "ul" &&
-      type != "T0D0" &&
-      type != "li" &&
+      type !== "ul" &&
+      type !== "T0D0" &&
+      type !== "li" &&
       addBlock
     ) {
       target.innerHTML = target.innerText;
+
+      if (onUpdate) onUpdate(blockItem.id, type || "", target.innerText);
       addBlock(blockItem.id);
+      return;
     }
+
     if (target.innerHTML === "#&nbsp;") ChangeType("h1");
     else if (target.innerHTML === "##&nbsp;") ChangeType("h2");
     else if (target.innerHTML === "###&nbsp;") ChangeType("h3");
@@ -149,22 +173,28 @@ function Block({
     }
   }
 
+  function handleSauvegardeGlobale(texte: string) {
+    vraiContenuState(texte);
+    if (onUpdate) {
+      onUpdate(blockItem.id, type || "", texte);
+    }
+  }
+
   function ChangeType(newtype: string | null): void {
     ChoixEnCoursState(false);
     ChoixEnCoursVideState(false);
 
     if (newtype != null) {
       let calculeContenu = vraiContenu;
-
       let texteExtrait = "";
+
       if (type === "C4DR3" && Array.isArray(vraiContenu)) {
         const premierEnfant = vraiContenu[0];
-        if (premierEnfant) {
+        if (premierEnfant)
           texteExtrait =
             typeof premierEnfant.content === "string"
               ? premierEnfant.content
               : "";
-        }
       } else if (
         type === "Menu" &&
         vraiContenu &&
@@ -177,9 +207,8 @@ function Block({
       }
 
       if (newtype === "ul" || newtype === "ol") {
-        if (type === "C4DR3" || !Array.isArray(vraiContenu)) {
+        if (type === "C4DR3" || !Array.isArray(vraiContenu))
           calculeContenu = [texteExtrait];
-        }
       } else if (newtype === "T0D0") {
         if (
           type === "C4DR3" ||
@@ -193,7 +222,6 @@ function Block({
           calculeContenu = [
             {
               id: `b-${crypto.randomUUID()}`,
-
               type: "h1",
               content: texteExtrait,
             },
@@ -201,28 +229,26 @@ function Block({
         }
       } else if (newtype === "Menu") {
         if (type !== "Menu") {
-          calculeContenu = { titre: texteExtrait, enfants: [] };
+          calculeContenu = {
+            titre: texteExtrait,
+            enfants: [
+              { id: `b-${crypto.randomUUID()}`, type: "", content: "" },
+            ],
+          };
         }
       } else {
-        if (Array.isArray(vraiContenu)) {
-          calculeContenu = texteExtrait;
-        }
+        if (Array.isArray(vraiContenu)) calculeContenu = texteExtrait;
       }
 
       vraiContenuState(calculeContenu);
       typeState(newtype);
-
-      if (onUpdate) {
-        onUpdate(blockItem.id, newtype, calculeContenu);
-      }
+      if (onUpdate) onUpdate(blockItem.id, newtype, calculeContenu);
     }
   }
 
   function gererClavier(e: React.KeyboardEvent<HTMLDivElement>): void {
     if (e.key === "Backspace" && editableRef.current?.textContent === "") {
-      if (onDelete) {
-        onDelete(blockItem);
-      }
+      if (onDelete) onDelete(blockItem);
     }
     if (ChoixEnCours) {
       if (e.key === "ArrowDown") {
@@ -245,7 +271,11 @@ function Block({
   }
 
   return (
-    <div className="Block">
+    <div
+      ref={setCombinedRef}
+      id={blockItem.id}
+      className={`Block ${isDragging ? "dragging" : ""} ${isDropTarget ? "drag-over" : ""}`}
+    >
       {type === "h1" ? (
         <Titres.H1
           innerRef={editableRef}
@@ -310,23 +340,49 @@ function Block({
             <Block
               key={enfant.id}
               type1={enfant.type}
-              contenu={enfant.content as BlockItem}
+              contenu={enfant.content}
               blockItem={enfant}
               onDelete={onDelete}
               onUpdate={onUpdate}
+              addBlock={addBlock}
+              idAFocus={idAFocus}
+              setIdAFocus={setIdAFocus}
             />
           ))}
         </Menu>
+      ) : type === "Colonnes" ? (
+        <div className="bloc-colonnes">
+          {(vraiContenu as BlockItem[][])?.map((colonne, colIndex) => (
+            <div key={colIndex} className="colonne-item">
+              {colonne.map((enfant) => (
+                <Block
+                  key={enfant.id}
+                  type1={enfant.type}
+                  contenu={enfant.content}
+                  blockItem={enfant}
+                  onDelete={onDelete}
+                  onUpdate={onUpdate}
+                  addBlock={addBlock}
+                  idAFocus={idAFocus}
+                  setIdAFocus={setIdAFocus}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
       ) : type === "C4DR3" ? (
         <Cadre innerRef={editableRef}>
           {(vraiContenu as BlockItem[])?.map((enfant) => (
             <Block
               key={enfant.id}
               type1={enfant.type}
-              contenu={enfant.content as BlockItem}
+              contenu={enfant.content}
               blockItem={enfant}
               onDelete={onDelete}
               onUpdate={onUpdate}
+              addBlock={addBlock}
+              idAFocus={idAFocus}
+              setIdAFocus={setIdAFocus}
             />
           ))}
         </Cadre>
@@ -342,6 +398,7 @@ function Block({
         <div
           ref={editableRef as React.RefObject<HTMLDivElement>}
           contentEditable="true"
+          suppressContentEditableWarning={true}
           data-placeholder={
             ChoixEnCours
               ? " Choisissez votre bloc préféré"
@@ -356,23 +413,52 @@ function Block({
               : ""
           }
           onInput={Content}
-        >
-          {vraiContenu as string}
-        </div>
+          onBlur={(e) => handleSauvegardeGlobale(e.currentTarget.innerText)}
+          dangerouslySetInnerHTML={{ __html: contenu as string }}
+        />
       )}
-      <div onClick={() => ChoixEnCoursState(!ChoixEnCours)}>
-        <img src={menuKebab} />
+
+      <div
+        ref={handleRef}
+        className="handle"
+        onPointerDown={(e) => {
+          e.stopPropagation();
+
+          const typesTextuelsSimples = [
+            "",
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h5",
+            "h6",
+            "C1T4Tion",
+          ];
+          if (
+            editableRef.current &&
+            typesTextuelsSimples.includes(type || "")
+          ) {
+            handleSauvegardeGlobale(editableRef.current.innerText);
+          }
+
+          ChoixEnCoursState(!ChoixEnCours);
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        <img src={menuKebab} alt="Menu" />
       </div>
 
       <div
+        className="delete-btn"
         onClick={() => {
-          if (onDelete) {
-            onDelete(blockItem);
-          }
+          if (onDelete) onDelete(blockItem);
         }}
       >
         <img src={bin} alt="Supprimer" />
       </div>
+
       {ChoixEnCours && (
         <div id="Menu">
           <ul>
@@ -396,17 +482,17 @@ function Block({
               >
                 {index < 6
                   ? `Texte ${index + 1}`
-                  : index == 6
+                  : index === 6
                     ? "Liste à puces"
-                    : index == 7
+                    : index === 7
                       ? "Liste numéroté"
-                      : index == 8
+                      : index === 8
                         ? "Liste T0D0"
-                        : index == 9
+                        : index === 9
                           ? "Menu"
-                          : index == 10
+                          : index === 10
                             ? "C4DR3"
-                            : index == 11
+                            : index === 11
                               ? "C1T4Tion"
                               : "Sep4r4teur"}
               </li>

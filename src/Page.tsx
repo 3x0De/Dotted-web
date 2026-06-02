@@ -10,7 +10,7 @@ interface CategorieItem {
 }
 
 interface Props {
-  image?: string;
+  banniere?: string;
   icon?: string;
   titre?: string;
   titreState?: React.Dispatch<React.SetStateAction<string>>;
@@ -24,7 +24,7 @@ interface Props {
 }
 
 function Page({
-  image,
+  banniere,
   icon,
   titre,
   titreState,
@@ -48,10 +48,12 @@ function Page({
 
   return (
     <main>
-      {image && (
+      {banniere && (
         <div
           id="Baniere"
-          style={{ "--Baniere-Image": `url(${image})` } as React.CSSProperties}
+          style={
+            { "--Baniere-Image": `url(${banniere})` } as React.CSSProperties
+          }
         ></div>
       )}
       {icon && (
@@ -63,6 +65,7 @@ function Page({
       <section>
         <h1
           ref={h1Ref}
+          id="Titre"
           contentEditable="true"
           data-placeholder="Nouvelle page..."
           suppressContentEditableWarning={true}
@@ -87,6 +90,7 @@ function Page({
                   </div>
                   <div
                     contentEditable="true"
+                    suppressContentEditableWarning={true}
                     data-placeholder={categorie.id + "..."}
                     onInput={handleInput}
                   >
@@ -98,19 +102,87 @@ function Page({
           </ul>
         </div>
         <div id="wrapper">
-          {Blocks?.map((block) => (
-            <Block
-              key={block.id}
-              type1={block.type}
-              contenu={block.content}
-              blockItem={block}
-              onDelete={onDeleteBlock}
-              onUpdate={onUpdate}
-              addBlock={addBlock}
-              autoFocus={idAFocus === block.id}
-              onFocusDone={() => setIdAFocus(null)}
-            />
-          ))}
+          {(() => {
+            const elements: React.ReactNode[] = [];
+            let currentLineBlocks: BlockItem[] = [];
+
+            const flushLine = (key: string | number) => {
+              if (currentLineBlocks.length > 0) {
+                elements.push(
+                  <div className="ligne" key={`ligne-${key}`}>
+                    {currentLineBlocks.map((block) => {
+                      if (typeof block.content === "string") {
+                        return (
+                          <Block
+                            key={block.id}
+                            contenu={block.content}
+                            blockItem={block}
+                            idAFocus={idAFocus}
+                            setIdAFocus={setIdAFocus}
+                            addBlock={addBlock}
+                            onDelete={onDeleteBlock}
+                            onUpdate={onUpdate}
+                          />
+                        );
+                      } else {
+                        return (
+                          <Block
+                            key={block.id}
+                            blockItem={block}
+                            idAFocus={idAFocus}
+                            setIdAFocus={setIdAFocus}
+                            addBlock={addBlock}
+                            onDelete={onDeleteBlock}
+                            onUpdate={onUpdate}
+                          />
+                        );
+                      }
+                    })}
+                  </div>,
+                );
+                currentLineBlocks = [];
+              }
+            };
+
+            (Blocks as BlockItem[]).forEach((block, index) => {
+              if (block.type === "Colonnes") {
+                flushLine(index);
+
+                elements.push(
+                  <div
+                    className="ligne bloc-colonnes"
+                    key={`ligne-col-${block.id}`}
+                  >
+                    {(block.content as BlockItem[][])?.map(
+                      (colonne, colIndex) => (
+                        <div key={colIndex} className="colonne-item">
+                          {colonne.map((enfant) => (
+                            <Block
+                              key={enfant.id}
+                              type1={enfant.type}
+                              contenu={enfant.content}
+                              blockItem={enfant}
+                              idAFocus={idAFocus}
+                              setIdAFocus={setIdAFocus}
+                              addBlock={addBlock}
+                              onDelete={onDeleteBlock}
+                              onUpdate={onUpdate}
+                            />
+                          ))}
+                        </div>
+                      ),
+                    )}
+                  </div>,
+                );
+              } else {
+                flushLine(index);
+                currentLineBlocks.push(block);
+                flushLine(`single-${block.id}`);
+              }
+            });
+
+            return elements;
+          })()}
         </div>
       </section>
     </main>

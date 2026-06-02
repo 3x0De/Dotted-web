@@ -118,12 +118,18 @@ div {
   align-items: stretch;
   gap: 5px;
   width: 100%;
+  transition:
+    background-color 0.2s ease,
+    border 0.1s ease;
 
   div {
-    &:not(:has(> img)):not(.Block) {
+    &:not(:has(> img)) {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
+      align-self: center;
+
+      &#Cadre {
+        flex-direction: column;
+      }
     }
     &:has(> img) {
       height: auto;
@@ -142,4 +148,20 @@ div {
       }
     }
   }
+
+  &.drag-over {
+    border-top: 3px solid v.$BlueLink;
+    background-color: rgba(v.$BlueLink, 0.05);
+    border-radius: 0 0 5px 5px;
+  }
+
+  &.dragging {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+}
+
+.handle {
+  cursor: grab;
+  touch-action: none;
 }

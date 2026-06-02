@@ -25,6 +25,7 @@ function Cite({ innerRef, oninput, contenu }: Props) {
         Content(e);
       }}
       onKeyDown={Clavier}
+      suppressContentEditableWarning={true}
     >
       {contenu}
     </p>

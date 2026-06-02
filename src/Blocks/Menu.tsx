@@ -21,6 +21,7 @@ function Menu({ innerRef, oninput, children, contenu }: MenuProps) {
         ref={innerRef}
         data-placeholder="Menu"
         contentEditable="true"
+        suppressContentEditableWarning={true}
         onInput={(e: any) => {
           handleInput(e);
           Content(e);

@@ -26,13 +26,18 @@ main {
 
   section {
     margin-top: 10px;
-    position: relative;
-    // top: 30vh;
+    position: absolute;
+    top: 30vh;
     display: flex;
     flex-direction: column;
     width: 90%;
 
-    h1 {
+    #Titre {
+      @include v.Rundeck;
+      &::first-letter {
+        @include v.Nove;
+      }
+
       &::after {
         content: attr(data-placeholder);
         color: v.$Groove;
@@ -114,10 +119,18 @@ main {
       flex-direction: column;
       height: min-content;
 
-      & > * {
-        margin: 2vh;
-        min-height: 5vh;
-        height: min-content;
+      .ligne {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+
+        .colonne-item {
+          width: 100%;
+
+          &:empty {
+            width: 0;
+          }
+        }
       }
     }
   }
