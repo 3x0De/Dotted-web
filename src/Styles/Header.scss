@@ -1,36 +1,140 @@
 @use "variables" as v;
 
-.PagesRacine {
-  width: min-content;
-  list-style-type: none;
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-radius: 0 10px 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  height: 100vh;
+  gap: 20px;
+  width: 25vw;
+  min-width: 250px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  text-align: center;
+  overflow-anchor: auto;
+  background-color: rgba(v.$Groove, 0.4);
+  direction: rtl;
 
-  li {
-    background-color: green;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    overflow-y: hidden;
-    padding: 5px;
-    gap: 5px;
+  > * {
+    direction: ltr;
+    margin: 0;
+  }
 
-    h4 {
-      justify-self: start;
-      flex: 1;
+  h1 {
+    width: 100%;
+    @include v.Rundeck;
+  }
 
-      @include v.Rundeck;
+  .PagesRacine {
+    img {
+      height: 1rem;
+      aspect-ratio: 1;
+    }
 
-      &::after {
-        content: attr(data-placeholder);
-        color: v.$Groove;
-        opacity: 0.8;
+    padding-left: 5px;
+    list-style-type: none;
+    width: 90%;
+
+    li {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px;
+      gap: 5px;
+
+      h4 {
+        justify-self: start;
+        text-align: start;
+        flex: 1;
+        cursor: text;
+        width: fit-content;
+        min-width: 6ch;
+        max-height: 1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &::after {
+          content: attr(data-placeholder);
+          color: v.$Smoke;
+          opacity: 0.8;
+        }
+        &:not(:empty)::after {
+          content: "";
+        }
+        &:focus {
+          outline: none;
+        }
+
+        &::selection {
+          background-color: v.$BlueLink;
+          padding: 2;
+        }
+        &::-moz-selection {
+          background-color: v.$BlueLink;
+          padding: 2px;
+        }
       }
-      &:not(:empty)::after {
-        content: "";
+
+      a {
+        text-decoration: none;
+        color: v.$BlueLink;
+        position: relative;
+        &:after {
+          background: none repeat scroll 0 0 transparent;
+          bottom: 0;
+          content: "";
+          display: block;
+          height: 2px;
+          left: 50%;
+          position: absolute;
+          background: v.$BlueLink;
+          transition:
+            width 0.3s ease 0s,
+            left 0.3s ease 0s;
+          width: 0;
+        }
+        &:hover:after {
+          width: 100%;
+          left: 0;
+        }
+      }
+
+      &:not(.Add) div {
+        align-self: stretch;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          border-radius: 5px;
+          background: rgba(v.$Smoke, 0.2);
+        }
+      }
+
+      &.Add:hover {
+        border-radius: 10px;
+        background: rgba(v.$Smoke, 0.2);
       }
     }
   }
-}
 
-h3 {
-  @include v.Nove;
+  input {
+    margin: 0 auto;
+    border: none;
+    border-radius: 5px;
+    &:focus {
+      outline: none;
+    }
+  }
+
+  h3 {
+    width: 100%;
+    @include v.Nove;
+  }
 }

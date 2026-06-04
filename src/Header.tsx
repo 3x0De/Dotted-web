@@ -31,7 +31,6 @@ function Header() {
   const fetchProjPv = async () => {
     const response = await fetch("http://localhost:8000/Racine/prive");
     const data = await response.json();
-    console.log(data);
 
     ProjetsPvState(data);
   };
@@ -42,9 +41,6 @@ function Header() {
   }, []);
 
   useEffect(() => {
-    console.log(ProjetsPv);
-    console.log(Pv);
-
     if (Pv) fetchProjPv();
   }, [Pv]);
 
@@ -121,17 +117,26 @@ function Header() {
 
   return (
     <header>
+      <img
+        src="/Logos/Dotted_full.svg"
+        style={{
+          width: "15vw",
+          margin: "10px auto 0 auto",
+        }}
+      />
       <h1>{Bjr}</h1>
       <h3>Projets</h3>
       <ul className="PagesRacine">
         {Projets.map((Proj) => {
           return (
             <li key={Proj[0]}>
-              <img
-                style={{ cursor: "pointer" }}
-                src="/src/assets/Image/Block logo/bin.svg"
-                onClick={() => delProj(Proj[0])}
-              />
+              <div>
+                <img
+                  style={{ cursor: "pointer" }}
+                  src="/src/assets/Image/Block logo/bin.svg"
+                  onClick={() => delProj(Proj[0])}
+                />
+              </div>
               <h4
                 contentEditable
                 suppressContentEditableWarning
@@ -143,6 +148,7 @@ function Header() {
                   handleInput(e);
                 }}
                 onBlur={(e) => {
+                  editingRef.current = null;
                   updateNom(Proj[0], e.currentTarget.innerText);
                 }}
               >
@@ -152,8 +158,8 @@ function Header() {
             </li>
           );
         })}
-        <li onClick={addPage} style={{ cursor: "pointer" }}>
-          <img src="/src/assets/Image/Block logo/bin.svg" />
+        <li onClick={addPage} className="Add" style={{ cursor: "pointer" }}>
+          <img src="/src/assets/Image/Block logo/Add.svg" />
           <h4>Ajouter</h4>
         </li>
       </ul>
@@ -165,15 +171,17 @@ function Header() {
             {ProjetsPv.map((Proj) => {
               return (
                 <li key={Proj[0]}>
-                  <img
-                    style={{ cursor: "pointer" }}
-                    src="/src/assets/Image/Block logo/bin.svg"
-                    onClick={() => delProj(Proj[0])}
-                  />
+                  <div>
+                    <img
+                      style={{ cursor: "pointer" }}
+                      src="/src/assets/Image/Block logo/bin.svg"
+                      onClick={() => delProj(Proj[0])}
+                    />
+                  </div>
                   <h4
                     contentEditable
                     suppressContentEditableWarning
-                    data-placeholder="Titre..."
+                    data-placeholder="T1tr3..."
                     onFocus={(e) => {
                       editingRef.current = e.currentTarget;
                     }}
@@ -190,8 +198,12 @@ function Header() {
                 </li>
               );
             })}
-            <li onClick={addPagePv} style={{ cursor: "pointer" }}>
-              <img src="/src/assets/Image/Block logo/bin.svg" />
+            <li
+              onClick={addPagePv}
+              style={{ cursor: "pointer" }}
+              className="Add"
+            >
+              <img src="/src/assets/Image/Block logo/Add.svg" />
               <h4>Ajouter</h4>
             </li>
           </ul>
