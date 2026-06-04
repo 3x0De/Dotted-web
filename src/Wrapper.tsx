@@ -1,4 +1,3 @@
-import "./Styles/App.scss";
 import Page from "./Page";
 import { useState } from "react";
 import type { BlockItem } from "./Types";
