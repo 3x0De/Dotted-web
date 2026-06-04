@@ -4,13 +4,15 @@ import "./Styles/Header.scss";
 function Header() {
   const [Bjr, BjrState] = useState("");
   const [Projets, ProjetsState] = useState<[number, string][]>([]);
+  const [ProjetsPv, ProjetsPvState] = useState<[number, string][]>([]);
+  const [Pv, PvState] = useState<boolean>(false);
   const editingRef = useRef<HTMLHeadingElement | null>(null);
 
   useEffect(() => {
     if (editingRef.current) {
       moveCursorToEnd(editingRef.current);
     }
-  }, [Projets]);
+  }, [Projets, ProjetsPv]);
 
   const fetchNom = async () => {
     const response = await fetch("http://localhost:8000/");
@@ -26,10 +28,35 @@ function Header() {
     ProjetsState(data);
   };
 
+  const fetchProjPv = async () => {
+    const response = await fetch("http://localhost:8000/Racine/prive");
+    const data = await response.json();
+    console.log(data);
+
+    ProjetsPvState(data);
+  };
+
   useEffect(() => {
     fetchNom();
     fetchProj();
   }, []);
+
+  useEffect(() => {
+    console.log(ProjetsPv);
+    console.log(Pv);
+
+    if (Pv) fetchProjPv();
+  }, [Pv]);
+
+  const verifCon = async (e: any) => {
+    const response = await fetch(
+      "http://localhost:8000/con?mdp=" + e.currentTarget.value,
+    );
+    const data = await response.json();
+
+    PvState(data);
+    fetchProjPv();
+  };
 
   const addPage = async () => {
     await fetch("http://localhost:8000/initProj", {
@@ -40,6 +67,17 @@ function Header() {
     });
 
     fetchProj();
+  };
+
+  const addPagePv = async () => {
+    await fetch("http://localhost:8000/initProj/prive", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    fetchProjPv();
   };
 
   const delProj = async (proj: number) => {
@@ -53,6 +91,7 @@ function Header() {
       }),
     });
     fetchProj();
+    fetchProjPv();
   };
 
   const updateNom = async (id: number, newName: string) => {
@@ -83,6 +122,7 @@ function Header() {
   return (
     <header>
       <h1>{Bjr}</h1>
+      <h3>Projets</h3>
       <ul className="PagesRacine">
         {Projets.map((Proj) => {
           return (
@@ -117,6 +157,46 @@ function Header() {
           <h4>Ajouter</h4>
         </li>
       </ul>
+      <input type="password" onChange={verifCon} />
+      {Pv && (
+        <>
+          <h3>Projets Privés</h3>
+          <ul className="PagesRacine">
+            {ProjetsPv.map((Proj) => {
+              return (
+                <li key={Proj[0]}>
+                  <img
+                    style={{ cursor: "pointer" }}
+                    src="/src/assets/Image/Block logo/bin.svg"
+                    onClick={() => delProj(Proj[0])}
+                  />
+                  <h4
+                    contentEditable
+                    suppressContentEditableWarning
+                    data-placeholder="Titre..."
+                    onFocus={(e) => {
+                      editingRef.current = e.currentTarget;
+                    }}
+                    onInput={(e) => {
+                      handleInput(e);
+                    }}
+                    onBlur={(e) => {
+                      updateNom(Proj[0], e.currentTarget.innerText);
+                    }}
+                  >
+                    {Proj[1]}
+                  </h4>
+                  <a href={"/Page/" + Proj[0]}>Ouvrir</a>
+                </li>
+              );
+            })}
+            <li onClick={addPagePv} style={{ cursor: "pointer" }}>
+              <img src="/src/assets/Image/Block logo/bin.svg" />
+              <h4>Ajouter</h4>
+            </li>
+          </ul>
+        </>
+      )}
     </header>
   );
 }
