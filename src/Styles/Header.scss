@@ -1,0 +1,32 @@
+@use "variables" as v;
+
+.PagesRacine {
+  width: min-content;
+  list-style-type: none;
+
+  li {
+    background-color: green;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    overflow-y: hidden;
+    padding: 5px;
+    gap: 5px;
+
+    h4 {
+      justify-self: start;
+      flex: 1;
+
+      @include v.Rundeck;
+
+      &::after {
+        content: attr(data-placeholder);
+        color: v.$Groove;
+        opacity: 0.8;
+      }
+      &:not(:empty)::after {
+        content: "";
+      }
+    }
+  }
+}
