@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Block from "./Blocks/BlockManager";
 import "./Styles/Page.scss";
 import type { BlockItem } from "./Types";
@@ -36,30 +36,28 @@ function Page({
   idAFocus,
   setIdAFocus,
 }: Props) {
-  const editingRef = useRef<HTMLHeadingElement | null>(null);
+  const updateNom = async (e: any) => {
+    const id = Number(window.location.href.split("/").pop());
+    await fetch("http://localhost:8000/Change/Nom", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id,
+        nom: e.currentTarget.innerHTML,
+      }),
+    });
+  };
 
   useEffect(() => {
-    if (editingRef.current && editingRef.current.innerText !== titre) {
-      const titreValue = titre ?? "";
-      editingRef.current.innerText = titreValue;
-    }
+    document.title = titre ? `${titre} | Dotted` : "Dotted";
   }, [titre]);
 
-  useEffect(() => {
-    const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
-    if (link) link.href = icon || "/Logos/Dotted_mini.svg";
-    document.title = titre ? `${titre} | Dotted` : "Dotted";
-  }, [icon, titre]);
+  const changeTitre = (e: any) => {
+    const value = e.currentTarget.innerText;
 
-  const moveCursorToEnd = (el: HTMLElement) => {
-    const range = document.createRange();
-    const selection = window.getSelection();
-
-    range.selectNodeContents(el);
-    range.collapse(false);
-
-    selection?.removeAllRanges();
-    selection?.addRange(range);
+    document.title = value ? `${value} | Dotted` : "Dotted";
   };
 
   return (
@@ -80,23 +78,21 @@ function Page({
       )}
       <section>
         <h1
-          ref={editingRef}
           contentEditable
           suppressContentEditableWarning
-          onFocus={(e) => {
-            editingRef.current = e.currentTarget;
-            setTimeout(() => moveCursorToEnd(e.currentTarget), 0);
-          }}
-          onBlur={() => {
-            editingRef.current = null;
-          }}
+          data-placeholder="Nouvelle page..."
           onInput={(e) => {
-            if (titreState) titreState(e.currentTarget.innerText);
+            changeTitre(e);
+            handleInput(e);
           }}
-        >
-          {titre}{" "}
-          {/* Ici, React affichera le titre initial, mais la synchro se fait via useEffect */}
-        </h1>
+          onBlur={(e) => {
+            titreState?.(e.currentTarget.innerText);
+            updateNom(e);
+          }}
+          dangerouslySetInnerHTML={{
+            __html: titre || "",
+          }}
+        />
         <div id="Categories">
           <ul>
             {categories?.map((categorie) => (
