@@ -123,6 +123,7 @@ function Header() {
           width: "15vw",
           margin: "10px auto 0 auto",
         }}
+        onClick={() => (window.location.href = "/")}
       />
       <h1>{Bjr}</h1>
       <h3>Projets</h3>
@@ -154,7 +155,7 @@ function Header() {
               >
                 {Proj[1]}
               </h4>
-              <a href={"/Page/" + Proj[0]}>Ouvrir</a>
+              <a href={"/" + Proj[0]}>Ouvrir</a>
             </li>
           );
         })}

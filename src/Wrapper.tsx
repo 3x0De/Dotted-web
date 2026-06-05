@@ -1,5 +1,5 @@
 import Page from "./Page";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { BlockItem } from "./Types";
 import { DragDropProvider } from "@dnd-kit/react";
 
@@ -18,6 +18,18 @@ function Wrapper() {
     },
   ]);
   const [idAFocus, setIdAFocus] = useState<string | null>(null);
+
+  async function fetchTitre() {
+    const response = await fetch(
+      "http://localhost:8000/titre" + window.location.pathname,
+    );
+    const data = await response.json();
+    titlreState(data);
+  }
+
+  useEffect(() => {
+    fetchTitre();
+  }, [window.location.pathname]);
 
   const handleAddBlockAfter = (targetId: string) => {
     const newId = `b${crypto.randomUUID()}`;

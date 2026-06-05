@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import Block from "./Blocks/BlockManager";
 import "./Styles/Page.scss";
 import type { BlockItem } from "./Types";
@@ -36,15 +36,31 @@ function Page({
   idAFocus,
   setIdAFocus,
 }: Props) {
-  const h1Ref = useRef<HTMLHeadingElement>(null);
+  const editingRef = useRef<HTMLHeadingElement | null>(null);
 
-  const initialTitre = useRef(titre);
+  useEffect(() => {
+    if (editingRef.current && editingRef.current.innerText !== titre) {
+      const titreValue = titre ?? "";
+      editingRef.current.innerText = titreValue;
+    }
+  }, [titre]);
 
   useEffect(() => {
     const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
     if (link) link.href = icon || "/Logos/Dotted_mini.svg";
     document.title = titre ? `${titre} | Dotted` : "Dotted";
   }, [icon, titre]);
+
+  const moveCursorToEnd = (el: HTMLElement) => {
+    const range = document.createRange();
+    const selection = window.getSelection();
+
+    range.selectNodeContents(el);
+    range.collapse(false);
+
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+  };
 
   return (
     <main>
@@ -64,20 +80,22 @@ function Page({
       )}
       <section>
         <h1
-          ref={h1Ref}
-          id="Titre"
-          contentEditable="true"
-          data-placeholder="Nouvelle page..."
-          suppressContentEditableWarning={true}
-          onInput={(e: React.FormEvent<HTMLHeadingElement>) => {
-            handleInput(e);
-            const target = e.currentTarget;
-            if (titreState) {
-              titreState(target.innerText);
-            }
+          ref={editingRef}
+          contentEditable
+          suppressContentEditableWarning
+          onFocus={(e) => {
+            editingRef.current = e.currentTarget;
+            setTimeout(() => moveCursorToEnd(e.currentTarget), 0);
+          }}
+          onBlur={() => {
+            editingRef.current = null;
+          }}
+          onInput={(e) => {
+            if (titreState) titreState(e.currentTarget.innerText);
           }}
         >
-          {initialTitre.current}
+          {titre}{" "}
+          {/* Ici, React affichera le titre initial, mais la synchro se fait via useEffect */}
         </h1>
         <div id="Categories">
           <ul>
