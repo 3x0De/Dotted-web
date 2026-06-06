@@ -1,5 +1,5 @@
 import Page from "./Page";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { BlockItem } from "./Types";
 import { DragDropProvider } from "@dnd-kit/react";
 
@@ -7,6 +7,7 @@ function Wrapper() {
   const [titlre, titlreState] = useState<string>("");
   const [blocks, setBlocks] = useState<BlockItem[]>([]);
   const [idAFocus, setIdAFocus] = useState<string | null>(null);
+  const isInitialMount = useRef(true);
 
   async function fetchTitre() {
     const response = await fetch(
@@ -31,6 +32,32 @@ function Wrapper() {
     fetchCont();
   }, [window.location.pathname]);
 
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    const saveBlocks = async () => {
+      try {
+        await fetch(
+          "http://localhost:8000/Modif/Cont" + window.location.pathname,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ page: blocks }),
+          },
+        );
+      } catch (error) {
+        console.error("Erreur de sauvegarde des blocs :", error);
+      }
+    };
+
+    saveBlocks();
+  }, [blocks]);
+
   const handleAddBlockAfter = (targetId: string) => {
     const newId = `b${crypto.randomUUID()}`;
     const newBlock: BlockItem = { id: newId, type: "", content: "" };
@@ -52,6 +79,19 @@ function Wrapper() {
           newList[newList.length - 1] = {
             ...block,
             content: insertRecursive([...(block.content as BlockItem[])]),
+          };
+        } else if (
+          block.type === "Menu" &&
+          block.content &&
+          typeof block.content === "object" &&
+          "enfants" in block.content
+        ) {
+          newList[newList.length - 1] = {
+            ...block,
+            content: {
+              ...block.content,
+              enfants: insertRecursive(block.content.enfants ?? []),
+            },
           };
         }
       }
@@ -141,6 +181,20 @@ function Wrapper() {
           return {
             ...block,
             content: updateRecursive([...(block.content as BlockItem[])]),
+          };
+        }
+        if (
+          block.type === "Menu" &&
+          block.content &&
+          typeof block.content === "object" &&
+          "enfants" in block.content
+        ) {
+          return {
+            ...block,
+            content: {
+              ...block.content,
+              enfants: updateRecursive(block.content.enfants ?? []),
+            },
           };
         }
         return block;
@@ -236,6 +290,20 @@ function Wrapper() {
                 content: removeBlockRecursive(b.content as BlockItem[]),
               };
             }
+            if (
+              b.type === "Menu" &&
+              b.content &&
+              typeof b.content === "object" &&
+              "enfants" in b.content
+            ) {
+              return {
+                ...b,
+                content: {
+                  ...b.content,
+                  enfants: removeBlockRecursive(b.content?.enfants ?? []),
+                },
+              };
+            }
             return b;
           });
       };
@@ -306,6 +374,19 @@ function Wrapper() {
             newList.push({
               ...b,
               content: insertIntoList(b.content as BlockItem[]),
+            });
+          } else if (
+            b.type === "Menu" &&
+            b.content &&
+            typeof b.content === "object" &&
+            "enfants" in b.content
+          ) {
+            newList.push({
+              ...b,
+              content: {
+                ...b.content,
+                enfants: insertIntoList(b.content?.enfants ?? []),
+              },
             });
           } else {
             newList.push(b);

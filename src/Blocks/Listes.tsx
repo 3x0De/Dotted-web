@@ -16,15 +16,21 @@ interface Props {
   innerRef: React.RefObject<HTMLElement | null>;
   oninput: ManagerProps;
   contenu?: string[] | { cont: string; etat: boolean }[];
+  onBlur?: (e: any) => void;
 }
 
-function ListePuces({ innerRef, oninput, contenu }: Props) {
+function ListePuces({ innerRef, oninput, contenu, onBlur }: Props) {
   const { Content, Clavier } = oninput;
   const [puces, setPuces] = useState<Puce[]>(
     contenu
       ? (contenu as string[]).map((cont, i) => ({
           id: (i + 1).toString(),
-          texte: cont,
+          texte:
+            typeof cont === "string"
+              ? cont
+              : cont && typeof cont === "object" && "texte" in cont
+                ? (cont as any).texte
+                : "",
           fait: false,
         }))
       : [{ id: "1", texte: "", fait: false }],
@@ -118,7 +124,10 @@ function ListePuces({ innerRef, oninput, contenu }: Props) {
   };
 
   return (
-    <ul ref={innerRef as React.RefObject<HTMLUListElement>}>
+    <ul
+      ref={innerRef as React.RefObject<HTMLUListElement>}
+      onBlur={() => onBlur?.(puces.map((puce) => puce.texte))}
+    >
       {puces.map((puce, index) => (
         <li
           key={puce.id}
@@ -144,13 +153,18 @@ function ListePuces({ innerRef, oninput, contenu }: Props) {
   );
 }
 
-function ListeNumerote({ innerRef, oninput, contenu }: Props) {
+function ListeNumerote({ innerRef, oninput, contenu, onBlur }: Props) {
   const { Content, Clavier } = oninput;
   const [puces, setPuces] = useState<Puce[]>(
     contenu
       ? (contenu as string[]).map((cont, i) => ({
           id: (i + 1).toString(),
-          texte: cont,
+          texte:
+            typeof cont === "string"
+              ? cont
+              : cont && typeof cont === "object" && "texte" in cont
+                ? (cont as any).texte
+                : "",
           fait: false,
         }))
       : [{ id: "1", texte: "", fait: false }],
@@ -244,7 +258,10 @@ function ListeNumerote({ innerRef, oninput, contenu }: Props) {
   };
 
   return (
-    <ol ref={innerRef as React.RefObject<HTMLOListElement>}>
+    <ol
+      ref={innerRef as React.RefObject<HTMLOListElement>}
+      onBlur={() => onBlur?.(puces.map((puce) => puce.texte))}
+    >
       {puces.map((puce, index) => (
         <li
           key={puce.id}
@@ -270,14 +287,20 @@ function ListeNumerote({ innerRef, oninput, contenu }: Props) {
   );
 }
 
-function ListeTODO({ innerRef, oninput, contenu }: Props) {
+function ListeTODO({ innerRef, oninput, contenu, onBlur }: Props) {
   const { Content, Clavier } = oninput;
   const [puces, setPuces] = useState<Puce[]>(
     contenu
       ? (contenu as { cont: string; etat: boolean }[]).map((obj, i) => ({
           id: (i + 1).toString(),
-          texte: obj.cont,
-          fait: obj.etat,
+          texte:
+            obj && typeof obj === "object" && "cont" in obj
+              ? obj.cont
+              : typeof obj === "string"
+                ? obj
+                : "",
+          fait:
+            obj && typeof obj === "object" && "etat" in obj ? obj.etat : false,
         }))
       : [{ id: "1", texte: "", fait: false }],
   );
@@ -399,6 +422,9 @@ function ListeTODO({ innerRef, oninput, contenu }: Props) {
     <ul
       ref={innerRef as React.RefObject<HTMLUListElement>}
       className="liste-todo-conteneur"
+      onBlur={() =>
+        onBlur?.(puces.map((puce) => ({ cont: puce.texte, etat: puce.fait })))
+      }
     >
       {puces.map((puce, index) => (
         <li key={puce.id} className={puce.fait ? "task-done" : ""}>

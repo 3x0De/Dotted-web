@@ -8,10 +8,11 @@ interface ManagerProps {
 interface Props {
   innerRef: React.RefObject<HTMLHeadingElement | null>;
   oninput: ManagerProps;
+  onBlur?: (e: any) => void;
   contenu?: string;
 }
 
-function Cite({ innerRef, oninput, contenu }: Props) {
+function Cite({ innerRef, oninput, onBlur, contenu }: Props) {
   const { Content, Clavier } = oninput;
 
   return (
@@ -24,6 +25,7 @@ function Cite({ innerRef, oninput, contenu }: Props) {
         handleInput(e);
         Content(e);
       }}
+      onBlur={(e: any) => onBlur?.(e.currentTarget.innerText)}
       onKeyDown={Clavier}
       suppressContentEditableWarning={true}
     >

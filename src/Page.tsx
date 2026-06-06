@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import Block from "./Blocks/BlockManager";
 import "./Styles/Page.scss";
 import type { BlockItem } from "./Types";
@@ -46,20 +46,6 @@ function Page({
       body: JSON.stringify({
         id,
         nom: e.currentTarget.innerHTML,
-      }),
-    });
-  };
-
-  const updateCont = async () => {
-    console.log(Blocks);
-
-    await fetch("http://localhost:8000/Modif/Cont" + window.location.pathname, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        page: Blocks,
       }),
     });
   };
@@ -129,7 +115,7 @@ function Page({
             ))}
           </ul>
         </div>
-        <div id="wrapper" onFocus={updateCont} onInput={updateCont}>
+        <div id="wrapper">
           {(() => {
             const elements: React.ReactNode[] = [];
             let currentLineBlocks: BlockItem[] = [];

@@ -9,12 +9,36 @@ interface ManagerProps {
 interface MenuProps {
   innerRef: React.RefObject<any>;
   oninput: ManagerProps;
+  onBlur?: (e: any) => void;
   children?: React.ReactNode;
   contenu?: TypeMenu;
 }
 
-function Menu({ innerRef, oninput, children, contenu }: MenuProps) {
+function Menu({ innerRef, oninput, onBlur, children, contenu }: MenuProps) {
   const { Content, Clavier } = oninput;
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+    if (e.key === " " || e.code === "Space") {
+      e.preventDefault();
+      e.stopPropagation();
+      if (document.queryCommandSupported("insertText")) {
+        document.execCommand("insertText", false, " ");
+      } else {
+        const sel = window.getSelection();
+        if (sel && sel.rangeCount > 0) {
+          const range = sel.getRangeAt(0);
+          range.deleteContents();
+          range.insertNode(document.createTextNode(" "));
+          range.collapse(false);
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }
+      }
+      return;
+    }
+    Clavier(e as unknown as React.KeyboardEvent<HTMLDivElement>);
+  };
+
   return (
     <details>
       <summary
@@ -22,11 +46,16 @@ function Menu({ innerRef, oninput, children, contenu }: MenuProps) {
         data-placeholder="Menu"
         contentEditable="true"
         suppressContentEditableWarning={true}
+        onPointerDown={(e: any) => {
+          e.preventDefault();
+          e.currentTarget.focus();
+        }}
         onInput={(e: any) => {
           handleInput(e);
           Content(e);
         }}
-        onKeyDown={Clavier}
+        onBlur={(e: any) => onBlur?.(e.currentTarget.innerText)}
+        onKeyDown={handleKeyDown}
       >
         {contenu?.titre}
       </summary>

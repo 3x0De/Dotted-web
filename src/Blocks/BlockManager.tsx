@@ -173,10 +173,10 @@ function Block({
     }
   }
 
-  function handleSauvegardeGlobale(texte: string) {
-    vraiContenuState(texte);
+  function handleSauvegardeGlobale(donnees: any) {
+    vraiContenuState(donnees);
     if (onUpdate) {
-      onUpdate(blockItem.id, type || "", texte);
+      onUpdate(blockItem.id, type || "", donnees);
     }
   }
 
@@ -232,7 +232,8 @@ function Block({
           calculeContenu = {
             titre: texteExtrait,
             enfants: [
-              { id: `b-${crypto.randomUUID()}`, type: "", content: "" },
+              // child must never be truly empty: give a single-space placeholder
+              { id: `b-${crypto.randomUUID()}`, type: "", content: " " },
             ],
           };
         }
@@ -248,7 +249,17 @@ function Block({
 
   function gererClavier(e: React.KeyboardEvent<HTMLDivElement>): void {
     if (e.key === "Backspace" && editableRef.current?.textContent === "") {
-      if (onDelete) onDelete(blockItem);
+      const selection = window.getSelection();
+      const isSelectionCollapsed = selection?.isCollapsed ?? false;
+      const isDefaultEmptyBlock =
+        (!type || type === "") &&
+        (contenu === undefined ||
+          contenu === "" ||
+          (Array.isArray(contenu) && contenu.length === 0));
+
+      if (!isDefaultEmptyBlock && isSelectionCollapsed) {
+        if (onDelete) onDelete(blockItem);
+      }
     }
     if (ChoixEnCours) {
       if (e.key === "ArrowDown") {
@@ -280,60 +291,88 @@ function Block({
         <Titres.H1
           innerRef={editableRef}
           oninput={{ Content, Clavier: gererClavier }}
+          onBlur={(e) => handleSauvegardeGlobale(e.currentTarget.innerText)}
           contenu={vraiContenu as string}
         />
       ) : type === "h2" ? (
         <Titres.H2
           innerRef={editableRef}
           oninput={{ Content, Clavier: gererClavier }}
+          onBlur={(e) => handleSauvegardeGlobale(e.currentTarget.innerText)}
           contenu={vraiContenu as string}
         />
       ) : type === "h3" ? (
         <Titres.H3
           innerRef={editableRef}
           oninput={{ Content, Clavier: gererClavier }}
+          onBlur={(e) => handleSauvegardeGlobale(e.currentTarget.innerText)}
           contenu={vraiContenu as string}
         />
       ) : type === "h4" ? (
         <Titres.H4
           innerRef={editableRef}
           oninput={{ Content, Clavier: gererClavier }}
+          onBlur={(e) => handleSauvegardeGlobale(e.currentTarget.innerText)}
           contenu={vraiContenu as string}
         />
       ) : type === "h5" ? (
         <Titres.H5
           innerRef={editableRef}
           oninput={{ Content, Clavier: gererClavier }}
+          onBlur={(e) => handleSauvegardeGlobale(e.currentTarget.innerText)}
           contenu={vraiContenu as string}
         />
       ) : type === "h6" ? (
         <Titres.H6
           innerRef={editableRef}
           oninput={{ Content, Clavier: gererClavier }}
+          onBlur={(e) => handleSauvegardeGlobale(e.currentTarget.innerText)}
           contenu={vraiContenu as string}
         />
       ) : type === "ul" ? (
         <Listes.ListePuces
           innerRef={editableRef}
           oninput={{ Content, Clavier: gererClavier }}
-          contenu={vraiContenu as string[]}
+          onBlur={handleSauvegardeGlobale}
+          contenu={
+            Array.isArray(vraiContenu)
+              ? (vraiContenu as any[]).map((item) =>
+                  typeof item === "string"
+                    ? item
+                    : item && typeof item === "object" && "texte" in item
+                      ? item.texte
+                      : "",
+                )
+              : []
+          }
+          // onChange={(nouveauTableau) => handleSauvegardeGlobale(nouveauTableau)}
         />
       ) : type === "ol" ? (
         <Listes.ListeNumerote
           innerRef={editableRef}
           oninput={{ Content, Clavier: gererClavier }}
+          onBlur={handleSauvegardeGlobale}
           contenu={vraiContenu as string[]}
         />
       ) : type === "T0D0" ? (
         <Listes.ListeTODO
           innerRef={editableRef}
           oninput={{ Content, Clavier: gererClavier }}
+          onBlur={handleSauvegardeGlobale}
           contenu={vraiContenu as { cont: string; etat: boolean }[]}
         />
       ) : type === "Menu" ? (
         <Menu
           innerRef={editableRef}
           oninput={{ Content, Clavier: gererClavier }}
+          onBlur={(nouveauTitre: string) => {
+            const current = (vraiContenu as TypeMenu) || {
+              titre: "",
+              enfants: [],
+            };
+            const updated = { ...current, titre: nouveauTitre } as TypeMenu;
+            handleSauvegardeGlobale(updated);
+          }}
           contenu={vraiContenu as TypeMenu}
         >
           {(vraiContenu as TypeMenu)?.enfants?.map((enfant) => (
@@ -390,6 +429,7 @@ function Block({
         <Cite
           innerRef={editableRef}
           oninput={{ Content, Clavier: gererClavier }}
+          onBlur={handleSauvegardeGlobale}
           contenu={vraiContenu as string}
         />
       ) : type === "Sep4r4teur" ? (

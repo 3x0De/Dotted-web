@@ -10,9 +10,10 @@ interface TitreProps {
   innerRef: React.RefObject<HTMLHeadingElement | null>;
   oninput: ManagerProps;
   contenu?: string;
+  onBlur?: (e: any) => void;
 }
 
-function H1({ innerRef, oninput, contenu }: TitreProps) {
+function H1({ innerRef, oninput, contenu, onBlur }: TitreProps) {
   const { Content, Clavier } = oninput;
 
   return (
@@ -26,13 +27,14 @@ function H1({ innerRef, oninput, contenu }: TitreProps) {
         Content(e);
       }}
       onKeyDown={Clavier}
+      onBlur={onBlur}
     >
       {contenu}
     </h1>
   );
 }
 
-function H2({ innerRef, oninput, contenu }: TitreProps) {
+function H2({ innerRef, oninput, contenu, onBlur }: TitreProps) {
   const { Content, Clavier } = oninput;
 
   return (
@@ -46,13 +48,14 @@ function H2({ innerRef, oninput, contenu }: TitreProps) {
         Content(e);
       }}
       onKeyDown={Clavier}
+      onBlur={onBlur}
     >
       {contenu}
     </h2>
   );
 }
 
-function H3({ innerRef, oninput, contenu }: TitreProps) {
+function H3({ innerRef, oninput, contenu, onBlur }: TitreProps) {
   const { Content, Clavier } = oninput;
   return (
     <h3
@@ -65,13 +68,14 @@ function H3({ innerRef, oninput, contenu }: TitreProps) {
         Content(e);
       }}
       onKeyDown={Clavier}
+      onBlur={onBlur}
     >
       {contenu}
     </h3>
   );
 }
 
-function H4({ innerRef, oninput, contenu }: TitreProps) {
+function H4({ innerRef, oninput, contenu, onBlur }: TitreProps) {
   const { Content, Clavier } = oninput;
   return (
     <h4
@@ -84,13 +88,14 @@ function H4({ innerRef, oninput, contenu }: TitreProps) {
         Content(e);
       }}
       onKeyDown={Clavier}
+      onBlur={onBlur}
     >
       {contenu}
     </h4>
   );
 }
 
-function H5({ innerRef, oninput, contenu }: TitreProps) {
+function H5({ innerRef, oninput, contenu, onBlur }: TitreProps) {
   const { Content, Clavier } = oninput;
   return (
     <h5
@@ -103,13 +108,14 @@ function H5({ innerRef, oninput, contenu }: TitreProps) {
         Content(e);
       }}
       onKeyDown={Clavier}
+      onBlur={onBlur}
     >
       {contenu}
     </h5>
   );
 }
 
-function H6({ innerRef, oninput, contenu }: TitreProps) {
+function H6({ innerRef, oninput, contenu, onBlur }: TitreProps) {
   const { Content, Clavier } = oninput;
   return (
     <h6
@@ -122,6 +128,7 @@ function H6({ innerRef, oninput, contenu }: TitreProps) {
         Content(e);
       }}
       onKeyDown={Clavier}
+      onBlur={onBlur}
     >
       {contenu}
     </h6>
