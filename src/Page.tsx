@@ -50,6 +50,20 @@ function Page({
     });
   };
 
+  const updateCont = async () => {
+    console.log(Blocks);
+
+    await fetch("http://localhost:8000/Modif/Cont" + window.location.pathname, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        page: Blocks,
+      }),
+    });
+  };
+
   useEffect(() => {
     document.title = titre ? `${titre} | Dotted` : "Dotted";
   }, [titre]);
@@ -115,7 +129,7 @@ function Page({
             ))}
           </ul>
         </div>
-        <div id="wrapper">
+        <div id="wrapper" onFocus={updateCont} onInput={updateCont}>
           {(() => {
             const elements: React.ReactNode[] = [];
             let currentLineBlocks: BlockItem[] = [];

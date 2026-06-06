@@ -131,12 +131,11 @@ function Header() {
         {Projets.map((Proj) => {
           return (
             <li key={Proj[0]}>
-              <div>
-                <img
-                  style={{ cursor: "pointer" }}
-                  src="/src/assets/Image/Block logo/bin.svg"
-                  onClick={() => delProj(Proj[0])}
-                />
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => delProj(Proj[0])}
+              >
+                <img src="/src/assets/Image/Block logo/bin.svg" />
               </div>
               <h4
                 contentEditable
@@ -172,12 +171,11 @@ function Header() {
             {ProjetsPv.map((Proj) => {
               return (
                 <li key={Proj[0]}>
-                  <div>
-                    <img
-                      style={{ cursor: "pointer" }}
-                      src="/src/assets/Image/Block logo/bin.svg"
-                      onClick={() => delProj(Proj[0])}
-                    />
+                  <div
+                    style={{ cursor: "pointer" }}
+                    onClick={() => delProj(Proj[0])}
+                  >
+                    <img src="/src/assets/Image/Block logo/bin.svg" />
                   </div>
                   <h4
                     contentEditable

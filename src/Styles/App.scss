@@ -2,6 +2,15 @@
 
 #App {
   display: flex;
+  position: relative;
+  align-items: stretch;
+  max-height: 100vh;
+
+  > * {
+    height: 100%;
+    max-height: 100vh;
+    overflow-y: scroll;
+  }
 
   #Right {
     position: relative;

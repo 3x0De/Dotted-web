@@ -5,18 +5,7 @@ import { DragDropProvider } from "@dnd-kit/react";
 
 function Wrapper() {
   const [titlre, titlreState] = useState<string>("");
-  const [blocks, setBlocks] = useState<BlockItem[]>([
-    {
-      id: "b1",
-      type: "",
-      content: "",
-    },
-    {
-      id: "b2",
-      type: "",
-      content: "",
-    },
-  ]);
+  const [blocks, setBlocks] = useState<BlockItem[]>([]);
   const [idAFocus, setIdAFocus] = useState<string | null>(null);
 
   async function fetchTitre() {
@@ -27,8 +16,19 @@ function Wrapper() {
     titlreState(data);
   }
 
+  async function fetchCont() {
+    console.log("ICI");
+    const response = await fetch(
+      "http://localhost:8000/Cont" + window.location.pathname,
+    );
+    const data = await response.json();
+
+    setBlocks(data);
+  }
+
   useEffect(() => {
     fetchTitre();
+    fetchCont();
   }, [window.location.pathname]);
 
   const handleAddBlockAfter = (targetId: string) => {
