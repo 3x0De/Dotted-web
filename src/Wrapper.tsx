@@ -18,7 +18,6 @@ function Wrapper() {
   }
 
   async function fetchCont() {
-    console.log("ICI");
     const response = await fetch(
       "http://localhost:8000/Cont" + window.location.pathname,
     );
