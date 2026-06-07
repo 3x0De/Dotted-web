@@ -51,6 +51,13 @@ function Page({
   };
 
   useEffect(() => {
+    const link = document.querySelector<HTMLLinkElement>("link[rel='icon']");
+    if (link) {
+      link.href = `http://localhost:8000/Icon/Page${window.location.pathname}`;
+    }
+  }, []);
+
+  useEffect(() => {
     document.title = titre ? `${titre} | Dotted` : "Dotted";
   }, [titre]);
 

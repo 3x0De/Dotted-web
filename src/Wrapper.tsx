@@ -402,8 +402,10 @@ function Wrapper() {
   return (
     <DragDropProvider onDragEnd={handleDragEnd}>
       <Page
-        banniere="/Logos/Dotted_full.svg"
-        icon="/Logos/Dotted_mini.svg"
+        banniere={
+          "http://localhost:8000/Banniere/Page" + window.location.pathname
+        }
+        icon={"http://localhost:8000/Icon/Page" + window.location.pathname}
         titre={titlre}
         titreState={titlreState}
         Blocks={blocks}
