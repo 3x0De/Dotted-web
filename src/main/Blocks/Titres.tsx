@@ -1,5 +1,5 @@
 import React from "react";
-import "../Styles/Blocks/Titres.scss";
+import "../../Styles/main/Blocks/Titres.scss";
 
 interface ManagerProps {
   Content: (e: React.SyntheticEvent<HTMLDivElement>) => void;

@@ -1,4 +1,4 @@
-import "../Styles/Blocks/Menu.scss";
+import "../../Styles/main/Blocks/Menu.scss";
 import type { TypeMenu } from "../Types";
 
 interface ManagerProps {

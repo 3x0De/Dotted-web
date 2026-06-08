@@ -1,4 +1,4 @@
-import "../Styles/Blocks/Cite.scss";
+import "../../Styles/main/Blocks/Cite.scss";
 
 interface ManagerProps {
   Content: (e: React.SyntheticEvent<HTMLDivElement>) => void;

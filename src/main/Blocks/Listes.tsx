@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import "../Styles/Blocks/Listes.scss";
+import "../../Styles/main/Blocks/Listes.scss";
 
 interface ManagerProps {
   Content: (e: React.SyntheticEvent<HTMLDivElement>) => void;

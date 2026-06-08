@@ -1,4 +1,4 @@
-import "../Styles/Blocks/Cadre.scss";
+import "../../Styles/main/Blocks/Cadre.scss";
 
 interface CadreProps {
   innerRef: React.RefObject<any>;

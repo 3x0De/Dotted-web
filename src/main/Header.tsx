@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import "./Styles/Header.scss";
+import "../Styles/main/Header.scss";
 
 function Header() {
   const [Bjr, BjrState] = useState("");

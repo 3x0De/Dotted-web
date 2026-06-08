@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import Block from "./Blocks/BlockManager";
-import "./Styles/Page.scss";
+import "../Styles/main/Page.scss";
 import type { BlockItem } from "./Types";
 
 interface CategorieItem {

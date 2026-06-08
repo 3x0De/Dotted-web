@@ -1,6 +1,6 @@
-@use "variables" as v;
+@use "../variables" as v;
 
-#App {
+#AppMain {
   display: flex;
   position: relative;
   align-items: stretch;
