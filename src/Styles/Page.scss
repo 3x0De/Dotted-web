@@ -24,6 +24,7 @@ main {
     top: 15vh;
     border-radius: 5px;
     transition: all 0.1s ease-in-out;
+    display: flex;
 
     &:hover {
       background: url(var(--Icon-Image)) center / cover no-repeat;
@@ -38,6 +39,19 @@ main {
         width: 100%;
         display: block;
       }
+    }
+
+    #MenuIcon {
+      height: 100%;
+      width: 300%;
+      position: absolute;
+      left: 105%;
+      height: 100%;
+      border-radius: 5px;
+      box-shadow:
+        0 10px 16px 0 v.$Smoke,
+        0 6px 20px 0 v.$Smoke;
+      background-color: v.$WhiteBase;
     }
   }
 
