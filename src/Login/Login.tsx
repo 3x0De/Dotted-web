@@ -62,6 +62,9 @@ function Login() {
         </Field>
         <div>
           <button id="submit">Se connecter</button>
+          <button onClick={() => (window.location.href = "/signUp")}>
+            Créer un compte
+          </button>
         </div>
       </form>
     </div>

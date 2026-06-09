@@ -115,6 +115,13 @@ function Header() {
     selection?.addRange(range);
   };
 
+  async function Logout() {
+    await fetch("http://localhost:8000/logOut", {
+      method: "POST",
+    });
+    window.location.href = "/logIn";
+  }
+
   return (
     <header>
       <img
@@ -123,7 +130,7 @@ function Header() {
           width: "15vw",
           margin: "10px auto 0 auto",
         }}
-        onClick={() => (window.location.href = "/")}
+        onClick={() => (window.location.href = "/1")}
       />
       <h1>{Bjr}</h1>
       <h3>Projets</h3>
@@ -193,7 +200,7 @@ function Header() {
                   >
                     {Proj[1]}
                   </h4>
-                  <a href={"/Page/" + Proj[0]}>Ouvrir</a>
+                  <a href={"/" + Proj[0]}>Ouvrir</a>
                 </li>
               );
             })}
@@ -208,6 +215,7 @@ function Header() {
           </ul>
         </>
       )}
+      <span onClick={Logout}>Log out</span>
     </header>
   );
 }

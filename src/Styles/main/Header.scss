@@ -135,4 +135,15 @@ header {
     width: 100%;
     @include v.Nove;
   }
+
+  span {
+    color: red;
+    text-align: center;
+    align-self: center;
+    padding: 5% 10%;
+    &:hover {
+      border-radius: 10px;
+      background: rgba(v.$Smoke, 0.2);
+    }
+  }
 }

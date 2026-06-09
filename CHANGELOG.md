@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.1] - 09/06/2026
+
+- Ajout des connection utilisateurs
+
 ## [0.1.0] - 07/06/2026
 
 - Création du repo

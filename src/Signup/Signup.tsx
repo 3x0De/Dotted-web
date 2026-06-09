@@ -26,7 +26,8 @@ function SignUp() {
     if (response.ok) {
       window.location.href = "/1";
     } else {
-      formInputState({ name: "", mdp: "" });
+      console.table(formInput);
+      formInputState({ name: formInput.name, mdp: "" });
       errorState(true);
     }
   }
@@ -61,6 +62,9 @@ function SignUp() {
         </Field>
         <div>
           <button id="submit">S'inscrire</button>
+          <button onClick={() => (window.location.href = "/logIn")}>
+            J'ai déjà un compte
+          </button>
         </div>
       </form>
     </div>

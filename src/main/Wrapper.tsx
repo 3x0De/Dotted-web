@@ -18,7 +18,6 @@ function Wrapper() {
   }
 
   async function fetchCont() {
-    console.log("ICI");
     const response = await fetch(
       "http://localhost:8000/Cont" + window.location.pathname,
     );
@@ -35,6 +34,10 @@ function Wrapper() {
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
+      return;
+    }
+
+    if (blocks.length === 0) {
       return;
     }
 
