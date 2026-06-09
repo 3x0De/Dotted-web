@@ -1,0 +1,74 @@
+@use "../variables.scss" as v;
+
+#er401 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.28);
+  border-radius: 20px;
+  padding-top: 5vh;
+  width: 80%;
+  height: 80vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+
+  .logos {
+    display: flex;
+    justify-content: center;
+    height: min-content;
+    gap: 5vw;
+    margin: 0 5vw;
+
+    div {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+
+      h1 {
+        @include v.Rundeck;
+      }
+      h2 {
+        @include v.Nove;
+      }
+    }
+  }
+
+  > h1 {
+    color: red;
+    height: max-content;
+  }
+
+  .bouttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60%;
+    gap: 5vh;
+    padding: 5vh;
+
+    button {
+      cursor: pointer;
+      border: none;
+      background-color: v.$Smoke;
+      border-radius: 5px;
+      padding: 5px;
+      height: 30%;
+      width: 100%;
+
+      color: v.$WhiteBase;
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        box-shadow: 2px 2px 0.4em v.$Void;
+        text-shadow: 2px 2px 0.4em v.$Void;
+        background-color: v.$Groove;
+      }
+    }
+  }
+}

@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.2] - 09/06/2026
+
+- Gestion des visibilités
+
 ## [0.1.1] - 09/06/2026
 
 - Ajout des connection utilisateurs
