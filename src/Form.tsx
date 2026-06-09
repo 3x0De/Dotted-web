@@ -24,7 +24,7 @@ function Field({
       {type === "password" ? (
         <div>
           <input
-            type={eye ? "password" : "text"}
+            type={eye ? "text" : "password"}
             name={htmlFor}
             id={htmlFor}
             value={val}

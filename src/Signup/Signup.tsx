@@ -6,6 +6,7 @@ function SignUp() {
     name: "",
     mdp: "",
   });
+  const [error, errorState] = useState<boolean>(false);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const name = e.target.name;
@@ -13,13 +14,21 @@ function SignUp() {
     formInputState((prev) => ({ ...prev, [name]: value }));
   }
 
-  function submitInfo(e: React.FormEvent<HTMLFormElement>) {
+  async function submitInfo(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.table(formInput);
-    formInputState({
-      name: "",
-      mdp: "",
-    });
+    const response = await fetch(
+      "http://localhost:8000/signUp?Nom=" +
+        formInput.name +
+        "&Mdp=" +
+        formInput.mdp,
+    );
+
+    if (response.ok) {
+      window.location.href = "/1";
+    } else {
+      formInputState({ name: "", mdp: "" });
+      errorState(true);
+    }
   }
 
   return (
@@ -32,7 +41,7 @@ function SignUp() {
         <img src={logo} alt="" />
       </div>
       <h1>Sign Up</h1>
-      {true && <span>Ce nom est déjà pris</span>}
+      {error && <span>Ce nom est déjà pris</span>}
       <form onSubmit={submitInfo}>
         <Field
           htmlFor="name"
