@@ -1,4 +1,6 @@
 import { useState } from "react";
+import "../Styles/form/Signup.scss";
+import logo from "/Logos/Dotted_full.svg";
 import eyeVisible from "../assets/Image/Form/eyeVisible.svg";
 import eyeInvisible from "../assets/Image/Form/eyeInvisible.svg";
 
@@ -21,7 +23,7 @@ function Field({
     <div>
       <label htmlFor={htmlFor}>{children}</label>
       {type === "password" ? (
-        <>
+        <div>
           <input
             type={eye ? "password" : "text"}
             name={htmlFor}
@@ -35,7 +37,7 @@ function Field({
             onClick={() => eyeState(!eye)}
             style={{ height: "1rem" }}
           />
-        </>
+        </div>
       ) : (
         <>
           <input
@@ -74,27 +76,38 @@ function SignUp() {
   }
 
   return (
-    <form onSubmit={submitInfo}>
-      <Field
-        htmlFor="name"
-        type="text"
-        val={formInput.name}
-        change={handleChange}
-      >
-        Nom :
-      </Field>
-      <Field
-        htmlFor="mdp"
-        type="password"
-        val={formInput.mdp}
-        change={handleChange}
-      >
-        Mot de passe :
-      </Field>
-      <div>
-        <button id="submit">Envoyer</button>
+    <div id="SignUp">
+      <div className="logos">
+        <div>
+          <h1>Dotted</h1>
+          <h2>Let's make point</h2>
+        </div>
+        <img src={logo} alt="" />
       </div>
-    </form>
+      <h1>Sign Up</h1>
+      {true && <span>Ce nom est déjà pris</span>}
+      <form onSubmit={submitInfo}>
+        <Field
+          htmlFor="name"
+          type="text"
+          val={formInput.name}
+          change={handleChange}
+        >
+          Nom :
+        </Field>
+        <Field
+          htmlFor="mdp"
+          type="password"
+          val={formInput.mdp}
+          change={handleChange}
+        >
+          Mot de passe :
+        </Field>
+        <div>
+          <button id="submit">S'inscrire</button>
+        </div>
+      </form>
+    </div>
   );
 }
 
