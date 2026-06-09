@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../Styles/form/Signup.scss";
+import "../Styles/form/form.scss";
 import logo from "/Logos/Dotted_full.svg";
 import eyeVisible from "../assets/Image/Form/eyeVisible.svg";
 import eyeInvisible from "../assets/Image/Form/eyeInvisible.svg";
