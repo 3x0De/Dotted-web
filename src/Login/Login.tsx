@@ -7,6 +7,7 @@ function Login() {
     name: "",
     mdp: "",
   });
+  const [error, errorState] = useState<boolean>(false);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const name = e.target.name;
@@ -14,13 +15,21 @@ function Login() {
     formInputState((prev) => ({ ...prev, [name]: value }));
   }
 
-  function submitInfo(e: React.FormEvent<HTMLFormElement>) {
+  async function submitInfo(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.table(formInput);
-    formInputState({
-      name: "",
-      mdp: "",
-    });
+    const response = await fetch(
+      "http://localhost:8000/logIn?Nom=" +
+        formInput.name +
+        "&Mdp=" +
+        formInput.mdp,
+    );
+
+    if (response.ok) {
+      window.location.href = "/1";
+    } else {
+      formInputState({ name: formInput.name, mdp: "" });
+      errorState(true);
+    }
   }
 
   return (
@@ -33,7 +42,7 @@ function Login() {
         <img src={logo} alt="" />
       </div>
       <h1>Log In</h1>
-      {true && <span>Mauvais mot de passe ou mauvais nom d'utilisateur</span>}
+      {error && <span>Mauvais mot de passe ou mauvais nom d'utilisateur</span>}
       <form onSubmit={submitInfo}>
         <Field
           htmlFor="name"
