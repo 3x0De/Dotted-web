@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import "../Styles/FoldScan.scss";
+import { NULL } from "sass";
 
 const allModules = import.meta.glob("/src/**/*");
 
@@ -67,8 +68,25 @@ export default function FolderScanner({
     window.location.href = window.location.pathname + "?t=" + Date.now();
   }
 
+  async function delIcon() {
+    const res = await fetch("http://localhost:8000/Icon/change", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Id: Number(window.location.pathname.split("/").filter(Boolean).at(-1)),
+        Icon: null,
+      }),
+    });
+    await res.json();
+
+    window.location.href = window.location.pathname + "?t=" + Date.now();
+  }
+
   return (
     <div id="MenuIcon">
+      <img src="src/assets/Image/Block logo/bin.svg" onClick={delIcon} />
       {contentList.map((folder) => (
         <div key={folder.directory}>
           <h5>{folder.directory}</h5>
