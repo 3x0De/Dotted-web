@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Block from "./Blocks/BlockManager";
 import FolderScanner from "./FoldScan";
 import "../Styles/main/Page.scss";
@@ -65,21 +65,60 @@ function Page({
     document.title = value ? `${value} | Dotted` : "Dotted";
   };
 
+  async function uploadImage(e: React.ChangeEvent<HTMLInputElement>) {
+    console.log("uploadImage déclenché", e.target.files);
+    const file = e.target.files?.[0];
+    if (!file) {
+      console.log("pas de fichier");
+      return;
+    }
+    console.log("fichier:", file.name);
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append(
+      "id",
+      String(window.location.pathname.split("/").filter(Boolean).at(-1)),
+    );
+
+    const res = await fetch("http://localhost:8000/Banniere/change", {
+      method: "POST",
+      body: formData,
+    });
+    await res.json();
+    window.location.href = window.location.pathname + "?t=" + Date.now();
+  }
+
+  const menuBanniereRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        menuBanniereRef.current &&
+        !menuBanniereRef.current.contains(e.target as Node)
+      ) {
+        afficheMenuBanniereState(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <main>
       {banniere && (
         <div
           id="Baniere"
+          ref={menuBanniereRef}
           style={
             { "--Baniere-Image": `url(${banniere})` } as React.CSSProperties
           }
-          onClick={() => afficheMenuBanniereState(!afficheMenuBanniere)}
-          onMouseLeave={() => afficheMenuBanniereState(false)}
+          onClick={() => afficheMenuBanniereState((prev) => !prev)}
         >
           {afficheMenuBanniere && (
-            <div className="Menu">
+            <div className="Menu" onClick={(e) => e.stopPropagation()}>
               <img src="src/assets/Image/Block logo/bin.svg" />
-              <input type="file" />
+              <input type="file" accept="image/*" onChange={uploadImage} />
             </div>
           )}
         </div>
