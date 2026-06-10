@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Block from "./Blocks/BlockManager";
+import FolderScanner from "./FoldScan";
 import "./Styles/Page.scss";
 import type { BlockItem } from "./Types";
 
@@ -86,7 +87,7 @@ function Page({
           onClick={() => afficheMenuIconState(!afficheMenuIcon)}
           onMouseLeave={() => afficheMenuIconState(false)}
         >
-          <div id="MenuIcon"></div>
+          {afficheMenuIcon && <FolderScanner path="src/assets/Image/Icons" />}
         </div>
       )}
       <section>
