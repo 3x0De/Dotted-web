@@ -38,6 +38,8 @@ function Page({
   setIdAFocus,
 }: Props) {
   const [afficheMenuIcon, afficheMenuIconState] = useState<boolean>(false);
+  const [afficheMenuBanniere, afficheMenuBanniereState] =
+    useState<boolean>(false);
 
   const updateNom = async (e: any) => {
     const id = Number(window.location.href.split("/").pop());
@@ -71,7 +73,16 @@ function Page({
           style={
             { "--Baniere-Image": `url(${banniere})` } as React.CSSProperties
           }
-        ></div>
+          onClick={() => afficheMenuBanniereState(!afficheMenuBanniere)}
+          onMouseLeave={() => afficheMenuBanniereState(false)}
+        >
+          {afficheMenuBanniere && (
+            <div className="Menu">
+              <img src="src/assets/Image/Block logo/bin.svg" />
+              <input type="file" />
+            </div>
+          )}
+        </div>
       )}
       {icon && (
         <div

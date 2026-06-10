@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import "../Styles/FoldScan.scss";
-import { NULL } from "sass";
 
 const allModules = import.meta.glob("/src/**/*");
 
