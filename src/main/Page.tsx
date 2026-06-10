@@ -149,6 +149,8 @@ function Page({
                         return (
                           <Block
                             key={block.id}
+                            type1={block.type}
+                            contenu={block.content}
                             blockItem={block}
                             idAFocus={idAFocus}
                             setIdAFocus={setIdAFocus}

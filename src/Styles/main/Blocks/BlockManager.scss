@@ -51,6 +51,7 @@ div {
   overflow-y: scroll;
   scrollbar-gutter: stable;
   background-color: v.$WhiteBase;
+  z-index: 100;
 
   ul {
     height: 10vh;
@@ -67,29 +68,29 @@ div {
 
       @for $i from 1 to 7 {
         &:nth-child(#{$i}) {
-          list-style-image: url("../../assets/Image/Block logo/H#{$i}.svg");
+          list-style-image: url("../../../assets/Image/Block logo/H#{$i}.svg");
         }
       }
       &:nth-child(7) {
-        list-style-image: url("../../assets/Image/Block logo/ul.svg");
+        list-style-image: url("../../../assets/Image/Block logo/ul.svg");
       }
       &:nth-child(8) {
-        list-style-image: url("../../assets/Image/Block logo/ol.svg");
+        list-style-image: url("../../../assets/Image/Block logo/ol.svg");
       }
       &:nth-child(9) {
-        list-style-image: url("../../assets/Image/Block logo/T0D0.svg");
+        list-style-image: url("../../../assets/Image/Block logo/T0D0.svg");
       }
       &:nth-child(10) {
-        list-style-image: url("../../assets/Image/Block logo/Menu.svg");
+        list-style-image: url("../../../assets/Image/Block logo/Menu.svg");
       }
       &:nth-child(11) {
-        list-style-image: url("../../assets/Image/Block logo/C4DR3.svg");
+        list-style-image: url("../../../assets/Image/Block logo/C4DR3.svg");
       }
       &:nth-child(12) {
-        list-style-image: url("../../assets/Image/Block logo/C1T4Tion.svg");
+        list-style-image: url("../../../assets/Image/Block logo/C1T4Tion.svg");
       }
       &:nth-child(13) {
-        list-style-image: url("../../assets/Image/Block logo/Sep4r4teur.svg");
+        list-style-image: url("../../../assets/Image/Block logo/Sep4r4teur.svg");
       }
 
       &.selectionne::after {

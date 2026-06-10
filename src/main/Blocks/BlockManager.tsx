@@ -24,6 +24,24 @@ function mergeRefs(...refs: Array<React.Ref<any> | undefined>) {
   };
 }
 
+function createDefaultCadreContent(contenu?: any) {
+  if (Array.isArray(contenu) && contenu.length > 0) {
+    return contenu;
+  }
+
+  return [
+    {
+      id: `b-${crypto.randomUUID()}`,
+      type: "",
+      content: "",
+    },
+  ];
+}
+
+function getInitialContent(type?: string, contenu?: any) {
+  return type === "C4DR3" ? createDefaultCadreContent(contenu) : contenu;
+}
+
 interface Props {
   autoFocus?: boolean;
   type1?: string;
@@ -49,11 +67,16 @@ function Block({
   idAFocus,
   setIdAFocus,
 }: Props) {
+  const resolvedType = type1 ?? blockItem.type;
+  const resolvedContenu = contenu ?? blockItem.content;
+
   const [ChoixEnCours, ChoixEnCoursState] = useState(false);
   const [ChoixEnCoursVide, ChoixEnCoursVideState] = useState(false);
-  const [type, typeState] = useState(type1);
+  const [type, typeState] = useState(resolvedType);
   const [indexSelectionne, indexSelectionneState] = useState(0);
-  const [vraiContenu, vraiContenuState] = useState<any>(contenu);
+  const [vraiContenu, vraiContenuState] = useState<any>(() =>
+    getInitialContent(resolvedType, resolvedContenu),
+  );
   const editableRef = useRef<any>(null);
 
   const {
@@ -69,12 +92,12 @@ function Block({
   const setCombinedRef = mergeRefs(dragRef, dropRef);
 
   useEffect(() => {
-    vraiContenuState(contenu);
-  }, [contenu]);
+    vraiContenuState(getInitialContent(resolvedType, resolvedContenu));
+  }, [resolvedType, resolvedContenu]);
 
   useEffect(() => {
-    typeState(type1);
-  }, [type1]);
+    typeState(resolvedType);
+  }, [resolvedType]);
 
   useEffect(() => {
     if (type && editableRef.current) editableRef.current.focus();
@@ -232,7 +255,6 @@ function Block({
           calculeContenu = {
             titre: texteExtrait,
             enfants: [
-              // child must never be truly empty: give a single-space placeholder
               { id: `b-${crypto.randomUUID()}`, type: "", content: " " },
             ],
           };
@@ -345,7 +367,6 @@ function Block({
                 )
               : []
           }
-          // onChange={(nouveauTableau) => handleSauvegardeGlobale(nouveauTableau)}
         />
       ) : type === "ol" ? (
         <Listes.ListeNumerote
