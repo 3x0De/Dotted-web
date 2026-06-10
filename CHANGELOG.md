@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.3] - 10/06/2026
+
+- Changement des icones disponnibles par l'utilisateur
+
 ## [0.1.2] - 09/06/2026
 
 - Gestion des visibilités

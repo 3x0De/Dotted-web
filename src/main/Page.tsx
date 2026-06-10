@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Block from "./Blocks/BlockManager";
+import FolderScanner from "./FoldScan";
 import "../Styles/main/Page.scss";
 import type { BlockItem } from "./Types";
 
@@ -36,6 +37,8 @@ function Page({
   idAFocus,
   setIdAFocus,
 }: Props) {
+  const [afficheMenuIcon, afficheMenuIconState] = useState<boolean>(false);
+
   const updateNom = async (e: any) => {
     const id = Number(window.location.href.split("/").pop());
     await fetch("http://localhost:8000/Change/Nom", {
@@ -74,7 +77,11 @@ function Page({
         <div
           id="Icon"
           style={{ "--Icon-Image": `url(${icon})` } as React.CSSProperties}
-        ></div>
+          onClick={() => afficheMenuIconState(!afficheMenuIcon)}
+          onMouseLeave={() => afficheMenuIconState(false)}
+        >
+          {afficheMenuIcon && <FolderScanner path="src/assets/Image/Icons" />}
+        </div>
       )}
       <section>
         <h1

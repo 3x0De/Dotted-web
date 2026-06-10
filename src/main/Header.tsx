@@ -161,6 +161,7 @@ function Header() {
               >
                 {Proj[1]}
               </h4>
+              <img src={`http://localhost:8000/Icon/Page/${Proj[0]}`} />
               <a href={"/" + Proj[0]}>Ouvrir</a>
             </li>
           );
@@ -200,6 +201,7 @@ function Header() {
                   >
                     {Proj[1]}
                   </h4>
+                  <img src={`http://localhost:8000/Icon/Page/${Proj[0]}`} />
                   <a href={"/" + Proj[0]}>Ouvrir</a>
                 </li>
               );
