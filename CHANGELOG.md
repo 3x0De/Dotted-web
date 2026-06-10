@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.4] - 11/06/2026
+
+- Changements des bannieres par l'utilisateur
+
 ## [0.1.3] - 10/06/2026
 
 - Changement des icones disponnibles par l'utilisateur
