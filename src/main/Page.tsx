@@ -66,10 +66,8 @@ function Page({
   };
 
   async function uploadImage(e: React.ChangeEvent<HTMLInputElement>) {
-    console.log("uploadImage déclenché", e.target.files);
     const file = e.target.files?.[0];
     if (!file) {
-      console.log("pas de fichier");
       return;
     }
     console.log("fichier:", file.name);
@@ -84,6 +82,18 @@ function Page({
     const res = await fetch("http://localhost:8000/Banniere/change", {
       method: "POST",
       body: formData,
+    });
+    await res.json();
+    window.location.href = window.location.pathname + "?t=" + Date.now();
+  }
+
+  async function delImage() {
+    const res = await fetch("http://localhost:8000/Banniere/del", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: Number(window.location.pathname.split("/").filter(Boolean).at(-1)),
+      }),
     });
     await res.json();
     window.location.href = window.location.pathname + "?t=" + Date.now();
@@ -117,7 +127,10 @@ function Page({
         >
           {afficheMenuBanniere && (
             <div className="Menu" onClick={(e) => e.stopPropagation()}>
-              <img src="src/assets/Image/Block logo/bin.svg" />
+              <img
+                src="src/assets/Image/Block logo/bin.svg"
+                onClick={delImage}
+              />
               <input type="file" accept="image/*" onChange={uploadImage} />
             </div>
           )}
