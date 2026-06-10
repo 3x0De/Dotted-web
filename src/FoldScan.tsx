@@ -52,20 +52,30 @@ export default function FolderScanner({
     }));
   }, [targetPath]);
 
-  if (contentList.length === 0) {
-    return <p>Aucun contenu trouvé dans "{targetPath}"</p>;
+  async function changeIcon(folder: string, file: string) {
+    await fetch("http://localhost:8000/Icon/change", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Id: Number(window.location.pathname.split("/").filter(Boolean).at(-1)),
+        Icon: folder + "/" + file,
+      }),
+    });
   }
 
   return (
     <div id="MenuIcon">
-      {contentList.map((folder, idx) => (
-        <div key={idx}>
-          <h5> {folder.directory} </h5>
-          {folder.files.map((file, fileIdx) => (
+      {contentList.map((folder) => (
+        <div key={folder.directory}>
+          <h5>{folder.directory}</h5>
+          {folder.files.map((file) => (
             <img
+              key={`${folder.directory}/${file}`}
               src={targetPath + "/" + folder.directory + "/" + file}
-              key={fileIdx}
               className="IconRemix"
+              onClick={() => changeIcon(folder.directory, file)}
             />
           ))}
         </div>
