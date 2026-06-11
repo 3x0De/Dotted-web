@@ -8,6 +8,7 @@ import Menu from "./Menu";
 import Cadre from "./Cadre";
 import Cite from "./Cite";
 import Separateur from "./Separateur";
+import Document from "./Document";
 import menuKebab from "../../assets/Image/Block logo/kebabMenu.svg";
 import bin from "../../assets/Image/Block logo/bin.svg";
 
@@ -144,6 +145,7 @@ function Block({
     "C4DR3",
     "C1T4Tion",
     "Sep4r4teur",
+    "Document",
   ];
 
   function Content(e: React.SyntheticEvent<HTMLDivElement>): void {
@@ -455,6 +457,8 @@ function Block({
         />
       ) : type === "Sep4r4teur" ? (
         <Separateur />
+      ) : type === "Document" ? (
+        <Document />
       ) : (
         <div
           ref={editableRef as React.RefObject<HTMLDivElement>}
@@ -555,7 +559,9 @@ function Block({
                             ? "C4DR3"
                             : index === 11
                               ? "C1T4Tion"
-                              : "Sep4r4teur"}
+                              : index === 12
+                                ? "Sep4r4teur"
+                                : "Document"}
               </li>
             ))}
           </ul>

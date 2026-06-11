@@ -92,6 +92,9 @@ div {
       &:nth-child(13) {
         list-style-image: url("../../../assets/Image/Block logo/Sep4r4teur.svg");
       }
+      &:nth-child(14) {
+        list-style-image: url("../../../assets/Image/Block logo/Document.svg");
+      }
 
       &.selectionne::after {
         background-color: rgba(v.$Smoke, 0.4);
