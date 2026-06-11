@@ -17,8 +17,8 @@ function Document({ innerRef, oninput, onBlur, contenu }: Props) {
 
   return (
     <span className="Doc">
-      <div>
-        <img src="src/assets/Image/Block logo/Document.svg" />
+      <div onClick={() => (window.location.href = "/" + contenu)}>
+        <img src={`http://localhost:8000/Icon/Page/${contenu}`} />
       </div>
       <p
         ref={innerRef}

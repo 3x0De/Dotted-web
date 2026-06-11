@@ -11,9 +11,10 @@
 
   > div {
     height: 100%;
+    padding: 2px;
 
     img {
-      width: auto;
+      width: 1rem !important;
       aspect-ratio: auto;
 
       &:hover {
