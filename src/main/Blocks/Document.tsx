@@ -1,20 +1,39 @@
 import "../../Styles/main/Blocks/Document.scss";
 
-function Document() {
+interface ManagerProps {
+  Content: (e: React.SyntheticEvent<HTMLDivElement>) => void;
+  Clavier: (e: React.KeyboardEvent<HTMLDivElement>) => void;
+}
+
+interface Props {
+  innerRef: React.RefObject<HTMLHeadingElement | null>;
+  oninput: ManagerProps;
+  onBlur?: (e: any) => void;
+  contenu?: number;
+}
+
+function Document({ innerRef, oninput, onBlur, contenu }: Props) {
+  const { Content, Clavier } = oninput;
+
   return (
     <span className="Doc">
       <div>
         <img src="src/assets/Image/Block logo/Document.svg" />
       </div>
       <p
+        ref={innerRef}
         data-placeholder="Titre..."
         contentEditable="true"
         onInput={(e: any) => {
           handleInput(e);
-          // Content(e);
+          Content(e);
         }}
+        onBlur={(e: any) => onBlur?.(e.currentTarget.innerText)}
+        onKeyDown={Clavier}
         suppressContentEditableWarning={true}
-      ></p>
+      >
+        {contenu}
+      </p>
     </span>
   );
 }

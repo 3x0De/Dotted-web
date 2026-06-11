@@ -68,6 +68,22 @@ function Block({
   idAFocus,
   setIdAFocus,
 }: Props) {
+  async function sendNewPage() {
+    await fetch("http://localhost:8000/initProj/enfant", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        parent: Number(
+          window.location.pathname.split("/").filter(Boolean).at(-1),
+        ),
+      }),
+    });
+    const response = await fetch("http://localhost:8000/maxId");
+    return await response.json();
+  }
+
   const resolvedType = type1 ?? blockItem.type;
   const resolvedContenu = contenu ?? blockItem.content;
 
@@ -260,6 +276,10 @@ function Block({
               { id: `b-${crypto.randomUUID()}`, type: "", content: " " },
             ],
           };
+        }
+      } else if (newtype === "Document") {
+        if (type !== "Document") {
+          calculeContenu = sendNewPage();
         }
       } else {
         if (Array.isArray(vraiContenu)) calculeContenu = texteExtrait;
@@ -458,7 +478,12 @@ function Block({
       ) : type === "Sep4r4teur" ? (
         <Separateur />
       ) : type === "Document" ? (
-        <Document />
+        <Document
+          innerRef={editableRef}
+          oninput={{ Content, Clavier: gererClavier }}
+          onBlur={handleSauvegardeGlobale}
+          contenu={vraiContenu as number}
+        />
       ) : (
         <div
           ref={editableRef as React.RefObject<HTMLDivElement>}

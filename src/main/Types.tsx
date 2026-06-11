@@ -12,5 +12,6 @@ export interface BlockItem {
     | { cont: string; etat: boolean }[]
     | TypeMenu
     | BlockItem[]
-    | BlockItem[][];
+    | BlockItem[][]
+    | Number;
 }
