@@ -9,6 +9,7 @@ import Cadre from "./Cadre";
 import Cite from "./Cite";
 import Separateur from "./Separateur";
 import Document from "./Document";
+import Picture from "./Picture";
 import menuKebab from "../../assets/Image/Block logo/kebabMenu.svg";
 import bin from "../../assets/Image/Block logo/bin.svg";
 
@@ -162,6 +163,7 @@ function Block({
     "C1T4Tion",
     "Sep4r4teur",
     "Document",
+    "P1ctuRe",
   ];
 
   function Content(e: React.SyntheticEvent<HTMLDivElement>): void {
@@ -490,6 +492,8 @@ function Block({
           oninput={{ Content, Clavier: gererClavier }}
           contenu={vraiContenu as number}
         />
+      ) : type === "P1ctuRe" ? (
+        <Picture />
       ) : (
         <div
           ref={editableRef as React.RefObject<HTMLDivElement>}
@@ -592,7 +596,9 @@ function Block({
                               ? "C1T4Tion"
                               : index === 12
                                 ? "Sep4r4teur"
-                                : "Document"}
+                                : index === 13
+                                  ? "Document"
+                                  : "P1ctuRe"}
               </li>
             ))}
           </ul>
