@@ -46,6 +46,20 @@ function Document({ innerRef, oninput, onBlur, contenu }: Props) {
     getTitre();
   }, [contenu]);
 
+  const updateNom = async (e: any) => {
+    const id = contenu;
+    await fetch("http://localhost:8000/Change/Nom", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id,
+        nom: e.currentTarget.innerHTML,
+      }),
+    });
+  };
+
   return (
     <span className="Doc">
       <div
@@ -67,7 +81,10 @@ function Document({ innerRef, oninput, onBlur, contenu }: Props) {
           handleInput(e);
           Content(e);
         }}
-        onBlur={(e: any) => onBlur?.(e.currentTarget.innerText)}
+        onBlur={(e) => {
+          onBlur?.(e.currentTarget.innerText);
+          updateNom(e);
+        }}
         onKeyDown={Clavier}
         suppressContentEditableWarning={true}
       >
