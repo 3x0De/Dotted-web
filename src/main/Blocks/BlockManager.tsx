@@ -221,7 +221,7 @@ function Block({
     }
   }
 
-  function ChangeType(newtype: string | null): void {
+  async function ChangeType(newtype: string | null): Promise<void> {
     ChoixEnCoursState(false);
     ChoixEnCoursVideState(false);
 
@@ -279,7 +279,14 @@ function Block({
         }
       } else if (newtype === "Document") {
         if (type !== "Document") {
-          calculeContenu = sendNewPage();
+          const newPageId = await sendNewPage();
+          if (typeof newPageId === "number" && !Number.isNaN(newPageId)) {
+            calculeContenu = newPageId;
+          } else {
+            console.error(
+              "Impossible de récupérer l'identifiant de la nouvelle page Document.",
+            );
+          }
         }
       } else {
         if (Array.isArray(vraiContenu)) calculeContenu = texteExtrait;
@@ -481,7 +488,6 @@ function Block({
         <Document
           innerRef={editableRef}
           oninput={{ Content, Clavier: gererClavier }}
-          onBlur={handleSauvegardeGlobale}
           contenu={vraiContenu as number}
         />
       ) : (

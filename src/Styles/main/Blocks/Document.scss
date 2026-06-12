@@ -16,11 +16,10 @@
     img {
       width: 1rem !important;
       aspect-ratio: auto;
-
-      &:hover {
-        border-radius: 5px;
-        background-color: rgba(v.$Groove, 0.2);
-      }
+    }
+    &:hover {
+      border-radius: 5px;
+      background-color: rgba(v.$Groove, 0.2);
     }
   }
 
