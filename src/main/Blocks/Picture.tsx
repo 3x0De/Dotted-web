@@ -1,11 +1,28 @@
-function Picture() {
+import "../../Styles/main/Blocks/Picture.scss";
+import bin from "../../assets/Image/Block logo/bin.svg";
+import scale from "../../assets/Image/Block logo/scale.svg";
+
+function Picture({
+  content,
+}: {
+  content?: { img: string; size?: { height: number; width: number } };
+}) {
   return (
-    <h1>
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus omnis
-      deserunt, quo beatae mollitia dignissimos commodi, atque quidem dolores
-      labore illo, quisquam velit consequatur? Tempora illo repellat nisi
-      voluptas ut?
-    </h1>
+    <div className="Picture">
+      {content ? (
+        <>
+          <img
+            src={content.img}
+            width={content.size ? content.size.width : ""}
+            height={content.size ? content.size.height : ""}
+          />
+          <img src={bin} />
+          <img src={scale} />
+        </>
+      ) : (
+        <input type="file" />
+      )}
+    </div>
   );
 }
 
