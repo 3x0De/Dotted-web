@@ -10,6 +10,7 @@ import Cite from "./Cite";
 import Separateur from "./Separateur";
 import Document from "./Document";
 import Picture from "./Picture";
+import Lien from "./Lien";
 import menuKebab from "../../assets/Image/Block logo/kebabMenu.svg";
 import bin from "../../assets/Image/Block logo/bin.svg";
 
@@ -164,6 +165,7 @@ function Block({
     "Sep4r4teur",
     "Document",
     "P1ctuRe",
+    "Li1",
   ];
 
   function Content(e: React.SyntheticEvent<HTMLDivElement>): void {
@@ -511,6 +513,8 @@ function Block({
             if (onUpdate) onUpdate(blockItem.id, type || "P1ctuRe", newContent);
           }}
         />
+      ) : type === "Li1" ? (
+        <Lien />
       ) : (
         <div
           ref={editableRef as React.RefObject<HTMLDivElement>}
@@ -615,7 +619,9 @@ function Block({
                                 ? "Sep4r4teur"
                                 : index === 13
                                   ? "Document"
-                                  : "P1ctuRe"}
+                                  : index === 14
+                                    ? "P1ctuRe"
+                                    : "Li1"}
               </li>
             ))}
           </ul>
