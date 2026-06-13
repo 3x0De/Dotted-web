@@ -69,8 +69,8 @@ function Picture({ innerRef, oninput, onUpload, contenu }: Props) {
       onUpload?.({
         img: contenu.img,
         size: {
-          width: Math.max(startResize.current.width + dx, 50),
-          height: Math.max(startResize.current.height + dy, 50),
+          width: Math.max(startResize.current.width + dx, 20),
+          height: Math.max(startResize.current.height + dy, 20),
         },
       });
     };
@@ -105,19 +105,29 @@ function Picture({ innerRef, oninput, onUpload, contenu }: Props) {
             height={contenu?.size?.height}
             alt="Uploaded"
           />
-          <img src={bin} alt="Supprimer" />
+          <img
+            src={bin}
+            alt="Supprimer"
+            onClick={() => onUpload?.({ img: "" })}
+          />
           <img
             src={scale}
             alt="Redimensionner"
             onMouseDown={(e) => {
-              if (!contenu?.size) return;
-
-              startResize.current = {
-                mouseX: e.clientX,
-                mouseY: e.clientY,
-                width: contenu.size.width,
-                height: contenu.size.height,
-              };
+              if (contenu?.size)
+                startResize.current = {
+                  mouseX: e.clientX,
+                  mouseY: e.clientY,
+                  width: contenu.size.width,
+                  height: contenu.size.height,
+                };
+              else
+                startResize.current = {
+                  mouseX: e.clientX,
+                  mouseY: e.clientY,
+                  width: 100,
+                  height: 100,
+                };
 
               setIsResizing(true);
             }}
