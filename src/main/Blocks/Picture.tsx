@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from "react";
 import "../../Styles/main/Blocks/Picture.scss";
 import bin from "../../assets/Image/Block logo/bin.svg";
 import scale from "../../assets/Image/Block logo/scale.svg";
@@ -54,6 +55,46 @@ function Picture({ innerRef, oninput, onUpload, contenu }: Props) {
       : `http://localhost:8000/Image/charge/${contenu.img.split("/").pop()}`
     : undefined;
 
+  const [isResizing, setIsResizing] = useState(false);
+
+  useEffect(() => {
+    const handleMove = (e: MouseEvent) => {
+      if (!isResizing || !contenu) return;
+
+      console.log(contenu.size);
+
+      const dx = e.clientX - startResize.current.mouseX;
+      const dy = e.clientY - startResize.current.mouseY;
+
+      onUpload?.({
+        img: contenu.img,
+        size: {
+          width: Math.max(startResize.current.width + dx, 50),
+          height: Math.max(startResize.current.height + dy, 50),
+        },
+      });
+    };
+
+    const handleUp = () => {
+      setIsResizing(false);
+    };
+
+    window.addEventListener("mousemove", handleMove);
+    window.addEventListener("mouseup", handleUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMove);
+      window.removeEventListener("mouseup", handleUp);
+    };
+  }, [isResizing, contenu, onUpload]);
+
+  const startResize = useRef({
+    mouseX: 0,
+    mouseY: 0,
+    width: 0,
+    height: 0,
+  });
+
   return (
     <div className="Picture" ref={innerRef} onKeyDown={oninput}>
       {imageUrl ? (
@@ -65,7 +106,22 @@ function Picture({ innerRef, oninput, onUpload, contenu }: Props) {
             alt="Uploaded"
           />
           <img src={bin} alt="Supprimer" />
-          <img src={scale} alt="Redimensionner" />
+          <img
+            src={scale}
+            alt="Redimensionner"
+            onMouseDown={(e) => {
+              if (!contenu?.size) return;
+
+              startResize.current = {
+                mouseX: e.clientX,
+                mouseY: e.clientY,
+                width: contenu.size.width,
+                height: contenu.size.height,
+              };
+
+              setIsResizing(true);
+            }}
+          />
         </>
       ) : (
         <input type="file" accept="image/*" onChange={uploadImage} />
