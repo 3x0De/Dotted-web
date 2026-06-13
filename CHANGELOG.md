@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.2.1] - 14/06/2026
+
+- Ajout du block d'image
+
 ## [0.2.0] - 12/06/2026
 
 - Ajout du block de doucument
