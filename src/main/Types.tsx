@@ -13,5 +13,6 @@ export interface BlockItem {
     | TypeMenu
     | BlockItem[]
     | BlockItem[][]
-    | Number;
+    | Number
+    | { img: string; size?: { height: number; width: number } };
 }
