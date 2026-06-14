@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.2.2] - 14/06/2026
+
+- Gestion des liens
+
 ## [0.2.1] - 14/06/2026
 
 - Ajout du block d'image
