@@ -514,7 +514,7 @@ function Block({
           }}
         />
       ) : type === "Li1" ? (
-        <Lien />
+        <Lien contenu={"http://localhost:5173/14"} />
       ) : (
         <div
           ref={editableRef as React.RefObject<HTMLDivElement>}
