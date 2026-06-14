@@ -17,6 +17,15 @@ body {
 
 * {
   @include Helios;
+
+  &::selection {
+    background-color: $BlueLink;
+    padding: 2;
+  }
+  &::-moz-selection {
+    background-color: $BlueLink;
+    padding: 2px;
+  }
 }
 
 img {

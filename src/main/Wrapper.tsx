@@ -8,6 +8,7 @@ function Wrapper() {
   const [blocks, setBlocks] = useState<BlockItem[]>([]);
   const [idAFocus, setIdAFocus] = useState<string | null>(null);
   const isInitialMount = useRef(true);
+  const historyRef = useRef<BlockItem[][]>([]);
 
   async function fetchTitre() {
     const response = await fetch(
@@ -61,6 +62,39 @@ function Wrapper() {
     saveBlocks();
   }, [blocks]);
 
+  const pushHistory = (previousBlocks: BlockItem[]) => {
+    historyRef.current = [
+      ...historyRef.current,
+      structuredClone(previousBlocks),
+    ];
+  };
+
+  const undo = () => {
+    const currentHistory = historyRef.current;
+    if (currentHistory.length === 0) {
+      return;
+    }
+
+    const previous = currentHistory[currentHistory.length - 1];
+    historyRef.current = currentHistory.slice(0, -1);
+    setBlocks(previous);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
+        e.preventDefault();
+        undo();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   const handleAddBlockAfter = (targetId: string) => {
     const newId = `b${crypto.randomUUID()}`;
     const newBlock: BlockItem = { id: newId, type: "", content: "" };
@@ -101,7 +135,10 @@ function Wrapper() {
       return newList;
     };
 
-    setBlocks((prev) => insertRecursive([...prev]));
+    setBlocks((prev) => {
+      pushHistory(prev);
+      return insertRecursive([...prev]);
+    });
     setIdAFocus(newId);
   };
 
@@ -159,6 +196,7 @@ function Wrapper() {
     };
 
     setBlocks((prev) => {
+      pushHistory(prev);
       const updated = removeRecursive([...prev]);
 
       return updated.length === 0
@@ -203,7 +241,10 @@ function Wrapper() {
         return block;
       });
     };
-    setBlocks((prev) => updateRecursive([...prev]));
+    setBlocks((prev) => {
+      pushHistory(prev);
+      return updateRecursive([...prev]);
+    });
   };
 
   const handleDragEnd = (event: any) => {
@@ -267,6 +308,7 @@ function Wrapper() {
     }
 
     setBlocks((prevBlocks) => {
+      pushHistory(prevBlocks);
       let draggedBlock: BlockItem | null = null;
 
       const removeBlockRecursive = (list: BlockItem[]): BlockItem[] => {
