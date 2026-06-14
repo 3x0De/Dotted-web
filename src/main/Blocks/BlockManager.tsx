@@ -514,7 +514,11 @@ function Block({
           }}
         />
       ) : type === "Li1" ? (
-        <Lien contenu={"http://localhost:5173/14"} />
+        <Lien
+          contenu={
+            "https://maps.google.com/maps?width=100%&amp;height=100%&amp;hl=en&amp;q=England, UK&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
+          }
+        />
       ) : (
         <div
           ref={editableRef as React.RefObject<HTMLDivElement>}

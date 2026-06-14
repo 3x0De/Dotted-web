@@ -24,7 +24,9 @@ function Lien({ contenu }: { contenu?: string }) {
   return (
     <div className="lien">
       {iframe ? (
-        <h1> pas lien </h1>
+        <iframe
+          src={contenu?.replaceAll("&amp;", "&").replace("/pen/", "/embed/")}
+        />
       ) : (
         <>
           <a href={contenu} target="_blank">
