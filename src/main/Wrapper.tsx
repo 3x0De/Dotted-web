@@ -1,5 +1,5 @@
 import Page from "./Page";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import type { BlockItem } from "./Types";
 import { DragDropProvider } from "@dnd-kit/react";
 
@@ -10,6 +10,59 @@ function Wrapper() {
   const isInitialMount = useRef(true);
   const historyRef = useRef<BlockItem[][]>([]);
   const pile2 = useRef<BlockItem[][]>([]);
+
+  const pushHistory = (previousBlocks: BlockItem[]) => {
+    pile2.current = [];
+    historyRef.current = [
+      ...historyRef.current,
+      structuredClone(previousBlocks),
+    ];
+  };
+
+  const undo = useCallback(() => {
+    if (historyRef.current.length === 0) return;
+
+    const previous = historyRef.current[historyRef.current.length - 1];
+
+    pile2.current.push(structuredClone(blocks));
+
+    historyRef.current = historyRef.current.slice(0, -1);
+    setBlocks(previous);
+  }, [blocks]);
+
+  const redo = useCallback(() => {
+    if (pile2.current.length === 0) return;
+
+    const next = pile2.current[pile2.current.length - 1];
+
+    historyRef.current.push(structuredClone(blocks));
+
+    pile2.current = pile2.current.slice(0, -1);
+    setBlocks(next);
+  }, [blocks]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        (e.ctrlKey || e.metaKey) &&
+        e.key.toLowerCase() === "z" &&
+        !e.shiftKey
+      ) {
+        e.preventDefault();
+        undo();
+      } else if (
+        (e.ctrlKey || e.metaKey) &&
+        (e.key.toLowerCase() === "y" ||
+          (e.shiftKey && e.key.toLowerCase() === "z"))
+      ) {
+        e.preventDefault();
+        redo();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [undo, redo]);
 
   async function fetchTitre() {
     const response = await fetch(
@@ -24,7 +77,6 @@ function Wrapper() {
       "http://localhost:8000/Cont" + window.location.pathname,
     );
     const data = await response.json();
-
     setBlocks(data);
   }
 
@@ -38,10 +90,7 @@ function Wrapper() {
       isInitialMount.current = false;
       return;
     }
-
-    if (blocks.length === 0) {
-      return;
-    }
+    if (blocks.length === 0) return;
 
     const saveBlocks = async () => {
       try {
@@ -49,9 +98,7 @@ function Wrapper() {
           "http://localhost:8000/Modif/Cont" + window.location.pathname,
           {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ page: blocks }),
           },
         );
@@ -59,53 +106,8 @@ function Wrapper() {
         console.error("Erreur de sauvegarde des blocs :", error);
       }
     };
-
     saveBlocks();
   }, [blocks]);
-
-  const pushHistory = (previousBlocks: BlockItem[]) => {
-    historyRef.current = [
-      ...historyRef.current,
-      structuredClone(previousBlocks),
-    ];
-  };
-
-  const undo = () => {
-    const currentHistory = historyRef.current;
-    if (currentHistory.length === 0) {
-      return;
-    }
-
-    const redo = () => {
-      const currentHistory = historyRef.current;
-      if (currentHistory.length === 0) {
-        return;
-      }
-
-      const previous = currentHistory[currentHistory.length - 1];
-      historyRef.current = currentHistory.slice(0, -1);
-      setBlocks(previous);
-    };
-
-    const previous = currentHistory[currentHistory.length - 1];
-    historyRef.current = currentHistory.slice(0, -1);
-    setBlocks(previous);
-  };
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
-        e.preventDefault();
-        undo();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
 
   const handleAddBlockAfter = (targetId: string) => {
     const newId = `b${crypto.randomUUID()}`;
@@ -162,23 +164,19 @@ function Wrapper() {
         .filter((block) => block.id !== blockToDelete.id)
         .map((block) => {
           if (block.type === "Colonnes" && Array.isArray(block.content)) {
-            const nouvellesColonnes = (block.content as BlockItem[][])
-              .map((col) => removeRecursive([...col]))
-              .filter((col) => col.length > 0);
-
             return {
               ...block,
-              content: nouvellesColonnes,
+              content: (block.content as BlockItem[][])
+                .map((col) => removeRecursive([...col]))
+                .filter((col) => col.length > 0),
             };
           }
-
           if (block.type === "C4DR3" && Array.isArray(block.content)) {
             return {
               ...block,
               content: removeRecursive([...(block.content as BlockItem[])]),
             };
           }
-
           if (
             block.type === "Menu" &&
             block.content &&
@@ -195,14 +193,12 @@ function Wrapper() {
           }
           return block;
         })
-
         .filter((block) => {
-          if (block.type === "Colonnes" && Array.isArray(block.content)) {
+          if (
+            (block.type === "Colonnes" || block.type === "C4DR3") &&
+            Array.isArray(block.content)
+          )
             return block.content.length > 0;
-          }
-          if (block.type === "C4DR3" && Array.isArray(block.content)) {
-            return block.content.length > 0;
-          }
           return true;
         });
     };
@@ -210,7 +206,6 @@ function Wrapper() {
     setBlocks((prev) => {
       pushHistory(prev);
       const updated = removeRecursive([...prev]);
-
       return updated.length === 0
         ? [{ id: `b-${crypto.randomUUID()}`, type: "", content: "" }]
         : updated;
@@ -261,20 +256,16 @@ function Wrapper() {
 
   const handleDragEnd = (event: any) => {
     if (event.canceled) return;
-
     const sourceId = event.operation?.source?.id || event.active?.id;
     const targetId = event.operation?.target?.id || event.over?.id;
-
-    if (!sourceId || !targetId || sourceId === targetId) {
-      return;
-    }
+    if (!sourceId || !targetId || sourceId === targetId) return;
 
     const targetElement = document.getElementById(targetId);
     const targetRect = targetElement?.getBoundingClientRect();
 
-    let dropX: number | undefined =
+    let dropX =
       event.operation?.pointer?.coordinates?.x || event.pointer?.coordinates?.x;
-    let dropY: number | undefined =
+    let dropY =
       event.operation?.pointer?.coordinates?.y || event.pointer?.coordinates?.y;
 
     if (!dropX || !dropY) {
@@ -282,47 +273,31 @@ function Wrapper() {
       if (shape) {
         dropX = shape.current.x + shape.current.width / 2;
         dropY = shape.current.y + shape.current.height / 2;
-      }
-    }
-
-    if (!dropX || !dropY) {
-      const nativeEvent = event.nativeEvent;
-      if (nativeEvent) {
-        dropX =
-          nativeEvent.clientX ||
-          (nativeEvent.touches && nativeEvent.touches[0]?.clientX);
-        dropY =
-          nativeEvent.clientY ||
-          (nativeEvent.touches && nativeEvent.touches[0]?.clientY);
+      } else {
+        const nativeEvent = event.nativeEvent;
+        if (nativeEvent) {
+          dropX =
+            nativeEvent.clientX ||
+            (nativeEvent.touches && nativeEvent.touches[0]?.clientX);
+          dropY =
+            nativeEvent.clientY ||
+            (nativeEvent.touches && nativeEvent.touches[0]?.clientY);
+        }
       }
     }
 
     let zoneDrop: "gauche" | "droite" | "haut" | "bas" = "bas";
-
     if (targetRect && dropX !== undefined && dropY !== undefined) {
-      const largeurCible = targetRect.width;
-      const hauteurCible = targetRect.height;
-      const positionRelativeX = dropX - targetRect.left;
-      const positionRelativeY = dropY - targetRect.top;
-
-      const pourcentageX = positionRelativeX / largeurCible;
-      const pourcentageY = positionRelativeY / hauteurCible;
-
-      if (pourcentageX < 0.2) {
-        zoneDrop = "gauche";
-      } else if (pourcentageX > 0.8) {
-        zoneDrop = "droite";
-      } else {
-        zoneDrop = pourcentageY < 0.5 ? "haut" : "bas";
-      }
-    } else {
-      return;
-    }
+      const pX = (dropX - targetRect.left) / targetRect.width;
+      const pY = (dropY - targetRect.top) / targetRect.height;
+      if (pX < 0.2) zoneDrop = "gauche";
+      else if (pX > 0.8) zoneDrop = "droite";
+      else zoneDrop = pY < 0.5 ? "haut" : "bas";
+    } else return;
 
     setBlocks((prevBlocks) => {
       pushHistory(prevBlocks);
       let draggedBlock: BlockItem | null = null;
-
       const removeBlockRecursive = (list: BlockItem[]): BlockItem[] => {
         return list
           .filter((b) => {
@@ -333,26 +308,24 @@ function Wrapper() {
             return true;
           })
           .map((b) => {
-            if (b.type === "Colonnes" && Array.isArray(b.content)) {
+            if (b.type === "Colonnes" && Array.isArray(b.content))
               return {
                 ...b,
                 content: (b.content as BlockItem[][])
                   .map((col) => removeBlockRecursive(col))
                   .filter((col) => col.length > 0),
               };
-            }
-            if (b.type === "C4DR3" && Array.isArray(b.content)) {
+            if (b.type === "C4DR3" && Array.isArray(b.content))
               return {
                 ...b,
                 content: removeBlockRecursive(b.content as BlockItem[]),
               };
-            }
             if (
               b.type === "Menu" &&
               b.content &&
               typeof b.content === "object" &&
               "enfants" in b.content
-            ) {
+            )
               return {
                 ...b,
                 content: {
@@ -360,23 +333,15 @@ function Wrapper() {
                   enfants: removeBlockRecursive(b.content?.enfants ?? []),
                 },
               };
-            }
             return b;
           });
       };
-
       const treeWithoutDragged = removeBlockRecursive([...prevBlocks]);
-
-      if (!draggedBlock || !document.getElementById(targetId)) {
-        console.warn(
-          "Drag annulé : Source ou Cible introuvable dans l'arbre actuel.",
-        );
+      if (!draggedBlock || !document.getElementById(targetId))
         return prevBlocks;
-      }
 
       const insertIntoList = (list: BlockItem[]): BlockItem[] => {
         const newList: BlockItem[] = [];
-
         for (const b of list) {
           if (b.id === targetId) {
             if (zoneDrop === "haut") {
@@ -398,35 +363,32 @@ function Wrapper() {
           } else if (b.type === "Colonnes" && Array.isArray(b.content)) {
             const matrix = b.content as BlockItem[][];
             let targetColIndex = -1;
-
-            matrix.forEach((colonne, idx) => {
-              if (colonne.some((enfant) => enfant.id === targetId)) {
+            matrix.forEach((col, idx) => {
+              if (col.some((enfant) => enfant.id === targetId))
                 targetColIndex = idx;
-              }
             });
-
             if (targetColIndex !== -1) {
               if (zoneDrop === "gauche" || zoneDrop === "droite") {
-                const newMatrix = [...matrix];
-                const insertIdx =
-                  zoneDrop === "gauche" ? targetColIndex : targetColIndex + 1;
-                newMatrix.splice(insertIdx, 0, [draggedBlock!]);
-                newList.push({ ...b, content: newMatrix });
+                const newM = [...matrix];
+                newM.splice(
+                  zoneDrop === "gauche" ? targetColIndex : targetColIndex + 1,
+                  0,
+                  [draggedBlock!],
+                );
+                newList.push({ ...b, content: newM });
               } else {
-                const newMatrix = matrix.map((colonne, idx) => {
-                  if (idx === targetColIndex) {
-                    return insertIntoList(colonne);
-                  }
-                  return colonne;
+                newList.push({
+                  ...b,
+                  content: matrix.map((col, idx) =>
+                    idx === targetColIndex ? insertIntoList(col) : col,
+                  ),
                 });
-                newList.push({ ...b, content: newMatrix });
               }
-            } else {
+            } else
               newList.push({
                 ...b,
                 content: matrix.map((col) => insertIntoList(col)),
               });
-            }
           } else if (b.type === "C4DR3" && Array.isArray(b.content)) {
             newList.push({
               ...b,
@@ -445,13 +407,10 @@ function Wrapper() {
                 enfants: insertIntoList(b.content?.enfants ?? []),
               },
             });
-          } else {
-            newList.push(b);
-          }
+          } else newList.push(b);
         }
         return newList;
       };
-
       return insertIntoList(treeWithoutDragged);
     });
   };
