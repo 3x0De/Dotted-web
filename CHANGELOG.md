@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.3] - 16/06/2026
+
+- Gestion du ctrl + z
+- Gestion du ctrl + y / ctrl + shift + z
+
 ## [0.2.2] - 14/06/2026
 
 - Gestion des liens
