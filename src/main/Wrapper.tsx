@@ -9,6 +9,7 @@ function Wrapper() {
   const [idAFocus, setIdAFocus] = useState<string | null>(null);
   const isInitialMount = useRef(true);
   const historyRef = useRef<BlockItem[][]>([]);
+  const pile2 = useRef<BlockItem[][]>([]);
 
   async function fetchTitre() {
     const response = await fetch(
@@ -74,6 +75,17 @@ function Wrapper() {
     if (currentHistory.length === 0) {
       return;
     }
+
+    const redo = () => {
+      const currentHistory = historyRef.current;
+      if (currentHistory.length === 0) {
+        return;
+      }
+
+      const previous = currentHistory[currentHistory.length - 1];
+      historyRef.current = currentHistory.slice(0, -1);
+      setBlocks(previous);
+    };
 
     const previous = currentHistory[currentHistory.length - 1];
     historyRef.current = currentHistory.slice(0, -1);
