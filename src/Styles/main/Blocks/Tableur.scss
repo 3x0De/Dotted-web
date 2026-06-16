@@ -1,0 +1,12 @@
+@use "../../variables.scss" as v;
+
+.ht-portal,
+.ht-theme-main {
+  display: none;
+}
+
+.spreadsheet-container {
+  .wtHolder {
+    width: 100% !important;
+  }
+}

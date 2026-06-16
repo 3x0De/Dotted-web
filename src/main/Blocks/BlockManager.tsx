@@ -11,6 +11,7 @@ import Separateur from "./Separateur";
 import Document from "./Document";
 import Picture from "./Picture";
 import Lien from "./Lien";
+import Tableur from "./Tableur";
 import menuKebab from "../../assets/Image/Block logo/kebabMenu.svg";
 import bin from "../../assets/Image/Block logo/bin.svg";
 
@@ -166,6 +167,7 @@ function Block({
     "Document",
     "P1ctuRe",
     "Li1",
+    "Tableur",
   ];
 
   function Content(e: React.SyntheticEvent<HTMLDivElement>): void {
@@ -520,6 +522,8 @@ function Block({
           onBlur={handleSauvegardeGlobale}
           contenu={vraiContenu as string}
         />
+      ) : type === "Tableur" ? (
+        <Tableur />
       ) : (
         <div
           ref={editableRef as React.RefObject<HTMLDivElement>}
@@ -626,7 +630,9 @@ function Block({
                                   ? "Document"
                                   : index === 14
                                     ? "P1ctuRe"
-                                    : "Li1"}
+                                    : index === 15
+                                      ? "Li1"
+                                      : "Tableur"}
               </li>
             ))}
           </ul>
