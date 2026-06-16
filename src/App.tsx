@@ -3,6 +3,7 @@ import AppMain from "./main/AppMain";
 import Login from "./Login/Login";
 import SignUp from "./Signup/Signup";
 import Error from "./401/401";
+import Test from "./testSpreadsheet";
 import { useEffect, useState } from "react";
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
       <Route path="/:id" element={<PageRouter />} />
       <Route path="/Signup" element={<SignUp />} />
       <Route path="/Login" element={<Login />} />
+      <Route path="/test" element={<Test />} />
       <Route path="*" element={<Login />} />
     </Routes>
   );
