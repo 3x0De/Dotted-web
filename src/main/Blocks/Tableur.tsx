@@ -1,20 +1,18 @@
-import { HotTable } from "@handsontable/react";
 import { HyperFormula } from "hyperformula";
 import { registerAllModules } from "handsontable/registry";
-
+import { HotTable, HotTableClass } from "@handsontable/react";
 import "handsontable/styles/handsontable.css";
 import "handsontable/styles/ht-theme-main.css";
-
 import "../../Styles/main/Blocks/Tableur.scss";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 registerAllModules();
 
 interface Props {
   innerRef: React.RefObject<HTMLHeadingElement | null>;
   oninput: (e: React.KeyboardEvent<HTMLElement>) => void;
-  onBlur?: (e: any) => void;
-  contenu?: (boolean | number | string)[][];
+  onBlur?: (e: (string | number | boolean)[][]) => void;
+  contenu?: (string | number | boolean)[][];
 }
 
 function Tableur({ innerRef, oninput, onBlur, contenu }: Props) {
@@ -23,13 +21,21 @@ function Tableur({ innerRef, oninput, onBlur, contenu }: Props) {
   const [col, setCol] = useState<boolean>(false);
   const [raw, setRaw] = useState<boolean>(false);
 
+  const hotRef = useRef<HotTableClass>(null);
+  const timerRef = useRef<any | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
+
   return contenu && contenu.length >= 1 ? (
     <div className="spreadsheet-container" ref={innerRef} onKeyDown={oninput}>
       <HotTable
+        ref={hotRef}
         data={contenu.slice(1)}
-        formulas={{
-          engine: HyperFormula,
-        }}
+        formulas={{ engine: HyperFormula }}
         themeName="ht-theme-main"
         rowHeaders={contenu[0][0] as boolean}
         colHeaders={contenu[0][1] as boolean}
@@ -39,6 +45,23 @@ function Tableur({ innerRef, oninput, onBlur, contenu }: Props) {
         licenseKey="non-commercial-and-evaluation"
         manualRowResize={false}
         manualColumnResize={false}
+        afterChange={(changes, source) => {
+          if (!["edit", "copy", "autofill"].includes(source as string)) return;
+
+          const hotInstance = hotRef.current?.hotInstance;
+          if (!hotInstance) return;
+
+          if (timerRef.current) clearTimeout(timerRef.current);
+
+          timerRef.current = setTimeout(() => {
+            const sourceData = hotInstance.getSourceData();
+
+            onBlur?.([
+              contenu[0],
+              ...(sourceData as (boolean | number | string)[][]),
+            ]);
+          }, 300);
+        }}
       />
     </div>
   ) : (
@@ -61,7 +84,7 @@ function Tableur({ innerRef, oninput, onBlur, contenu }: Props) {
           min="1"
           max="10"
           defaultValue={2}
-          name="Lignes"
+          name="Colonnes"
           onChange={(e) => setColonnes(e.target.valueAsNumber)}
         />
       </div>
