@@ -298,6 +298,10 @@ function Block({
         if (type !== "P1ctuRe") {
           calculeContenu = { img: "" };
         }
+      } else if (newtype === "Tableur") {
+        if (type !== "Tableur") {
+          calculeContenu = [];
+        }
       } else {
         if (Array.isArray(vraiContenu)) calculeContenu = texteExtrait;
       }
@@ -523,7 +527,14 @@ function Block({
           contenu={vraiContenu as string}
         />
       ) : type === "Tableur" ? (
-        <Tableur />
+        <Tableur
+          innerRef={editableRef}
+          oninput={
+            gererClavier as (e: React.KeyboardEvent<HTMLElement>) => void
+          }
+          onBlur={handleSauvegardeGlobale}
+          contenu={vraiContenu as (boolean | number | string)[][]}
+        />
       ) : (
         <div
           ref={editableRef as React.RefObject<HTMLDivElement>}

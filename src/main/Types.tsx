@@ -14,5 +14,6 @@ export interface BlockItem {
     | BlockItem[]
     | BlockItem[][]
     | Number
-    | { img: string; size?: { height: number; width: number } };
+    | { img: string; size?: { height: number; width: number } }
+    | (boolean | number | string)[][];
 }

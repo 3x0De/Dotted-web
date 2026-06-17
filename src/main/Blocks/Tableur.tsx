@@ -10,24 +10,29 @@ import { useState } from "react";
 
 registerAllModules();
 
-function Tableur({ content }: { content?: any }) {
+interface Props {
+  innerRef: React.RefObject<HTMLHeadingElement | null>;
+  oninput: (e: React.KeyboardEvent<HTMLElement>) => void;
+  onBlur?: (e: any) => void;
+  contenu?: (boolean | number | string)[][];
+}
+
+function Tableur({ innerRef, oninput, onBlur, contenu }: Props) {
   const [lignes, setLignes] = useState<number>(2);
   const [colonnes, setColonnes] = useState<number>(2);
+  const [col, setCol] = useState<boolean>(false);
+  const [raw, setRaw] = useState<boolean>(false);
 
-  return content ? (
-    <div className="spreadsheet-container">
+  return contenu && contenu.length >= 1 ? (
+    <div className="spreadsheet-container" ref={innerRef} onKeyDown={oninput}>
       <HotTable
-        data={[
-          [10, 2],
-          [20, 2],
-          ["=A1+A2", "=B1+B2"],
-        ]}
+        data={contenu.slice(1)}
         formulas={{
           engine: HyperFormula,
         }}
         themeName="ht-theme-main"
-        rowHeaders
-        colHeaders
+        rowHeaders={contenu[0][0] as boolean}
+        colHeaders={contenu[0][1] as boolean}
         height="auto"
         width="100%"
         stretchH="all"
@@ -37,7 +42,7 @@ function Tableur({ content }: { content?: any }) {
       />
     </div>
   ) : (
-    <form className="tableur">
+    <form className="tableur" onKeyDown={oninput}>
       <div>
         <label htmlFor="Lignes">Lignes : {lignes}</label>
         <input
@@ -62,13 +67,26 @@ function Tableur({ content }: { content?: any }) {
       </div>
       <div>
         <label htmlFor="raw">Entêtes des lignes : </label>
-        <input type="checkbox" name="raw" />
+        <input type="checkbox" name="raw" onChange={() => setRaw(!raw)} />
       </div>
       <div>
-        <label htmlFor="col">Entêtes des lignes : </label>
-        <input type="checkbox" name="col" />
+        <label htmlFor="col">Entêtes des colonnes : </label>
+        <input type="checkbox" name="col" onChange={() => setCol(!col)} />
       </div>
-      <button>Créer le tableau</button>
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          const data: (boolean | number | string)[][] = [
+            [raw, col],
+            ...Array.from({ length: lignes }, () =>
+              Array.from({ length: colonnes }, () => ""),
+            ),
+          ];
+          onBlur?.(data);
+        }}
+      >
+        Créer le tableau
+      </button>
     </form>
   );
 }

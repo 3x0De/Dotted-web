@@ -61,8 +61,6 @@ function Picture({ innerRef, oninput, onUpload, contenu }: Props) {
     const handleMove = (e: MouseEvent) => {
       if (!isResizing || !contenu) return;
 
-      console.log(contenu.size);
-
       const dx = e.clientX - startResize.current.mouseX;
       const dy = e.clientY - startResize.current.mouseY;
 
