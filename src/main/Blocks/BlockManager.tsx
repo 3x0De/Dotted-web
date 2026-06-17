@@ -12,6 +12,7 @@ import Document from "./Document";
 import Picture from "./Picture";
 import Lien from "./Lien";
 import Tableur from "./Tableur";
+import Graphe from "./Graphe";
 import menuKebab from "../../assets/Image/Block logo/kebabMenu.svg";
 import bin from "../../assets/Image/Block logo/bin.svg";
 
@@ -168,6 +169,7 @@ function Block({
     "P1ctuRe",
     "Li1",
     "Tableur",
+    "Graph3",
   ];
 
   function Content(e: React.SyntheticEvent<HTMLDivElement>): void {
@@ -535,6 +537,8 @@ function Block({
           onBlur={handleSauvegardeGlobale}
           contenu={vraiContenu as (boolean | number | string)[][]}
         />
+      ) : type === "Graph3" ? (
+        <Graphe />
       ) : (
         <div
           ref={editableRef as React.RefObject<HTMLDivElement>}
@@ -643,7 +647,9 @@ function Block({
                                     ? "P1ctuRe"
                                     : index === 15
                                       ? "Li1"
-                                      : "Tableur"}
+                                      : index === 16
+                                        ? "Tableur"
+                                        : "Graph3"}
               </li>
             ))}
           </ul>
