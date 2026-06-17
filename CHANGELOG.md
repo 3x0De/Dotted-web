@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.3.0] - 17/06/2026
+
+- Ajout du bloc de tableur
+
 ## [0.2.3] - 16/06/2026
 
 - Gestion du ctrl + z
