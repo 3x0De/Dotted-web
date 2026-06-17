@@ -10,3 +10,128 @@
     width: 100% !important;
   }
 }
+
+.tableur {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    * {
+      font-size: min(10px, 100%);
+      width: 50%;
+      height: min-content;
+    }
+  }
+
+  button {
+    font-size: min(10px, 100%);
+    border: none;
+    background-color: v.$Smoke;
+    border-radius: 5px;
+    padding: 5px;
+    color: v.$WhiteBase;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      box-shadow: 2px 2px 0.4em v.$Void;
+      text-shadow: 2px 2px 0.4em v.$Void;
+      background-color: v.$Groove;
+    }
+  }
+
+  input {
+    &[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      background: v.$WhiteBase;
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+
+      // La partie remplie (webkit seulement)
+      &::-webkit-slider-runnable-track {
+        height: 4px;
+        background: v.$WhiteBase;
+        border-radius: 2px;
+      }
+
+      // Le thumb
+      &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: v.$BlueLink;
+        cursor: pointer;
+        margin-top: -6px; // centre le thumb sur la track
+      }
+
+      // Firefox
+      &::-moz-range-track {
+        height: 4px;
+        background: v.$Smoke;
+        border-radius: 2px;
+      }
+
+      &::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: v.$BlueLink;
+        border: none;
+        cursor: pointer;
+      }
+    }
+
+    &[type="checkbox"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid v.$Groove;
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+      transition:
+        background 0.2s,
+        border-color 0.2s;
+
+      // Le checkmark via pseudo-element
+      &::after {
+        content: "";
+        position: absolute;
+        display: none;
+        left: 4px;
+        top: 1px;
+        width: 5px;
+        height: 9px;
+        border: 2px solid v.$WhiteBase;
+        border-top: none;
+        border-left: none;
+        transform: rotate(45deg);
+      }
+
+      &:checked {
+        background: v.$BlueLink;
+        border-color: v.$BlueLink;
+
+        &::after {
+          display: block;
+        }
+      }
+
+      &:hover {
+        border-color: #6c63ff;
+      }
+    }
+  }
+}

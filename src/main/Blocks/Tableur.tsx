@@ -6,11 +6,15 @@ import "handsontable/styles/handsontable.css";
 import "handsontable/styles/ht-theme-main.css";
 
 import "../../Styles/main/Blocks/Tableur.scss";
+import { useState } from "react";
 
 registerAllModules();
 
-function Tableur() {
-  return (
+function Tableur({ content }: { content?: any }) {
+  const [lignes, setLignes] = useState<number>(2);
+  const [colonnes, setColonnes] = useState<number>(2);
+
+  return content ? (
     <div className="spreadsheet-container">
       <HotTable
         data={[
@@ -32,6 +36,40 @@ function Tableur() {
         manualColumnResize={false}
       />
     </div>
+  ) : (
+    <form className="tableur">
+      <div>
+        <label htmlFor="Lignes">Lignes : {lignes}</label>
+        <input
+          type="range"
+          min="1"
+          max="10"
+          defaultValue={2}
+          name="Lignes"
+          onChange={(e) => setLignes(e.target.valueAsNumber)}
+        />
+      </div>
+      <div>
+        <label htmlFor="Colonnes">Colonnes : {colonnes}</label>
+        <input
+          type="range"
+          min="1"
+          max="10"
+          defaultValue={2}
+          name="Lignes"
+          onChange={(e) => setColonnes(e.target.valueAsNumber)}
+        />
+      </div>
+      <div>
+        <label htmlFor="raw">Entêtes des lignes : </label>
+        <input type="checkbox" name="raw" />
+      </div>
+      <div>
+        <label htmlFor="col">Entêtes des lignes : </label>
+        <input type="checkbox" name="col" />
+      </div>
+      <button>Créer le tableau</button>
+    </form>
   );
 }
 
