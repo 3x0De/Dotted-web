@@ -1,0 +1,10 @@
+@use "../../variables.scss" as v;
+
+.Graph3 {
+  width: 100%;
+  aspect-ratio: 1;
+
+  a[href="https://reactflow.dev"] {
+    display: none;
+  }
+}

@@ -304,6 +304,20 @@ function Block({
         if (type !== "Tableur") {
           calculeContenu = [];
         }
+      } else if (newtype === "Graph3") {
+        if (type !== "Graph3") {
+          calculeContenu = {
+            nodes: [
+              { id: "n1", position: { x: 0, y: 0 }, data: { label: "Node 1" } },
+              {
+                id: "n2",
+                position: { x: 100, y: 100 },
+                data: { label: "Node 2" },
+              },
+            ],
+            edges: [{ id: "n1-n2", source: "n1", target: "n2" }],
+          };
+        }
       } else {
         if (Array.isArray(vraiContenu)) calculeContenu = texteExtrait;
       }
@@ -538,7 +552,19 @@ function Block({
           contenu={vraiContenu as (boolean | number | string)[][]}
         />
       ) : type === "Graph3" ? (
-        <Graphe />
+        <Graphe
+          innerRef={editableRef}
+          // oninput={
+          // gererClavier as (e: React.KeyboardEvent<HTMLElement>) => void
+          // }
+          onBlur={handleSauvegardeGlobale}
+          contenu={
+            vraiContenu as {
+              nodes: Node[];
+              edges: Edge[];
+            }
+          }
+        />
       ) : (
         <div
           ref={editableRef as React.RefObject<HTMLDivElement>}

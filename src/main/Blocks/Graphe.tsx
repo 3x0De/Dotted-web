@@ -1,42 +1,57 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import {
   ReactFlow,
   applyNodeChanges,
   applyEdgeChanges,
   addEdge,
+  type OnNodesChange,
+  type OnEdgesChange,
+  type OnConnect,
+  type Node, // Importation du type Node
+  type Edge, // Importation du type Edge
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import "../../Styles/main/Blocks/Graphe.scss";
 
-const initialNodes = [
-  { id: "n1", position: { x: 0, y: 0 }, data: { label: "Node 1" } },
-  { id: "n2", position: { x: 100, y: 100 }, data: { label: "Node 2" } },
-];
-const initialEdges = [{ id: "n1-n2", source: "n1", target: "n2" }];
+interface Props {
+  innerRef: React.RefObject<HTMLHeadingElement | null>;
+  onBlur?: (data: { nodes: Node[]; edges: Edge[] }) => void;
+  contenu: {
+    nodes: Node[];
+    edges: Edge[];
+  };
+}
 
-export default function Test() {
-  const [nodes, setNodes] = useState(initialNodes);
-  const [edges, setEdges] = useState(initialEdges);
-
-  const onNodesChange = useCallback(
-    (changes) =>
-      setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
-    [],
+function Graphe({ innerRef, onBlur, contenu }: Props) {
+  const onNodesChange: OnNodesChange = useCallback(
+    (changes) => {
+      const nextNodes = applyNodeChanges(changes, contenu.nodes);
+      onBlur?.({ nodes: nextNodes, edges: contenu.edges });
+    },
+    [contenu.nodes, contenu.edges, onBlur],
   );
-  const onEdgesChange = useCallback(
-    (changes) =>
-      setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
-    [],
+
+  const onEdgesChange: OnEdgesChange = useCallback(
+    (changes) => {
+      const nextEdges = applyEdgeChanges(changes, contenu.edges);
+      onBlur?.({ nodes: contenu.nodes, edges: nextEdges });
+    },
+    [contenu.nodes, contenu.edges, onBlur],
   );
-  const onConnect = useCallback(
-    (params) => setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
-    [],
+
+  const onConnect: OnConnect = useCallback(
+    (params) => {
+      const nextEdges = addEdge(params, contenu.edges);
+      onBlur?.({ nodes: contenu.nodes, edges: nextEdges });
+    },
+    [contenu.nodes, contenu.edges, onBlur],
   );
 
   return (
-    <div style={{ width: "100%", aspectRatio: 1 }}>
+    <div className="Graph3" ref={innerRef}>
       <ReactFlow
-        nodes={nodes}
-        edges={edges}
+        nodes={contenu.nodes}
+        edges={contenu.edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
@@ -45,3 +60,5 @@ export default function Test() {
     </div>
   );
 }
+
+export default Graphe;
