@@ -1,6 +1,6 @@
 @use "../../variables.scss" as v;
 
-.Graph3 {
+.M00dBo4Rd {
   width: 100%;
   aspect-ratio: 1;
   border: 1Q solid v.$Void;
@@ -30,10 +30,11 @@
     font-size: 12px;
     height: min-content;
 
-    div:has(> input) {
-      display: flex;
-      flex-direction: column;
-      height: min-content;
+    display: flex;
+    flex-direction: column;
+
+    div {
+      width: 100%;
 
       input {
         cursor: pointer;
@@ -43,6 +44,7 @@
         padding: 0;
 
         &[type="text"] {
+          width: 100%;
           border: none;
           background: transparent;
           outline: none;
