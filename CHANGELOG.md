@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.1] - 18/06/2026
+
+- Ajout du bloc de graphe
+- Modification des couleurs des noeuds
+- Modification du nom des noeuds
+- Suppresion des noeuds/liens
+- Ajout des liens entre 2 noeuds
+- Ajout des noeuds
+
 ## [0.3.0] - 17/06/2026
 
 - Ajout du bloc de tableur
