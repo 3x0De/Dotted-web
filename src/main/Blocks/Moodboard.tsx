@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import {
   ReactFlow,
   applyNodeChanges,
@@ -13,82 +13,121 @@ import add from "../../assets/Image/Block logo/Add.svg";
 type ColorNodeData = {
   label: string;
   color?: string;
-  onChangeColor: (id: string, color: string) => void;
-  onChangeLabel: (id: string, label: string) => void;
+  onChangeColor?: (id: string, color: string) => void;
+  onChangeLabel?: (id: string, label: string) => void;
 };
+
+// ✅ Callbacks passés via nodeTypes context plutôt que dans data
+// On garde la même structure mais on corrige les bugs
 
 function ColorNode({ id, data }: NodeProps<Node<ColorNodeData>>) {
   return (
-    <div
-      className="Node"
-      style={{
-        background: data.color || "#ffffff",
-      }}
-    >
+    <div className="Node" style={{ background: data.color || "#ffffff" }}>
       <div>
         <input
           type="text"
           value={data.label}
-          onChange={(e) => data.onChangeLabel(id, e.target.value)}
+          onChange={(e) => data.onChangeLabel?.(id, e.target.value)}
         />
       </div>
       <div>
         <input
           type="color"
           value={data.color || "#ffffff"}
-          onChange={(e) => data.onChangeColor(id, e.target.value)}
+          onChange={(e) => data.onChangeColor?.(id, e.target.value)}
         />
       </div>
     </div>
   );
 }
 
-function Moodboard() {
-  const onChangeLabel = useCallback((id: string, newLabel: string) => {
-    setNodes((nds) =>
-      nds.map((node) =>
-        node.id === id
-          ? { ...node, data: { ...node.data, label: newLabel } }
-          : node,
-      ),
-    );
-  }, []);
+interface Props {
+  innerRef: React.RefObject<HTMLHeadingElement | null>;
+  oninput: (e: React.KeyboardEvent<HTMLElement>) => void;
+  onBlur?: (data: Node<ColorNodeData>[]) => void;
+  contenu: Node[];
+}
 
-  const onChangeColor = useCallback((id: string, newColor: string) => {
-    setNodes((nds) =>
-      nds.map((node) =>
-        node.id === id
-          ? { ...node, data: { ...node.data, color: newColor } }
-          : node,
-      ),
-    );
-  }, []);
+function Moodboard({ innerRef, oninput, onBlur, contenu }: Props) {
+  const [nodes, setNodes] = useState<Node<ColorNodeData>[]>(
+    contenu as Node<ColorNodeData>[],
+  );
 
-  const [nodes, setNodes] = useState<Node<ColorNodeData>[]>([
-    {
-      id: "n1",
-      type: "colorNode",
-      position: { x: 50, y: 50 },
-      data: { label: "Nœud 1", color: "#ffffff", onChangeColor, onChangeLabel },
+  useEffect(() => {
+    setNodes(contenu as Node<ColorNodeData>[]);
+  }, [contenu]);
+
+  const sanitizeNodes = useCallback(
+    (nodesToSanitize: Node<ColorNodeData>[]) =>
+      nodesToSanitize.map((node) => ({
+        ...node,
+        data: {
+          label: node.data.label,
+          color: node.data.color,
+        },
+      })),
+    [],
+  );
+
+  const onChangeLabel = useCallback(
+    (id: string, newLabel: string) => {
+      setNodes((nds) => {
+        const updated = nds.map((node) =>
+          node.id === id
+            ? { ...node, data: { ...node.data, label: newLabel } }
+            : node,
+        );
+        onBlur?.(sanitizeNodes(updated));
+        return updated;
+      });
     },
-    {
-      id: "n2",
-      type: "colorNode",
-      position: { x: 300, y: 50 },
-      data: { label: "Nœud 2", color: "#ffffff", onChangeColor, onChangeLabel },
+    [onBlur, sanitizeNodes],
+  );
+
+  const onChangeColor = useCallback(
+    (id: string, newColor: string) => {
+      setNodes((nds) => {
+        const updated = nds.map((node) =>
+          node.id === id
+            ? { ...node, data: { ...node.data, color: newColor } }
+            : node,
+        );
+        onBlur?.(sanitizeNodes(updated));
+        return updated;
+      });
     },
-  ]);
+    [onBlur, sanitizeNodes],
+  );
 
   const nodeTypes = useMemo(() => ({ colorNode: ColorNode }), []);
 
+  const nodesWithHandlers = useMemo(
+    () =>
+      nodes.map((node) => ({
+        ...node,
+        type: "colorNode",
+        data: {
+          ...node.data,
+          onChangeColor,
+          onChangeLabel,
+        },
+      })),
+    [nodes, onChangeColor, onChangeLabel],
+  );
+
   const onNodesChange: OnNodesChange<Node<ColorNodeData>> = useCallback(
-    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-    [],
+    (changes) => {
+      setNodes((nds) => {
+        const updated = applyNodeChanges(changes, nds); // ✅ résultat utilisé
+        onBlur?.(sanitizeNodes(updated));
+        return updated;
+      });
+    },
+    [onBlur, sanitizeNodes],
   );
 
   const addNewNode = useCallback(() => {
     const id = `node_${Date.now()}`;
-
     const newNode: Node<ColorNodeData> = {
       id,
       type: "colorNode",
@@ -99,22 +138,22 @@ function Moodboard() {
       data: {
         label: `Nœud ${nodes.length + 1}`,
         color: "#ffffff",
-        onChangeColor,
-        onChangeLabel,
       },
     };
-
-    setNodes((nds) => [...nds, newNode]);
-  }, [nodes.length, onChangeColor, onChangeLabel]);
+    setNodes((nds) => {
+      const updated = [...nds, newNode];
+      onBlur?.(updated);
+      return updated;
+    });
+  }, [nodes.length, onChangeColor, onChangeLabel, onBlur]);
 
   return (
-    <div className="M00dBo4Rd">
+    <div className="M00dBo4Rd" ref={innerRef} onKeyDown={oninput}>
       <button onClick={addNewNode} className="add-btn">
         <img src={add} alt="Ajouter" />
       </button>
-
       <ReactFlow
-        nodes={nodes}
+        nodes={nodesWithHandlers}
         onNodesChange={onNodesChange}
         nodeTypes={nodeTypes}
         fitView

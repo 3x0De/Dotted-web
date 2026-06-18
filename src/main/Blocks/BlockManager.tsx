@@ -573,7 +573,14 @@ function Block({
           }
         />
       ) : type === "M00dBo4Rd" ? (
-        <Moodboard />
+        <Moodboard
+          innerRef={editableRef}
+          oninput={
+            gererClavier as (e: React.KeyboardEvent<HTMLElement>) => void
+          }
+          onBlur={handleSauvegardeGlobale}
+          contenu={vraiContenu as Node[]}
+        />
       ) : (
         <div
           ref={editableRef as React.RefObject<HTMLDivElement>}
