@@ -330,6 +330,10 @@ function Block({
   }
 
   function gererClavier(e: React.KeyboardEvent<HTMLDivElement>): void {
+    if (type === "Graph3") {
+      return;
+    }
+
     if (e.key === "Backspace" && editableRef.current?.textContent === "") {
       const selection = window.getSelection();
       const isSelectionCollapsed = selection?.isCollapsed ?? false;
@@ -555,9 +559,9 @@ function Block({
       ) : type === "Graph3" ? (
         <Graphe
           innerRef={editableRef}
-          // oninput={
-          // gererClavier as (e: React.KeyboardEvent<HTMLElement>) => void
-          // }
+          oninput={
+            gererClavier as (e: React.KeyboardEvent<HTMLElement>) => void
+          }
           onBlur={handleSauvegardeGlobale}
           contenu={
             vraiContenu as {
