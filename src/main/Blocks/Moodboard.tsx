@@ -13,30 +13,83 @@ import add from "../../assets/Image/Block logo/Add.svg";
 type ColorNodeData = {
   label: string;
   color?: string;
+  img?: string;
   onChangeColor?: (id: string, color: string) => void;
   onChangeLabel?: (id: string, label: string) => void;
+  onChangeImg?: (id: string, img: string) => void;
 };
 
-// ✅ Callbacks passés via nodeTypes context plutôt que dans data
-// On garde la même structure mais on corrige les bugs
-
 function ColorNode({ id, data }: NodeProps<Node<ColorNodeData>>) {
+  async function uploadImage(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("http://localhost:8000/Image/get", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      console.error("Erreur upload image", response.status);
+      return;
+    }
+
+    const json = await response.json();
+    if (!json.ok || !json.path) {
+      console.error("Réponse serveur image invalide", json);
+      return;
+    }
+
+    const fileName = json.name || json.path.split("/").pop();
+    if (!fileName) {
+      console.error("Impossible de retrouver le nom de fichier image");
+      return;
+    }
+
+    const imageUrl = `http://localhost:8000/Image/charge/${fileName}`;
+    data.onChangeImg?.(id, imageUrl);
+  }
+
   return (
     <div className="Node" style={{ background: data.color || "#ffffff" }}>
-      <div>
-        <input
-          type="text"
-          value={data.label}
-          onChange={(e) => data.onChangeLabel?.(id, e.target.value)}
+      {data.img ? (
+        <img
+          src={`http://localhost:8000/Image/charge/${data.img.split("/").pop()}`}
         />
-      </div>
-      <div>
-        <input
-          type="color"
-          value={data.color || "#ffffff"}
-          onChange={(e) => data.onChangeColor?.(id, e.target.value)}
-        />
-      </div>
+      ) : (
+        <>
+          <div>
+            <input
+              type="text"
+              value={data.label}
+              onChange={(e) => data.onChangeLabel?.(id, e.target.value)}
+            />
+          </div>
+          <div>
+            <input
+              type="color"
+              value={data.color || "#ffffff"}
+              onChange={(e) => data.onChangeColor?.(id, e.target.value)}
+            />
+          </div>
+          {data.label == "" && (
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  uploadImage(e);
+                }}
+              />
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }
@@ -64,6 +117,7 @@ function Moodboard({ innerRef, oninput, onBlur, contenu }: Props) {
         data: {
           label: node.data.label,
           color: node.data.color,
+          img: (node.data as any)?.img,
         },
       })),
     [],
@@ -99,6 +153,21 @@ function Moodboard({ innerRef, oninput, onBlur, contenu }: Props) {
     [onBlur, sanitizeNodes],
   );
 
+  const onChangeImg = useCallback(
+    (id: string, imgUrl: string) => {
+      setNodes((nds) => {
+        const updated = nds.map((node) =>
+          node.id === id
+            ? { ...node, data: { ...node.data, img: imgUrl } }
+            : node,
+        );
+        onBlur?.(sanitizeNodes(updated));
+        return updated;
+      });
+    },
+    [onBlur, sanitizeNodes],
+  );
+
   const nodeTypes = useMemo(() => ({ colorNode: ColorNode }), []);
 
   const nodesWithHandlers = useMemo(
@@ -110,9 +179,10 @@ function Moodboard({ innerRef, oninput, onBlur, contenu }: Props) {
           ...node.data,
           onChangeColor,
           onChangeLabel,
+          onChangeImg,
         },
       })),
-    [nodes, onChangeColor, onChangeLabel],
+    [nodes, onChangeColor, onChangeLabel, onChangeImg],
   );
 
   const onNodesChange: OnNodesChange<Node<ColorNodeData>> = useCallback(
@@ -142,7 +212,7 @@ function Moodboard({ innerRef, oninput, onBlur, contenu }: Props) {
     };
     setNodes((nds) => {
       const updated = [...nds, newNode];
-      onBlur?.(updated);
+      onBlur?.(sanitizeNodes(updated));
       return updated;
     });
   }, [nodes.length, onChangeColor, onChangeLabel, onBlur]);
