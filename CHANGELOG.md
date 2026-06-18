@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.3.2] - 19/06/2026
+
+- Ajout du bloc de Moodboard
+
 ## [0.3.1] - 18/06/2026
 
 - Ajout du bloc de graphe
