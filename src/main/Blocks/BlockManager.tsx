@@ -14,6 +14,7 @@ import Picture from "./Picture";
 import Lien from "./Lien";
 import Tableur from "./Tableur";
 import Graphe from "./Graphe";
+import Moodboard from "./Moodboard";
 import menuKebab from "../../assets/Image/Block logo/kebabMenu.svg";
 import bin from "../../assets/Image/Block logo/bin.svg";
 
@@ -171,6 +172,7 @@ function Block({
     "Li1",
     "Tableur",
     "Graph3",
+    "M00dBo4Rd",
   ];
 
   function Content(e: React.SyntheticEvent<HTMLDivElement>): void {
@@ -570,6 +572,8 @@ function Block({
             }
           }
         />
+      ) : type === "M00dBo4Rd" ? (
+        <Moodboard />
       ) : (
         <div
           ref={editableRef as React.RefObject<HTMLDivElement>}
@@ -680,7 +684,9 @@ function Block({
                                       ? "Li1"
                                       : index === 16
                                         ? "Tableur"
-                                        : "Graph3"}
+                                        : index === 17
+                                          ? "Graph3"
+                                          : "M00dBo4Rd"}
               </li>
             ))}
           </ul>
