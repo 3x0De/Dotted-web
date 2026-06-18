@@ -584,7 +584,15 @@ function Block({
           contenu={vraiContenu as Node[]}
         />
       ) : type === "F1le" ? (
-        <File />
+        <File
+          innerRef={editableRef}
+          oninput={gererClavier}
+          contenu={vraiContenu as string}
+          onUpload={(newContent: string) => {
+            vraiContenuState(newContent);
+            if (onUpdate) onUpdate(blockItem.id, type || "F1le", newContent);
+          }}
+        />
       ) : (
         <div
           ref={editableRef as React.RefObject<HTMLDivElement>}

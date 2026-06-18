@@ -1,0 +1,17 @@
+@use "../../variables.scss" as v;
+
+.F1le {
+  width: 100%;
+  a {
+    gap: 10px;
+    display: flex;
+    width: 100%;
+
+    text-decoration: none;
+
+    p {
+      color: v.$BlueLink;
+      filter: saturate(10);
+    }
+  }
+}

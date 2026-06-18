@@ -29,7 +29,7 @@ function ColorNode({ id, data }: NodeProps<Node<ColorNodeData>>) {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch("http://localhost:8000/Image/get", {
+    const response = await fetch("http://localhost:8000/File/upload", {
       method: "POST",
       body: formData,
     });
@@ -51,7 +51,7 @@ function ColorNode({ id, data }: NodeProps<Node<ColorNodeData>>) {
       return;
     }
 
-    const imageUrl = `http://localhost:8000/Image/charge/${fileName}`;
+    const imageUrl = `http://localhost:8000/File/charge/${fileName}`;
     data.onChangeImg?.(id, imageUrl);
   }
 
@@ -59,7 +59,7 @@ function ColorNode({ id, data }: NodeProps<Node<ColorNodeData>>) {
     <div className="Node" style={{ background: data.color || "#ffffff" }}>
       {data.img ? (
         <img
-          src={`http://localhost:8000/Image/charge/${data.img.split("/").pop()}`}
+          src={`http://localhost:8000/File/charge/${data.img.split("/").pop()}`}
         />
       ) : (
         <>
