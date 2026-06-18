@@ -7,8 +7,8 @@ import {
   type OnNodesChange,
   type OnEdgesChange,
   type OnConnect,
-  type Node, // Importation du type Node
-  type Edge, // Importation du type Edge
+  type Node,
+  type Edge,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import "../../Styles/main/Blocks/Graphe.scss";

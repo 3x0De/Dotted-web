@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useDraggable, useDroppable } from "@dnd-kit/react";
+import type { Node, Edge } from "@xyflow/react";
 import "../../Styles/main/Blocks/BlockManager.scss";
 import type { BlockItem, TypeMenu } from "../Types";
 import Titres from "./Titres";
