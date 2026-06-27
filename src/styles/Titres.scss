@@ -1,0 +1,36 @@
+@use "variables" as v;
+
+.inputText {
+  all: inset;
+  border: none;
+  background: none;
+  outline: none;
+  width: 100%;
+
+  @for $i from 1 to 7 {
+    &.h#{$i} {
+      @include v.HeliosBold;
+      margin: 0.1rem 0;
+      display: block;
+    }
+  }
+
+  &.h1 {
+    font-size: 2em;
+  }
+  &.h2 {
+    font-size: 1.5em;
+  }
+  &.h3 {
+    font-size: 1.17em;
+  }
+  &.h4 {
+    font-size: 1em;
+  }
+  &.h5 {
+    font-size: 0.83em;
+  }
+  &.h6 {
+    font-size: 0.67em;
+  }
+}
