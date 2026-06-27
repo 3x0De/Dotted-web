@@ -1,0 +1,9 @@
+.inputText {
+  all: inset;
+  border: none;
+  background: none;
+  outline: none;
+  width: 100%;
+  -webkit-mask-image: linear-gradient(90deg, black 75%, transparent 100%);
+  mask-image: linear-gradient(90deg, black 75%, transparent 100%);
+}

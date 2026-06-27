@@ -1,12 +1,6 @@
 @use "variables" as v;
 
 .inputText {
-  all: inset;
-  border: none;
-  background: none;
-  outline: none;
-  width: 100%;
-
   @for $i from 1 to 7 {
     &.h#{$i} {
       @include v.HeliosBold;

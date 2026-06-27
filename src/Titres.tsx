@@ -1,9 +1,8 @@
+import { Text } from "./Text";
 import "./styles/Titres.scss";
 
 function Titre({ Size }: { Size: string }) {
-  return (
-    <input type="text" className={`inputText ${Size}`} placeholder="Titre..." />
-  );
+  return <Text placeholder={"Titre..."} ClassName={Size} />;
 }
 
 function H1() {

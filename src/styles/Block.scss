@@ -1,0 +1,19 @@
+@use "variables" as v;
+
+.Block {
+  margin: 0.2rem;
+  display: flex;
+  gap: 2px;
+  width: 100%;
+
+  img {
+    aspect-ratio: auto;
+    height: 1rem;
+    padding: 2px;
+    border-radius: 5px;
+
+    &:hover {
+      background-color: rgba(v.$Groove, 0.2);
+    }
+  }
+}

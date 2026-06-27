@@ -1,16 +1,7 @@
-import Titres from "./Titres";
+import Block from "./Block";
 
 function App() {
-  return (
-    <>
-      <Titres.H1 />
-      <Titres.H2 />
-      <Titres.H3 />
-      <Titres.H4 />
-      <Titres.H5 />
-      <Titres.H6 />
-    </>
-  );
+  return <Block />;
 }
 
 export default App;
