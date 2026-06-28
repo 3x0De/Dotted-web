@@ -1,0 +1,1 @@
+export type MakeState<T> = (e: T) => void;
