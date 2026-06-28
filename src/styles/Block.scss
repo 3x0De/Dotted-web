@@ -3,17 +3,69 @@
 .Block {
   margin: 0.2rem;
   display: flex;
+  align-items: stretch;
   gap: 2px;
   width: 100%;
+  position: relative;
 
-  img {
-    aspect-ratio: auto;
-    height: 1rem;
-    padding: 2px;
+  div:has(img) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 5px;
 
     &:hover {
       background-color: rgba(v.$Groove, 0.2);
+    }
+
+    img {
+      aspect-ratio: auto;
+      height: 1rem;
+      padding: 2px;
+    }
+  }
+}
+
+#Menu {
+  position: fixed;
+  top: 2.5rem;
+  left: 0;
+  height: 15vh;
+  border-radius: 10px;
+  box-shadow:
+    0 10px 16px 0 v.$Smoke,
+    0 6px 20px 0 v.$Smoke;
+  padding: 5px 20px 5px 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  background-color: v.$WhiteBase;
+  z-index: 10;
+
+  ul {
+    // height: 10vh;
+    width: max-content;
+    // background-color: red;
+
+    li {
+      margin: 0 0 10px 0;
+      position: relative;
+      width: 100%;
+      // background-color: green;
+
+      &:hover::after {
+        background-color: rgba(v.$Smoke, 0.4);
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        border-radius: 5px;
+        top: -5px;
+        bottom: -5px;
+        left: -30px;
+        right: -10px;
+        z-index: -1;
+      }
     }
   }
 }
