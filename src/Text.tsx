@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./styles/Texte.scss";
 import type { MakeState } from "./types/Set";
 
@@ -16,6 +16,7 @@ export function Text({
   onKeyDown?: MakeState<React.KeyboardEvent<HTMLInputElement>>;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [focused, setfocused] = useState<boolean>(false);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -26,7 +27,9 @@ export function Text({
   return (
     <input
       ref={inputRef}
-      placeholder={placeholder}
+      placeholder={focused ? placeholder : ""}
+      onFocus={() => setfocused(true)}
+      onBlur={() => setfocused(false)}
       type="text"
       className={`inputText ${ClassName}`}
       value={content}
