@@ -7,70 +7,104 @@ import "./styles/Block.scss";
 import { createPortal } from "react-dom";
 import { type MakeState } from "./types/Set";
 import { STATE, menu, type TYPE } from "./types/menu";
+import type { EditorState, TextBlock } from "./types/Wrapper";
 
 function Block({
-  children: content,
   onChange,
   onKeyDown,
-  type,
+  children: content,
   settype,
+  onAddItem,
+  onRemoveItem,
 }: {
-  children: string;
-  onChange: MakeState<React.ChangeEvent<HTMLInputElement>>;
-  onKeyDown: MakeState<React.KeyboardEvent<HTMLInputElement>>;
-  type: TYPE;
-  settype: MakeState<TYPE>;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>, id: number) => void;
+  onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>, id: number) => void;
+  children: EditorState;
+  settype: MakeState<{ newType: TYPE; targetId: number }>;
+  onAddItem: MakeState<string>;
+  onRemoveItem: MakeState<number>;
 }) {
   const [showMenu, setshowMenu] = useState<boolean>(false);
 
   return (
     <div className="Block">
-      <div>
-        <img src={bin} />
-      </div>
-      <div>
-        <img src={drag} onClick={() => setshowMenu((prev) => !prev)} />
-      </div>
-      <Contenu type={type} onChange={onChange} onKeyDown={onKeyDown}>
-        {content}
-      </Contenu>
-      {showMenu && createPortal(<Menu settype={settype} />, document.body)}
+      {content.type === STATE.col ? (
+        content.content.map((e: EditorState) => {
+          return (
+            <Block
+              key={e.id}
+              onChange={onChange}
+              onKeyDown={onKeyDown}
+              settype={settype}
+              onAddItem={onAddItem}
+              onRemoveItem={onRemoveItem}
+            >
+              {e}
+            </Block>
+          );
+        })
+      ) : (
+        <>
+          <div>
+            <img src={bin} alt="Delete" />
+          </div>
+          <div>
+            <img src={drag} onClick={() => setshowMenu((prev) => !prev)} />
+          </div>
+          <Contenu
+            onChange={(e) => onChange(e, content.id)}
+            onKeyDown={(e) => onKeyDown(e, content.id)}
+          >
+            {content as TextBlock}
+          </Contenu>
+          {showMenu &&
+            createPortal(
+              <Menu
+                leave={() => setshowMenu(false)}
+                settype={(newType: TYPE) =>
+                  settype({ newType, targetId: content.id })
+                }
+              />,
+              document.body,
+            )}
+        </>
+      )}
     </div>
   );
 }
 
 function Contenu({
-  type,
-  children: content,
+  children: contenu,
   onChange,
   onKeyDown,
 }: {
-  type: TYPE;
-  children: string;
+  children: TextBlock;
   onChange: MakeState<React.ChangeEvent<HTMLInputElement>>;
   onKeyDown: MakeState<React.KeyboardEvent<HTMLInputElement>>;
 }) {
-  return type == STATE.h1 ? (
+  const { type, content } = contenu;
+
+  return type === STATE.h1 ? (
     <Titres.H1 onChange={onChange} onKeyDown={onKeyDown}>
       {content}
     </Titres.H1>
-  ) : type == STATE.h2 ? (
+  ) : type === STATE.h2 ? (
     <Titres.H2 onChange={onChange} onKeyDown={onKeyDown}>
       {content}
     </Titres.H2>
-  ) : type == STATE.h3 ? (
+  ) : type === STATE.h3 ? (
     <Titres.H3 onChange={onChange} onKeyDown={onKeyDown}>
       {content}
     </Titres.H3>
-  ) : type == STATE.h4 ? (
+  ) : type === STATE.h4 ? (
     <Titres.H4 onChange={onChange} onKeyDown={onKeyDown}>
       {content}
     </Titres.H4>
-  ) : type == STATE.h5 ? (
+  ) : type === STATE.h5 ? (
     <Titres.H5 onChange={onChange} onKeyDown={onKeyDown}>
       {content}
     </Titres.H5>
-  ) : type == STATE.h6 ? (
+  ) : type === STATE.h6 ? (
     <Titres.H6 onChange={onChange} onKeyDown={onKeyDown}>
       {content}
     </Titres.H6>
@@ -85,10 +119,16 @@ function Contenu({
   );
 }
 
-function Menu({ settype }: { settype: MakeState<TYPE> }) {
+function Menu({
+  settype,
+  leave,
+}: {
+  settype: MakeState<TYPE>;
+  leave?: MakeState<React.MouseEvent<HTMLUListElement>>;
+}) {
   return (
     <div id="Menu">
-      <ul>
+      <ul onMouseLeave={leave}>
         {menu.map(([key, value]) => {
           return (
             <li

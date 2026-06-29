@@ -1,4 +1,5 @@
 export const enum STATE {
+  col = "column",
   h1 = "Titre 1",
   h2 = "Titre 2",
   h3 = "Titre 3",
@@ -7,9 +8,9 @@ export const enum STATE {
   h6 = "Titre 6",
 }
 
-export type TYPE = STATE | null
+export type TYPE = STATE | null;
 
-type MenuEntry = [keyof typeof STATE, STATE];
+type MenuEntry = [Exclude<keyof typeof STATE, "col">, STATE];
 
 export const menu: MenuEntry[] = [
   ["h1", STATE.h1],
