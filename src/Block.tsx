@@ -27,7 +27,7 @@ function Block({
   const [showMenu, setshowMenu] = useState<boolean>(false);
 
   return (
-    <div className="Block">
+    <div className={`Block ${content.type == STATE.col ? "Colonne" : ""}`}>
       {content.type === STATE.col ? (
         content.content.map((e: EditorState) => {
           return (

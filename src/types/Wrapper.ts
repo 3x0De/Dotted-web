@@ -3,13 +3,13 @@ import { STATE, type TYPE } from "./menu";
 export interface ColumnBlock {
   id: number;
   type: STATE.col;
-  content: EditorState[]; // Les colonnes ont des sous-éléments
+  content: EditorState[];
 }
 
 export interface TextBlock {
   id: number;
-  type: Exclude<TYPE, STATE.col>; // h1, h2, h3... ou null
-  content: string; // Les textes ont une chaîne de caractères
+  type: Exclude<TYPE, STATE.col>;
+  content: string;
 }
 
 export type EditorState = ColumnBlock | TextBlock;

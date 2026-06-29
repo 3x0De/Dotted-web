@@ -8,20 +8,40 @@
   width: 100%;
   position: relative;
 
-  div:has(img) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  div {
     border-radius: 5px;
 
-    &:hover {
-      background-color: rgba(v.$Groove, 0.2);
+    &:hover div,
+    &:has(input:focus) div {
+      opacity: 1;
     }
 
-    img {
-      aspect-ratio: auto;
-      height: 1rem;
-      padding: 2px;
+    input {
+      border-radius: 5px;
+      padding: 5px;
+
+      &:hover {
+        background-color: rgba(v.$Groove, 0.2);
+        mask-image: none;
+      }
+    }
+
+    &:has(> img) {
+      opacity: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s ease-in-out;
+
+      &:hover {
+        background-color: rgba(v.$Groove, 0.2);
+      }
+
+      img {
+        aspect-ratio: auto;
+        height: 1rem;
+        padding: 2px;
+      }
     }
   }
 }
@@ -42,15 +62,12 @@
   z-index: 10;
 
   ul {
-    // height: 10vh;
     width: max-content;
-    // background-color: red;
 
     li {
       margin: 0 0 10px 0;
       position: relative;
       width: 100%;
-      // background-color: green;
 
       &:hover::after {
         background-color: rgba(v.$Smoke, 0.4);
@@ -68,4 +85,9 @@
       }
     }
   }
+}
+
+.Colonne {
+  display: flex;
+  flex-direction: column;
 }

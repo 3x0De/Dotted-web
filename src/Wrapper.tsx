@@ -36,7 +36,7 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
       });
 
     case "SET_CONTENT":
-      if (state.type === STATE.col) return state; // Une colonne n'a pas de texte direct
+      if (state.type === STATE.col) return state;
       return { ...state, content: action.payload };
 
     case "CLEAR_TYPE":
@@ -71,7 +71,7 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
       });
 
     case "ADD_ITEM":
-      if (state.type !== STATE.col) return state; // On ne peut ajouter des items que dans une colonne
+      if (state.type !== STATE.col) return state;
       return { ...state, content: [...state.content, action.payload] };
 
     case "REMOVE_ITEM":
@@ -98,7 +98,6 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
 }
 
 function Wrapper() {
-  // Initialisation conforme au type ColumnBlock
   const [state, dispatch] = useReducer(reducer, {
     id: 0,
     type: STATE.col,
@@ -117,7 +116,12 @@ function Wrapper() {
     targetId: number,
   ) => {
     if (e.key === "Backspace") {
-      dispatch({ type: "CLEAR_TYPE", targetId });
+      const target = (state.content as EditorState[]).find(
+        (b) => b.id === targetId,
+      );
+      if (target && target.content === "") {
+        dispatch({ type: "CLEAR_TYPE", targetId });
+      }
     }
   };
 
@@ -128,7 +132,6 @@ function Wrapper() {
       settype={({ newType, targetId }: { newType: TYPE; targetId: number }) =>
         dispatch({ type: "SET_TYPE", payload: newType, targetId })
       }
-      // Changement ici : on passe un nouvel objet d'état vide par défaut à ADD_ITEM
       onAddItem={() =>
         dispatch({
           type: "ADD_ITEM",
