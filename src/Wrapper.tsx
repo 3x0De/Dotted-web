@@ -96,13 +96,6 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
       if (state.type !== STATE.col) return state;
       return { ...state, content: [] };
 
-    case "CLEAR_TYPE":
-      return updateBlock(state, action.targetId, (block) => ({
-        ...block,
-        type: null,
-        content: "",
-      }));
-
     default:
       return state;
   }
@@ -150,9 +143,10 @@ function Wrapper() {
       settype={({ newType, targetId }: { newType: TYPE; targetId: number }) =>
         dispatch({ type: "SET_TYPE", payload: newType, targetId })
       }
-      onAddItem={() =>
+      onAddItem={(targetId: number) =>
         dispatch({
           type: "ADD_ITEM",
+          targetId,
           payload: { id: Math.random(), type: null, content: "" },
         })
       }

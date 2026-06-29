@@ -21,7 +21,7 @@ function Block({
   onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>, id: number) => void;
   children: EditorState;
   settype: MakeState<{ newType: TYPE; targetId: number }>;
-  onAddItem: MakeState<string>;
+  onAddItem: MakeState<number>;
   onRemoveItem: MakeState<number>;
 }) {
   const [showMenu, setshowMenu] = useState<boolean>(false);
