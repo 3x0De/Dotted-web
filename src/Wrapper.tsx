@@ -72,7 +72,18 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
 
     case "ADD_ITEM":
       if (state.type !== STATE.col) return state;
-      return { ...state, content: [...state.content, action.payload] };
+      const idx = (state.content as EditorState[]).findIndex(
+        (b) => b.id === action.targetId,
+      );
+      const insertAt = idx === -1 ? state.content.length : idx + 1;
+      return {
+        ...state,
+        content: [
+          ...state.content.slice(0, insertAt),
+          action.payload,
+          ...state.content.slice(insertAt),
+        ],
+      };
 
     case "REMOVE_ITEM":
       if (state.type !== STATE.col) return state;
@@ -122,6 +133,13 @@ function Wrapper() {
       if (target && target.content === "") {
         dispatch({ type: "CLEAR_TYPE", targetId });
       }
+    }
+    if (e.key === "Enter") {
+      dispatch({
+        type: "ADD_ITEM",
+        targetId,
+        payload: { id: Math.random(), type: null, content: "" },
+      });
     }
   };
 

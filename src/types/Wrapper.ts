@@ -19,6 +19,6 @@ export type EditorAction =
   | { type: "SET_CONTENT"; payload: string }
   | { type: "CLEAR_TYPE"; targetId: number }
   | { type: "HANDLE_CHANGE"; payload: string; targetId: number }
-  | { type: "ADD_ITEM"; payload: EditorState }
+  | { type: "ADD_ITEM"; targetId: number; payload: EditorState }
   | { type: "REMOVE_ITEM"; payload: number }
   | { type: "CLEAR_ITEMS" };
