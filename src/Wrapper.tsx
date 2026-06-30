@@ -6,7 +6,7 @@ import {
   useRef,
 } from "react";
 import { STATE, type TYPE } from "./types/menu";
-import { type EditorState, type EditorAction } from "./types/Wrapper";
+import type { EditorState, EditorAction, ColumnBlock } from "./types/Wrapper";
 
 function updateBlock(
   state: EditorState,
@@ -14,13 +14,13 @@ function updateBlock(
   updater: (b: EditorState) => EditorState,
 ): EditorState {
   if (state.id === targetId) return updater(state);
-  if (state.type === STATE.col) {
+  if (state.type === STATE.col || state.type === STATE.row) {
     return {
       ...state,
       content: (state.content as EditorState[]).map((child) =>
         updateBlock(child, targetId, updater),
       ),
-    };
+    } as EditorState;
   }
   return state;
 }
@@ -29,7 +29,7 @@ function findSiblings(
   state: EditorState,
   targetId: number,
 ): EditorState[] | null {
-  if (state.type !== STATE.col) return null;
+  if (state.type !== STATE.col && state.type !== STATE.row) return null;
   const list = state.content as EditorState[];
   if (list.some((b) => b.id === targetId)) return list;
   for (const child of list) {
@@ -44,15 +44,41 @@ function updateParentList(
   targetId: number,
   updater: (list: EditorState[]) => EditorState[],
 ): EditorState {
-  if (state.type !== STATE.col) return state;
+  if (state.type !== STATE.col && state.type !== STATE.row) return state;
   const list = state.content as EditorState[];
   if (list.some((b) => b.id === targetId)) {
-    return { ...state, content: updater(list) };
+    return { ...state, content: updater(list) } as EditorState;
   }
   return {
     ...state,
     content: list.map((child) => updateParentList(child, targetId, updater)),
-  };
+  } as EditorState;
+}
+
+function collapseEmpty(state: EditorState): EditorState {
+  if (state.type !== STATE.col && state.type !== STATE.row) return state;
+
+  const children = (state.content as EditorState[]).map(collapseEmpty);
+
+  if (state.type === STATE.row) {
+    const alive = children.filter(
+      (b) => b.type === STATE.col && (b.content as EditorState[]).length > 0,
+    );
+
+    if (alive.length === 0) {
+      return { id: state.id, type: null, content: "" };
+    }
+    return { ...state, content: alive } as EditorState;
+  }
+
+  if (children.length === 0 && state.id === 0) {
+    return {
+      ...state,
+      content: [{ id: Math.random(), type: null, content: "" }],
+    } as EditorState;
+  }
+
+  return { ...state, content: children } as EditorState;
 }
 
 function reducer(state: EditorState, action: EditorAction): EditorState {
@@ -60,18 +86,24 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
     case "SET_TYPE":
       return updateBlock(state, action.targetId, (block) => {
         if (action.payload === STATE.col) {
-          return { ...block, type: STATE.col, content: [] };
+          return {
+            id: block.id,
+            type: STATE.col,
+            content: [] as EditorState[],
+          };
         }
-        return {
-          ...block,
-          id: Math.random(),
-          type: action.payload,
-          content: "",
-        };
+        if (action.payload === STATE.row) {
+          return {
+            id: block.id,
+            type: STATE.row,
+            content: [] as ColumnBlock[],
+          };
+        }
+        return { id: Math.random(), type: action.payload, content: "" };
       });
 
     case "SET_CONTENT":
-      if (state.type === STATE.col) return state;
+      if (state.type === STATE.col || state.type === STATE.row) return state;
       return { ...state, content: action.payload };
 
     case "CLEAR_TYPE":
@@ -83,11 +115,12 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
 
     case "HANDLE_CHANGE":
       return updateBlock(state, action.targetId, (block) => {
-        if (block.type === STATE.col) return block;
+        if (block.type === STATE.col || block.type === STATE.row) return block;
 
         const val = action.payload;
         if (val === "" && block.content !== "")
           return { ...block, content: "" };
+
         if (/^#{1,6}\s/.test(val)) {
           if (/^#\s/.test(val))
             return { id: Math.random(), type: STATE.h1, content: "" };
@@ -119,13 +152,12 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
       });
     }
 
-    case "REMOVE_ITEM":
-      return updateParentList(state, action.payload, (siblings) => {
-        const filtered = siblings.filter((b) => b.id !== action.payload);
-        return filtered.length === 0
-          ? [{ id: Math.random(), type: null, content: "" }]
-          : filtered;
-      });
+    case "REMOVE_ITEM": {
+      const afterRemoval = updateParentList(state, action.payload, (siblings) =>
+        siblings.filter((b) => b.id !== action.payload),
+      );
+      return collapseEmpty(afterRemoval);
+    }
 
     case "CLEAR_ITEMS":
       if (state.type !== STATE.col) return state;
@@ -145,10 +177,21 @@ function Wrapper() {
       { id: Math.random(), type: STATE.h1, content: "2" },
       {
         id: Math.random(),
-        type: STATE.col,
+        type: STATE.row,
         content: [
-          { id: Math.random(), type: STATE.h1, content: "1" },
-          { id: Math.random(), type: STATE.h1, content: "2" },
+          {
+            id: Math.random(),
+            type: STATE.col,
+            content: [
+              { id: Math.random(), type: STATE.h1, content: "1" },
+              { id: Math.random(), type: STATE.h1, content: "2" },
+            ],
+          },
+          {
+            id: Math.random(),
+            type: STATE.col,
+            content: [{ id: Math.random(), type: STATE.h1, content: "1" }],
+          },
         ],
       },
     ],
@@ -226,8 +269,8 @@ function Wrapper() {
           payload: { id: Math.random(), type: null, content: "" },
         })
       }
-      onRemoveItem={(index: number) =>
-        dispatch({ type: "REMOVE_ITEM", payload: index })
+      onRemoveItem={(blockId: number) =>
+        dispatch({ type: "REMOVE_ITEM", payload: blockId })
       }
       registerRef={registerRef}
     >

@@ -1,5 +1,11 @@
 import { STATE, type TYPE } from "./menu";
 
+export interface RowBlock {
+  id: number;
+  type: STATE.row;
+  content: ColumnBlock[];
+}
+
 export interface ColumnBlock {
   id: number;
   type: STATE.col;
@@ -8,11 +14,11 @@ export interface ColumnBlock {
 
 export interface TextBlock {
   id: number;
-  type: Exclude<TYPE, STATE.col>;
+  type: Exclude<TYPE, STATE.col | STATE.row>;
   content: string;
 }
 
-export type EditorState = ColumnBlock | TextBlock;
+export type EditorState = RowBlock | ColumnBlock | TextBlock;
 
 export type EditorAction =
   | { type: "SET_TYPE"; payload: TYPE; targetId: number }

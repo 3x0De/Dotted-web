@@ -29,8 +29,10 @@ function Block({
   const [showMenu, setshowMenu] = useState<boolean>(false);
 
   return (
-    <div className={`Block ${content.type == STATE.col ? "Colonne" : ""}`}>
-      {content.type === STATE.col ? (
+    <div
+      className={`Block ${content.type == STATE.col ? "Colonne" : content.type == STATE.row ? "Ligne" : ""}`}
+    >
+      {content.type === STATE.col || content.type === STATE.row ? (
         content.content.map((e: EditorState) => (
           <Block
             key={e.id}
