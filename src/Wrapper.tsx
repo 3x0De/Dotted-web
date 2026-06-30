@@ -162,6 +162,20 @@ function Wrapper() {
         payload: { id: Math.random(), type: null, content: "" },
       });
     }
+
+    if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+      const blocks = state.content as EditorState[];
+      const currentIdx = blocks.findIndex((b) => b.id === targetId);
+      if (currentIdx === -1) return;
+
+      const targetIdx = e.key === "ArrowUp" ? currentIdx - 1 : currentIdx + 1;
+      const neighbor = blocks[targetIdx];
+
+      if (neighbor) {
+        e.preventDefault(); // évite que le curseur bouge dans l'input avant le focus
+        inputRefs.current.get(neighbor.id)?.focus();
+      }
+    }
   };
 
   return (
