@@ -16,6 +16,7 @@ function Block({
   settype,
   onAddItem,
   onRemoveItem,
+  registerRef,
 }: {
   onChange: (e: React.ChangeEvent<HTMLInputElement>, id: number) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>, id: number) => void;
@@ -23,35 +24,36 @@ function Block({
   settype: MakeState<{ newType: TYPE; targetId: number }>;
   onAddItem: MakeState<number>;
   onRemoveItem: MakeState<number>;
+  registerRef: (id: number, el: HTMLInputElement | null) => void;
 }) {
   const [showMenu, setshowMenu] = useState<boolean>(false);
 
   return (
     <div className={`Block ${content.type == STATE.col ? "Colonne" : ""}`}>
       {content.type === STATE.col ? (
-        content.content.map((e: EditorState) => {
-          return (
-            <Block
-              key={e.id}
-              onChange={onChange}
-              onKeyDown={onKeyDown}
-              settype={settype}
-              onAddItem={onAddItem}
-              onRemoveItem={onRemoveItem}
-            >
-              {e}
-            </Block>
-          );
-        })
+        content.content.map((e: EditorState) => (
+          <Block
+            key={e.id}
+            onChange={onChange}
+            onKeyDown={onKeyDown}
+            settype={settype}
+            onAddItem={onAddItem}
+            onRemoveItem={onRemoveItem}
+            registerRef={registerRef}
+          >
+            {e}
+          </Block>
+        ))
       ) : (
         <>
-          <div>
+          <div onClick={() => onRemoveItem(content.id)}>
             <img src={bin} alt="Delete" />
           </div>
-          <div>
-            <img src={drag} onClick={() => setshowMenu((prev) => !prev)} />
+          <div onClick={() => setshowMenu((prev) => !prev)}>
+            <img src={drag} />
           </div>
           <Contenu
+            registerRef={(el) => registerRef(content.id, el)}
             onChange={(e) => onChange(e, content.id)}
             onKeyDown={(e) => onKeyDown(e, content.id)}
           >
@@ -77,43 +79,31 @@ function Contenu({
   children: contenu,
   onChange,
   onKeyDown,
+  registerRef,
 }: {
   children: TextBlock;
   onChange: MakeState<React.ChangeEvent<HTMLInputElement>>;
   onKeyDown: MakeState<React.KeyboardEvent<HTMLInputElement>>;
+  registerRef: (el: HTMLInputElement | null) => void;
 }) {
   const { type, content } = contenu;
 
+  const props = { onChange, onKeyDown, registerRef };
+
   return type === STATE.h1 ? (
-    <Titres.H1 onChange={onChange} onKeyDown={onKeyDown}>
-      {content}
-    </Titres.H1>
+    <Titres.H1 {...props}>{content}</Titres.H1>
   ) : type === STATE.h2 ? (
-    <Titres.H2 onChange={onChange} onKeyDown={onKeyDown}>
-      {content}
-    </Titres.H2>
+    <Titres.H2 {...props}>{content}</Titres.H2>
   ) : type === STATE.h3 ? (
-    <Titres.H3 onChange={onChange} onKeyDown={onKeyDown}>
-      {content}
-    </Titres.H3>
+    <Titres.H3 {...props}>{content}</Titres.H3>
   ) : type === STATE.h4 ? (
-    <Titres.H4 onChange={onChange} onKeyDown={onKeyDown}>
-      {content}
-    </Titres.H4>
+    <Titres.H4 {...props}>{content}</Titres.H4>
   ) : type === STATE.h5 ? (
-    <Titres.H5 onChange={onChange} onKeyDown={onKeyDown}>
-      {content}
-    </Titres.H5>
+    <Titres.H5 {...props}>{content}</Titres.H5>
   ) : type === STATE.h6 ? (
-    <Titres.H6 onChange={onChange} onKeyDown={onKeyDown}>
-      {content}
-    </Titres.H6>
+    <Titres.H6 {...props}>{content}</Titres.H6>
   ) : (
-    <Text
-      placeholder='Appuyez sur "/" pour afficher les commandes'
-      onChange={onChange}
-      onKeyDown={onKeyDown}
-    >
+    <Text placeholder='Appuyez sur "/" pour afficher les commandes' {...props}>
       {content}
     </Text>
   );
@@ -129,19 +119,15 @@ function Menu({
   return (
     <div id="Menu">
       <ul onMouseLeave={leave}>
-        {menu.map(([key, value]) => {
-          return (
-            <li
-              key={key}
-              onClick={() => settype(value)}
-              style={{
-                listStyle: `url('/../src/assets/Img/${key}.svg')`,
-              }}
-            >
-              {value}
-            </li>
-          );
-        })}
+        {menu.map(([key, value]) => (
+          <li
+            key={key}
+            onClick={() => settype(value)}
+            style={{ listStyle: `url('/../src/assets/Img/${key}.svg')` }}
+          >
+            {value}
+          </li>
+        ))}
       </ul>
     </div>
   );

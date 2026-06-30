@@ -1,5 +1,10 @@
 import Block from "./Block";
-import { useReducer, type ChangeEvent, type KeyboardEvent } from "react";
+import {
+  useReducer,
+  type ChangeEvent,
+  type KeyboardEvent,
+  useRef,
+} from "react";
 import { STATE, type TYPE } from "./types/menu";
 import { type EditorState, type EditorAction } from "./types/Wrapper";
 
@@ -87,9 +92,15 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
 
     case "REMOVE_ITEM":
       if (state.type !== STATE.col) return state;
+      const filtered = (state.content as EditorState[]).filter(
+        (b) => b.id !== action.payload,
+      );
       return {
         ...state,
-        content: state.content.filter((_, idx) => idx !== action.payload),
+        content:
+          filtered.length === 0
+            ? [{ id: Math.random(), type: null, content: "" }]
+            : filtered,
       };
 
     case "CLEAR_ITEMS":
@@ -114,19 +125,36 @@ function Wrapper() {
   const handleChange = (e: ChangeEvent<HTMLInputElement>, targetId: number) => {
     dispatch({ type: "HANDLE_CHANGE", payload: e.target.value, targetId });
   };
+  const inputRefs = useRef<Map<number, HTMLInputElement>>(new Map());
+
+  const registerRef = (id: number, el: HTMLInputElement | null) => {
+    if (el) inputRefs.current.set(id, el);
+    else inputRefs.current.delete(id);
+  };
 
   const handleKeyDown = (
     e: KeyboardEvent<HTMLInputElement>,
     targetId: number,
   ) => {
     if (e.key === "Backspace") {
-      const target = (state.content as EditorState[]).find(
-        (b) => b.id === targetId,
-      );
+      const blocks = state.content as EditorState[];
+      const target = blocks.find((b) => b.id === targetId);
+
       if (target && target.content === "") {
-        dispatch({ type: "CLEAR_TYPE", targetId });
+        const currentIdx = blocks.findIndex((b) => b.id === targetId);
+        const prevBlock = currentIdx > 0 ? blocks[currentIdx - 1] : null;
+
+        if (target.type == null) {
+          dispatch({ type: "REMOVE_ITEM", payload: targetId });
+          if (prevBlock !== null) {
+            setTimeout(() => inputRefs.current.get(prevBlock.id)?.focus(), 0);
+          }
+        } else {
+          dispatch({ type: "CLEAR_TYPE", targetId });
+        }
       }
     }
+
     if (e.key === "Enter") {
       dispatch({
         type: "ADD_ITEM",
@@ -153,6 +181,7 @@ function Wrapper() {
       onRemoveItem={(index: number) =>
         dispatch({ type: "REMOVE_ITEM", payload: index })
       }
+      registerRef={registerRef}
     >
       {state}
     </Block>

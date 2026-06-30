@@ -8,12 +8,14 @@ export function Text({
   children: content = "",
   onChange,
   onKeyDown,
+  registerRef,
 }: {
   placeholder?: string;
   ClassName?: string;
   children: string;
   onChange: MakeState<React.ChangeEvent<HTMLInputElement>>;
   onKeyDown?: MakeState<React.KeyboardEvent<HTMLInputElement>>;
+  registerRef?: (el: HTMLInputElement | null) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [focused, setfocused] = useState<boolean>(false);
@@ -26,7 +28,10 @@ export function Text({
 
   return (
     <input
-      ref={inputRef}
+      ref={(el) => {
+        inputRef.current = el;
+        registerRef?.(el);
+      }}
       placeholder={focused ? placeholder : ""}
       onFocus={() => setfocused(true)}
       onBlur={() => setfocused(false)}
