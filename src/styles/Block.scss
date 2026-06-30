@@ -11,8 +11,8 @@
   div {
     border-radius: 5px;
 
-    &:hover div,
-    &:has(input:focus) div {
+    &:hover > div,
+    &:has(> input:focus) div {
       opacity: 1;
     }
 

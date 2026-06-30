@@ -25,6 +25,36 @@ function updateBlock(
   return state;
 }
 
+function findSiblings(
+  state: EditorState,
+  targetId: number,
+): EditorState[] | null {
+  if (state.type !== STATE.col) return null;
+  const list = state.content as EditorState[];
+  if (list.some((b) => b.id === targetId)) return list;
+  for (const child of list) {
+    const found = findSiblings(child, targetId);
+    if (found) return found;
+  }
+  return null;
+}
+
+function updateParentList(
+  state: EditorState,
+  targetId: number,
+  updater: (list: EditorState[]) => EditorState[],
+): EditorState {
+  if (state.type !== STATE.col) return state;
+  const list = state.content as EditorState[];
+  if (list.some((b) => b.id === targetId)) {
+    return { ...state, content: updater(list) };
+  }
+  return {
+    ...state,
+    content: list.map((child) => updateParentList(child, targetId, updater)),
+  };
+}
+
 function reducer(state: EditorState, action: EditorAction): EditorState {
   switch (action.type) {
     case "SET_TYPE":
@@ -75,33 +105,27 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
         return { ...block, content: val };
       });
 
-    case "ADD_ITEM":
-      if (state.type !== STATE.col) return state;
-      const idx = (state.content as EditorState[]).findIndex(
-        (b) => b.id === action.targetId,
-      );
-      const insertAt = idx === -1 ? state.content.length : idx + 1;
-      return {
-        ...state,
-        content: [
-          ...state.content.slice(0, insertAt),
+    case "ADD_ITEM": {
+      const list = findSiblings(state, action.targetId);
+      if (!list) return state;
+      return updateParentList(state, action.targetId, (siblings) => {
+        const idx = siblings.findIndex((b) => b.id === action.targetId);
+        const insertAt = idx === -1 ? siblings.length : idx + 1;
+        return [
+          ...siblings.slice(0, insertAt),
           action.payload,
-          ...state.content.slice(insertAt),
-        ],
-      };
+          ...siblings.slice(insertAt),
+        ];
+      });
+    }
 
     case "REMOVE_ITEM":
-      if (state.type !== STATE.col) return state;
-      const filtered = (state.content as EditorState[]).filter(
-        (b) => b.id !== action.payload,
-      );
-      return {
-        ...state,
-        content:
-          filtered.length === 0
-            ? [{ id: Math.random(), type: null, content: "" }]
-            : filtered,
-      };
+      return updateParentList(state, action.payload, (siblings) => {
+        const filtered = siblings.filter((b) => b.id !== action.payload);
+        return filtered.length === 0
+          ? [{ id: Math.random(), type: null, content: "" }]
+          : filtered;
+      });
 
     case "CLEAR_ITEMS":
       if (state.type !== STATE.col) return state;
@@ -117,8 +141,16 @@ function Wrapper() {
     id: 0,
     type: STATE.col,
     content: [
-      { id: Math.random(), type: STATE.h1, content: "" },
-      { id: Math.random(), type: STATE.h1, content: "fds" },
+      { id: Math.random(), type: STATE.h1, content: "1" },
+      { id: Math.random(), type: STATE.h1, content: "2" },
+      {
+        id: Math.random(),
+        type: STATE.col,
+        content: [
+          { id: Math.random(), type: STATE.h1, content: "1" },
+          { id: Math.random(), type: STATE.h1, content: "2" },
+        ],
+      },
     ],
   });
 
@@ -137,7 +169,8 @@ function Wrapper() {
     targetId: number,
   ) => {
     if (e.key === "Backspace") {
-      const blocks = state.content as EditorState[];
+      const blocks = findSiblings(state, targetId);
+      if (!blocks) return;
       const target = blocks.find((b) => b.id === targetId);
 
       if (target && target.content === "") {
@@ -164,7 +197,8 @@ function Wrapper() {
     }
 
     if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-      const blocks = state.content as EditorState[];
+      const blocks = findSiblings(state, targetId);
+      if (!blocks) return;
       const currentIdx = blocks.findIndex((b) => b.id === targetId);
       if (currentIdx === -1) return;
 
@@ -172,7 +206,7 @@ function Wrapper() {
       const neighbor = blocks[targetIdx];
 
       if (neighbor) {
-        e.preventDefault(); // évite que le curseur bouge dans l'input avant le focus
+        e.preventDefault();
         inputRefs.current.get(neighbor.id)?.focus();
       }
     }
