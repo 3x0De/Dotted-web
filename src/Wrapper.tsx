@@ -26,7 +26,7 @@ function updateBlock(
   return state;
 }
 
-function findSiblings(
+export function findSiblings(
   state: EditorState,
   targetId: number,
 ): EditorState[] | null {
@@ -294,34 +294,8 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
   }
 }
 
-function Wrapper() {
-  const [state, dispatch] = useReducer(reducer, {
-    id: 0,
-    type: STATE.col,
-    content: [
-      { id: Math.random(), type: STATE.h1, content: "1" },
-      { id: Math.random(), type: STATE.h1, content: "2" },
-      {
-        id: Math.random(),
-        type: STATE.row,
-        content: [
-          {
-            id: Math.random(),
-            type: STATE.col,
-            content: [
-              { id: Math.random(), type: STATE.h1, content: "1" },
-              { id: Math.random(), type: STATE.h1, content: "2" },
-            ],
-          },
-          {
-            id: Math.random(),
-            type: STATE.col,
-            content: [{ id: Math.random(), type: STATE.h1, content: "1" }],
-          },
-        ],
-      },
-    ],
-  });
+function Wrapper({ init }: { init: EditorState }) {
+  const [state, dispatch] = useReducer(reducer, init);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>, targetId: number) => {
     dispatch({ type: "HANDLE_CHANGE", payload: e.target.value, targetId });

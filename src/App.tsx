@@ -1,7 +1,7 @@
-import Wrapper from "./Wrapper";
+import Page from "./Page";
 
 function App() {
-  return <Wrapper />;
+  return <Page />;
 }
 
 export default App;
