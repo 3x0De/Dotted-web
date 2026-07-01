@@ -7,6 +7,7 @@ import {
 } from "react";
 import { STATE, type TYPE } from "./types/menu";
 import type { EditorState, EditorAction, ColumnBlock } from "./types/Wrapper";
+import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
 
 function updateBlock(
   state: EditorState,
@@ -79,6 +80,104 @@ function collapseEmpty(state: EditorState): EditorState {
   }
 
   return { ...state, content: children } as EditorState;
+}
+
+function removeBlock(
+  state: EditorState,
+  targetId: number,
+): {
+  tree: EditorState;
+  removed: EditorState | null;
+} {
+  if (state.type !== STATE.col && state.type !== STATE.row) {
+    return {
+      tree: state,
+      removed: null,
+    };
+  }
+
+  let removed: EditorState | null = null;
+
+  const newChildren: EditorState[] = [];
+
+  for (const child of state.content as EditorState[]) {
+    if (child.id === targetId) {
+      removed = child;
+      continue;
+    }
+
+    const result = removeBlock(child, targetId);
+
+    if (result.removed) {
+      removed = result.removed;
+    }
+
+    newChildren.push(result.tree);
+  }
+
+  return {
+    tree: {
+      ...state,
+      content: newChildren,
+    },
+    removed,
+  } as {
+    tree: EditorState;
+    removed: EditorState | null;
+  };
+}
+
+function insertBlock(
+  state: EditorState,
+  parentId: number,
+  block: EditorState,
+): EditorState {
+  if (
+    state.id === parentId &&
+    (state.type === STATE.col || state.type === STATE.row)
+  ) {
+    return {
+      ...state,
+      content: [...(state.content as EditorState[]), block],
+    } as EditorState;
+  }
+
+  if (state.type === STATE.col || state.type === STATE.row) {
+    return {
+      ...state,
+      content: (state.content as EditorState[]).map((child) =>
+        insertBlock(child, parentId, block),
+      ),
+    } as EditorState;
+  }
+
+  return state;
+}
+
+function findNode(state: EditorState, targetId: number): EditorState | null {
+  if (state.id === targetId) return state;
+  if (state.type === STATE.col || state.type === STATE.row) {
+    for (const child of state.content as EditorState[]) {
+      const found = findNode(child, targetId);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+function wrapInColumns(
+  state: EditorState,
+  targetId: number,
+  moved: EditorState,
+): EditorState {
+  return updateBlock(state, targetId, (target) => ({
+    id: Math.random(),
+    type: STATE.row,
+    content: [
+      { id: Math.random(), type: STATE.col, content: [target] },
+      { id: Math.random(), type: STATE.col, content: [moved] },
+    ],
+  }));
 }
 
 function reducer(state: EditorState, action: EditorAction): EditorState {
@@ -162,6 +261,33 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
     case "CLEAR_ITEMS":
       if (state.type !== STATE.col) return state;
       return { ...state, content: [] };
+
+    case "MOVE_BLOCK": {
+      if (action.sourceId === action.targetId) return state;
+
+      const { tree, removed } = removeBlock(state, action.sourceId);
+      if (!removed) return state;
+
+      const targetNode = findNode(tree, action.targetId);
+      if (!targetNode) return state;
+
+      let result: EditorState;
+
+      if (targetNode.type === STATE.row) {
+        const newCol: EditorState = {
+          id: Math.random(),
+          type: STATE.col,
+          content: [removed],
+        };
+        result = insertBlock(tree, action.targetId, newCol);
+      } else if (targetNode.type === STATE.col) {
+        result = insertBlock(tree, action.targetId, removed);
+      } else {
+        result = wrapInColumns(tree, action.targetId, removed);
+      }
+
+      return collapseEmpty(result);
+    }
 
     default:
       return state;
@@ -256,26 +382,41 @@ function Wrapper() {
   };
 
   return (
-    <Block
-      onChange={handleChange}
-      onKeyDown={handleKeyDown}
-      settype={({ newType, targetId }: { newType: TYPE; targetId: number }) =>
-        dispatch({ type: "SET_TYPE", payload: newType, targetId })
-      }
-      onAddItem={(targetId: number) =>
+    <DragDropProvider
+      onDragEnd={(e: DragEndEvent) => {
+        const sourceId = e.operation.source?.data.blockId;
+        const targetId = e.operation.target?.data.blockId;
+
+        if (!targetId) return;
+
         dispatch({
-          type: "ADD_ITEM",
+          type: "MOVE_BLOCK",
+          sourceId,
           targetId,
-          payload: { id: Math.random(), type: null, content: "" },
-        })
-      }
-      onRemoveItem={(blockId: number) =>
-        dispatch({ type: "REMOVE_ITEM", payload: blockId })
-      }
-      registerRef={registerRef}
+        });
+      }}
     >
-      {state}
-    </Block>
+      <Block
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        settype={({ newType, targetId }: { newType: TYPE; targetId: number }) =>
+          dispatch({ type: "SET_TYPE", payload: newType, targetId })
+        }
+        onAddItem={(targetId: number) =>
+          dispatch({
+            type: "ADD_ITEM",
+            targetId,
+            payload: { id: Math.random(), type: null, content: "" },
+          })
+        }
+        onRemoveItem={(blockId: number) =>
+          dispatch({ type: "REMOVE_ITEM", payload: blockId })
+        }
+        registerRef={registerRef}
+      >
+        {state}
+      </Block>
+    </DragDropProvider>
   );
 }
 

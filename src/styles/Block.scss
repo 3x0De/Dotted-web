@@ -33,6 +33,10 @@
       justify-content: center;
       transition: opacity 0.2s ease-in-out;
 
+      &:nth-child(2) {
+        cursor: pointer;
+      }
+
       &:hover {
         background-color: rgba(v.$Groove, 0.2);
       }
@@ -43,6 +47,18 @@
         padding: 2px;
       }
     }
+  }
+
+  &.dragging {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  &.drag-over {
+    border-top: 3px solid v.$BlueLink;
+    background-color: rgba(v.$BlueLink, 0.5);
+    background-color: rgba(v.$BlueLink, 0.05);
+    border-radius: 0 0 5px 5px;
   }
 }
 
