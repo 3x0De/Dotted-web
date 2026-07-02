@@ -44,6 +44,8 @@ function Page() {
 }
 
 function Header() {
+  const [titre, settitre] = useState<string>("");
+
   return (
     <header>
       <div
@@ -54,8 +56,15 @@ function Header() {
           } as React.CSSProperties
         }
       />
-      <input id="Titre" type="text" placeholder="Nouvelle page..." />
+      <input
+        id="Titre"
+        type="text"
+        placeholder="Nouvelle page..."
+        value={titre}
+        onChange={(e) => settitre(e.currentTarget.value)}
+      />
       <Categories />
+      <Path titre={titre} />
       <div
         id="Icon"
         style={
@@ -65,6 +74,31 @@ function Header() {
         }
       />
     </header>
+  );
+}
+
+function Path({ titre }: { titre: string }) {
+  const path = [
+    { nom: "a", path: "google.com" },
+    { nom: "b", path: "google.com" },
+    { nom: "", path: "https://google.com" },
+  ];
+
+  const displayedPath = path.map((el, idx) =>
+    idx === path.length - 1 ? { ...el, nom: titre } : el,
+  );
+
+  return (
+    <p>
+      {displayedPath.map((el, idx) => {
+        return (
+          <>
+            <a href={el.path}>{el.nom}</a>
+            {idx != path.length - 1 ? "/" : ""}
+          </>
+        );
+      })}
+    </p>
   );
 }
 

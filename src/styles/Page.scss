@@ -110,9 +110,32 @@
         }
       }
     }
+
+    p {
+      position: absolute;
+      left: 20px;
+      top: 0;
+
+      > * {
+        @include v.Rundeck;
+      }
+
+      a {
+        letter-spacing: 2px;
+        color: v.$Void;
+        text-decoration: none;
+        border-radius: 4px;
+        padding: 1px;
+        transition: background 0.3s ease-in;
+
+        &:hover {
+          background: rgba(v.$Groove, 0.2);
+        }
+      }
+    }
   }
 
-  > .Block {
+  #Wrapper {
     width: 90%;
   }
 }
