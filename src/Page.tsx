@@ -1,7 +1,7 @@
 import { STATE } from "./types/menu";
 import Wrapper from "./Wrapper";
 import "./styles/Page.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Categories } from "./types/Categories";
 
 function Page() {
@@ -45,6 +45,10 @@ function Page() {
 
 function Header() {
   const [titre, settitre] = useState<string>("");
+
+  useEffect(() => {
+    document.title = titre == "" ? "Dotted" : `${titre} | Dotted`;
+  }, [titre]);
 
   return (
     <header>
