@@ -22,6 +22,41 @@
       height: 25vh;
       width: 100%;
       position: relative;
+
+      &:hover {
+        background:
+          linear-gradient(0deg, v.$WhiteBase 1%, transparent),
+          url(var(--Icon-Image)) center / cover no-repeat;
+        background-color: rgba(v.$Smoke, 0.4);
+        background-blend-mode: multiply;
+
+        &::after {
+          background:
+            linear-gradient(0deg, v.$WhiteBase 1%, transparent),
+            url("src/assets/Img/Change.svg") left / contain no-repeat;
+          content: "";
+          height: 100%;
+          width: 100%;
+          display: block;
+          transform: rotateY(180deg);
+        }
+      }
+
+      input {
+        position: absolute;
+        position: absolute;
+        right: 5px;
+        background-color: v.$WhiteBase;
+        z-index: 10;
+        height: min-content;
+        padding: 5px;
+        margin: 5px;
+        border-radius: 5px;
+
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
     }
 
     #Icon {

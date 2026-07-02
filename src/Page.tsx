@@ -45,6 +45,7 @@ function Page() {
 
 function Header() {
   const [titre, settitre] = useState<string>("");
+  const [afficheBanniere, setafficheBanniere] = useState<boolean>(false);
 
   useEffect(() => {
     document.title = titre == "" ? "Dotted" : `${titre} | Dotted`;
@@ -59,7 +60,12 @@ function Header() {
             "--Baniere-Image": `url('/Icons/logo_max.svg')`,
           } as React.CSSProperties
         }
-      />
+        onClick={() => setafficheBanniere((e) => !e)}
+      >
+        {afficheBanniere && (
+          <input onClick={(e) => e.stopPropagation()} type="file" />
+        )}
+      </div>
       <input
         id="Titre"
         type="text"
