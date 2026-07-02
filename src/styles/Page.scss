@@ -1,0 +1,58 @@
+@use "variables" as v;
+
+#Page {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    height: min-content;
+
+    #Banniere {
+      background:
+        linear-gradient(0deg, v.$WhiteBase 1%, transparent),
+        var(--Baniere-Image) center / cover no-repeat;
+      height: 25vh;
+      width: 100%;
+      position: relative;
+    }
+
+    #Icon {
+      background: var(--Icon-Image) center / cover no-repeat;
+      height: 15vh;
+      aspect-ratio: 1;
+      position: absolute;
+      left: 5%;
+      top: 15vh;
+      border-radius: 5px;
+      transition: all 0.1s ease-in-out;
+    }
+
+    #Titre {
+      margin-top: 5vh;
+      width: 90%;
+      align-self: center;
+
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 3em;
+
+      &,
+      &::placeholder {
+        @include v.Rundeck;
+      }
+    }
+  }
+
+  > .Block {
+    width: 90%;
+  }
+}
