@@ -1,7 +1,6 @@
 import { STATE } from "./types/menu";
 import Wrapper from "./Wrapper";
 import "./styles/Page.scss";
-import baniere from "../public/Icons/logo_max.svg";
 
 function Page() {
   return (
@@ -52,7 +51,8 @@ function Header() {
             "--Baniere-Image": `url('/Icons/logo_max.svg')`,
           } as React.CSSProperties
         }
-      ></div>
+      />
+      <input id="Titre" type="text" placeholder="Nouvelle page..." />
       <div
         id="Icon"
         style={
@@ -60,8 +60,7 @@ function Header() {
             "--Icon-Image": `url('/Icons/logo_mini.svg')`,
           } as React.CSSProperties
         }
-      ></div>
-      <input id="Titre" type="text" placeholder="Nouvelle page..." />
+      />
     </header>
   );
 }

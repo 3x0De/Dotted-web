@@ -356,41 +356,47 @@ function Wrapper({ init }: { init: EditorState }) {
   };
 
   return (
-    <DragDropProvider
-      onDragEnd={(e: DragEndEvent) => {
-        const sourceId = e.operation.source?.data.blockId;
-        const targetId = e.operation.target?.data.blockId;
+    <div id="Wrapper">
+      <DragDropProvider
+        onDragEnd={(e: DragEndEvent) => {
+          const sourceId = e.operation.source?.data.blockId;
+          const targetId = e.operation.target?.data.blockId;
 
-        if (!targetId) return;
+          if (!targetId) return;
 
-        dispatch({
-          type: "MOVE_BLOCK",
-          sourceId,
-          targetId,
-        });
-      }}
-    >
-      <Block
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        settype={({ newType, targetId }: { newType: TYPE; targetId: number }) =>
-          dispatch({ type: "SET_TYPE", payload: newType, targetId })
-        }
-        onAddItem={(targetId: number) =>
           dispatch({
-            type: "ADD_ITEM",
+            type: "MOVE_BLOCK",
+            sourceId,
             targetId,
-            payload: { id: Math.random(), type: null, content: "" },
-          })
-        }
-        onRemoveItem={(blockId: number) =>
-          dispatch({ type: "REMOVE_ITEM", payload: blockId })
-        }
-        registerRef={registerRef}
+          });
+        }}
       >
-        {state}
-      </Block>
-    </DragDropProvider>
+        <Block
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          settype={({
+            newType,
+            targetId,
+          }: {
+            newType: TYPE;
+            targetId: number;
+          }) => dispatch({ type: "SET_TYPE", payload: newType, targetId })}
+          onAddItem={(targetId: number) =>
+            dispatch({
+              type: "ADD_ITEM",
+              targetId,
+              payload: { id: Math.random(), type: null, content: "" },
+            })
+          }
+          onRemoveItem={(blockId: number) =>
+            dispatch({ type: "REMOVE_ITEM", payload: blockId })
+          }
+          registerRef={registerRef}
+        >
+          {state}
+        </Block>
+      </DragDropProvider>
+    </div>
   );
 }
 

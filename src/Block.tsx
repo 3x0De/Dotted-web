@@ -4,7 +4,6 @@ import { Text } from "./Text";
 import bin from "./assets/Img/bin.svg";
 import drag from "./assets/Img/drag.svg";
 import "./styles/Block.scss";
-import { createPortal } from "react-dom";
 import { type MakeState } from "./types/Set";
 import { STATE, menu, type TYPE } from "./types/menu";
 import type { EditorState, TextBlock } from "./types/Wrapper";
@@ -101,16 +100,14 @@ const Block = forwardRef<HTMLDivElement, BlockProps>(
             >
               {content as TextBlock}
             </Contenu>
-            {showMenu &&
-              createPortal(
-                <Menu
-                  leave={() => setshowMenu(false)}
-                  settype={(newType: TYPE) =>
-                    settype({ newType, targetId: content.id })
-                  }
-                />,
-                document.body,
-              )}
+            {showMenu && (
+              <Menu
+                leave={() => setshowMenu(false)}
+                settype={(newType: TYPE) =>
+                  settype({ newType, targetId: content.id })
+                }
+              />
+            )}
           </>
         )}
       </div>
