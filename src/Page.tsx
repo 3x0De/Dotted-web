@@ -1,6 +1,8 @@
 import { STATE } from "./types/menu";
 import Wrapper from "./Wrapper";
 import "./styles/Page.scss";
+import { useState } from "react";
+import type { Categories } from "./types/Categories";
 
 function Page() {
   return (
@@ -53,6 +55,7 @@ function Header() {
         }
       />
       <input id="Titre" type="text" placeholder="Nouvelle page..." />
+      <Categories />
       <div
         id="Icon"
         style={
@@ -62,6 +65,56 @@ function Header() {
         }
       />
     </header>
+  );
+}
+
+function Categories() {
+  const [categories, setcategories] = useState<Categories>([
+    {
+      icon: "/Icons/logo_mini.svg",
+      categorie: "Categorie1",
+      type: "Texte",
+      value: "ACAB",
+    },
+    {
+      icon: "/Icons/logo_mini.svg",
+      categorie: "Categorie2",
+      type: "Texte",
+      value: "",
+    },
+  ]);
+
+  return (
+    <table>
+      <tbody>
+        {categories.map((el) => {
+          return (
+            <tr key={el.categorie}>
+              <td>
+                <img src={el.icon} />
+              </td>
+              <td>{el.categorie}</td>
+              <td>
+                <input
+                  type={el.type}
+                  value={el.value}
+                  placeholder={`${el.type}...`}
+                  onChange={(e) =>
+                    setcategories((prev) =>
+                      prev.map((elt) =>
+                        elt.categorie == el.categorie
+                          ? { ...el, value: e.target.value }
+                          : elt,
+                      ),
+                    )
+                  }
+                />
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
   );
 }
 

@@ -49,6 +49,67 @@
         @include v.Rundeck;
       }
     }
+
+    table {
+      align-self: flex-start;
+      border-collapse: collapse;
+      width: 40%;
+      margin: 5vh 0 5vh 10%;
+
+      tr {
+        $BorderSize: 2px;
+        border-top: $BorderSize solid v.$Void;
+        &:last-child {
+          border-bottom: $BorderSize solid v.$Void;
+        }
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        td {
+          &:nth-child(1) {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 3rem;
+            aspect-ratio: 1;
+
+            img {
+              width: 1.5rem;
+              aspect-ratio: auto;
+            }
+          }
+
+          &:nth-child(2) {
+            font-size: 1.5em;
+            @include v.Rundeck;
+
+            &:first-letter {
+              @include v.Nove;
+              text-transform: capitalize;
+            }
+          }
+
+          &:nth-child(3) {
+            width: 30%;
+
+            input {
+              width: 100%;
+              border: none;
+              background: transparent;
+              outline: none;
+              font-size: 1.5em;
+
+              &,
+              &::placeholder {
+                @include v.Rundeck;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   > .Block {
