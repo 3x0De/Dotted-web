@@ -1,0 +1,50 @@
+@use "variables" as v;
+
+nav {
+  left: 100%;
+  top: 0;
+  margin-left: 5px;
+  border-radius: 5px;
+  position: absolute;
+  background-color: v.$WhiteBase;
+  height: 15vh;
+  overflow: scroll;
+
+  box-shadow:
+    0 10px 16px 0 v.$Smoke,
+    0 6px 20px 0 v.$Smoke;
+
+  img {
+    width: 1rem;
+    aspect-ratio: 1;
+  }
+
+  div {
+    h1 {
+      text-align: center;
+      @include v.Nove;
+    }
+
+    div img {
+      width: 1rem;
+      aspect-ratio: 1;
+      border-radius: 3px;
+
+      &:hover {
+        background-color: rgba(v.$Smoke, 0.4);
+      }
+    }
+  }
+
+  .bin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 2px 0;
+
+    &:hover {
+      background-color: rgba(v.$Smoke, 0.4);
+    }
+  }
+}

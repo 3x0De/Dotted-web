@@ -68,6 +68,20 @@
       top: 10vh;
       border-radius: 5px;
       transition: all 0.1s ease-in-out;
+
+      &:hover {
+        background: url(var(--Icon-Image)) center / cover no-repeat;
+        background-color: rgba(v.$Smoke, 0.4);
+        background-blend-mode: multiply;
+
+        &::before {
+          background: url("src/assets/Img/Change.svg") center / cover no-repeat;
+          content: "";
+          height: 100%;
+          width: 100%;
+          display: block;
+        }
+      }
     }
 
     #Titre {

@@ -3,6 +3,7 @@ import Wrapper from "./Wrapper";
 import "./styles/Page.scss";
 import { useEffect, useState } from "react";
 import type { Categories } from "./types/Categories";
+import MenuIcons from "./MenuIcons";
 
 function Page() {
   return (
@@ -46,6 +47,8 @@ function Page() {
 function Header() {
   const [titre, settitre] = useState<string>("");
   const [afficheBanniere, setafficheBanniere] = useState<boolean>(false);
+  const [afficheIcons, setafficheIcons] = useState<boolean>(false);
+  const [iconPath, seticonPath] = useState<string | undefined>();
 
   useEffect(() => {
     document.title = titre == "" ? "Dotted" : `${titre} | Dotted`;
@@ -79,10 +82,14 @@ function Header() {
         id="Icon"
         style={
           {
-            "--Icon-Image": `url('/Icons/logo_mini.svg')`,
+            "--Icon-Image": `url(${iconPath ? iconPath : "/Icons/logo_mini.svg"})`,
           } as React.CSSProperties
         }
-      />
+        onClick={() => setafficheIcons((e) => !e)}
+        onMouseLeave={() => setafficheIcons(false)}
+      >
+        {afficheIcons && <MenuIcons seticonPath={seticonPath} />}
+      </div>
     </header>
   );
 }
