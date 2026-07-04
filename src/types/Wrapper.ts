@@ -42,6 +42,8 @@ export type EditorAction =
       payload: string;
       targetId: number;
       itemId?: number;
+      itemState?: boolean;
+      isCheckbox?: boolean;
     }
   | { type: "ADD_ITEM"; targetId: number; payload: EditorState }
   | { type: "ADD_LIST_ITEM"; blockId: number; afterId: number }

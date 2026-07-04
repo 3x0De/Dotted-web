@@ -1,3 +1,60 @@
+@use "variables" as v;
+
 .Liste {
   width: 100%;
+
+  &:is(div) {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    .li {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+
+      .checkbox {
+        height: min-content;
+        width: min-content;
+        border-radius: 3px;
+        border: 1px solid v.$Smoke;
+        background-color: v.$Groove;
+        position: relative;
+
+        &:hover {
+          filter: saturate(20);
+        }
+
+        &:has(input:checked) {
+          background-color: v.$BlueLink;
+
+          &::after {
+            content: "";
+          }
+        }
+
+        input {
+          cursor: pointer;
+          opacity: 0;
+        }
+
+        &::after {
+          height: 70%;
+          width: 30%;
+          border: solid v.$WhiteBase;
+          border-width: 0 5px 5px 0;
+          position: absolute;
+          left: 20%;
+          top: -10%;
+          rotate: 45deg;
+          pointer-events: none;
+        }
+      }
+
+      &:has(input[type="checkbox"]:checked) input[type="text"] {
+        text-decoration: line-through;
+        color: v.$Smoke;
+      }
+    }
+  }
 }

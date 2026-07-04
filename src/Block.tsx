@@ -202,6 +202,23 @@ function Contenu({
     >
       {content}
     </Listes.Ol>
+  ) : type === STATE.todo ? (
+    <Listes.Todo
+      id={id}
+      onChange={(e, id, itemId) => onChange(e, id, itemId)}
+      onKeyDown={(e, itemId) => onKeyDown(e, id, itemId)}
+      registerRef={(_, el) => registerRef(el)}
+      onAddItem={(afterId: number) => onAddListItem?.(id, afterId)}
+      onRemoveItem={(blockId: number, itemId: number) =>
+        onRemoveListItem?.(blockId, itemId)
+      }
+    >
+      {content.map((item) => ({
+        Id: item.Id,
+        contenu: item.contenu,
+        state: (item as any).state ?? false,
+      }))}
+    </Listes.Todo>
   ) : (
     <Text placeholder='Appuyez sur "/" pour afficher les commandes' {...props}>
       {content as string}

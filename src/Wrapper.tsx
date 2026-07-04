@@ -13,6 +13,7 @@ import type {
   TextBlock,
 } from "./types/Wrapper";
 import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
+import type { Listede, TodoListItem } from "./types/Liste";
 
 function updateBlock(
   state: EditorState,
@@ -216,7 +217,7 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
           return {
             id: block.id,
             type: action.payload,
-            content: [{ Id: Math.random(), contenu: "" }],
+            content: [{ Id: Math.random(), contenu: "", state: false }],
           };
         }
 
@@ -244,13 +245,20 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
               el.Id === action.itemId ? { ...el, contenu: action.payload } : el,
             ),
           };
-        if (block.type === STATE.todo)
+        if (block.type === STATE.todo) {
           return {
             ...block,
-            content: block.content.map((el) =>
-              el.Id === action.itemId ? { ...el, contenu: action.payload } : el,
+            content: (block.content as Listede<TodoListItem>).map((el) =>
+              el.Id === action.itemId
+                ? {
+                    ...el,
+                    contenu: action.payload,
+                    state: action.isCheckbox ? action.itemState : el.state,
+                  }
+                : el,
             ),
           };
+        }
 
         const val = action.payload;
         if (val === "" && block.content !== "")
@@ -397,6 +405,8 @@ function Wrapper({ init }: { init: EditorState }) {
       payload: e.target.value,
       targetId,
       itemId,
+      itemState: e.target.checked,
+      isCheckbox: e.target.type === "checkbox",
     });
   };
 
