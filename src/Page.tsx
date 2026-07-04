@@ -54,6 +54,15 @@ function Header() {
     document.title = titre == "" ? "Dotted" : `${titre} | Dotted`;
   }, [titre]);
 
+  useEffect(() => {
+    const link = document.querySelector(
+      "link[rel~='icon']",
+    ) as HTMLLinkElement | null;
+    if (link) {
+      link.href = iconPath ? iconPath : "/Icons/logo_mini.svg";
+    }
+  }, [iconPath]);
+
   return (
     <header>
       <div
