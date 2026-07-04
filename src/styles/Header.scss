@@ -1,0 +1,129 @@
+@use "variables" as v;
+
+#Header {
+  flex-grow: 1;
+  width: 10px;
+  height: calc(100vh - 20px);
+  overflow-y: scroll;
+  overflow-x: visible;
+  background-color: rgba(v.$Groove, 0.4);
+  border-radius: 0 5px 5px 0;
+  transition: all 0.2s;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+  gap: 10px;
+  direction: rtl;
+  position: relative;
+
+  * {
+    direction: ltr;
+    transition: background 0.2s ease-in-out;
+  }
+
+  > a {
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 70%;
+    }
+  }
+
+  span {
+    font-size: 2em;
+    @include v.Nove;
+  }
+
+  > input {
+    border-radius: 5px;
+    outline: v.$BlueLink;
+    border: none;
+  }
+
+  ul {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: start;
+    gap: 10px;
+    padding: 0;
+
+    li {
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      width: 80%;
+      max-width: 100%;
+      margin: auto;
+
+      a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 2px;
+        border-radius: 5px;
+
+        &:hover {
+          background-color: rgba(v.$Smoke, 0.2);
+        }
+
+        img {
+          height: 1rem;
+          aspect-ratio: 1;
+        }
+      }
+
+      input {
+        outline: none;
+        background-color: transparent;
+        border: none;
+        font-size: 1.5em;
+        max-width: calc(100% - 1rem);
+        @include v.Rundeck;
+      }
+
+      > img {
+        height: 1rem;
+        margin: auto;
+      }
+
+      &:has(> img) {
+        padding: 5px;
+        border-radius: 5px;
+
+        &:hover {
+          background-color: rgba(v.$Smoke, 0.2);
+        }
+      }
+    }
+  }
+
+  button {
+    all: unset;
+    color: red;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+
+    &:hover {
+      background-color: rgba(v.$Smoke, 0.2);
+    }
+  }
+
+  .DoubleArrow {
+    position: fixed;
+    height: 2em;
+    left: 25vw;
+    top: 40px;
+    z-index: 1000;
+    background-color: rgba(v.$Groove, 0.4);
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+  }
+}

@@ -1,7 +1,7 @@
-import Page from "./Page";
+import Principal from "./Principal";
 
 function App() {
-  return <Page />;
+  return <Principal />;
 }
 
 export default App;
