@@ -269,10 +269,17 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
             return { id: block.id, type: STATE.h5, content: "" };
           if (/^#{6}\s/.test(val))
             return { id: block.id, type: STATE.h6, content: "" };
-        } else if (/^.\s/.test(val))
+        }
+        if (/^[.\+\-*]\s/.test(val))
           return {
             id: block.id,
             type: STATE.ul,
+            content: [{ Id: Math.random(), contenu: "" }],
+          };
+        else if (/^([0-9]+\.|\$\.?)\s/.test(val))
+          return {
+            id: block.id,
+            type: STATE.ol,
             content: [{ Id: Math.random(), contenu: "" }],
           };
 

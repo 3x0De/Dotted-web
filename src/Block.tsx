@@ -189,6 +189,19 @@ function Contenu({
     >
       {content}
     </Listes.Ul>
+  ) : type === STATE.ol ? (
+    <Listes.Ol
+      id={id}
+      onChange={(e, id, itemId) => onChange(e, id, itemId)}
+      onKeyDown={(e, itemId) => onKeyDown(e, id, itemId)}
+      registerRef={(_, el) => registerRef(el)}
+      onAddItem={(afterId: number) => onAddListItem?.(id, afterId)}
+      onRemoveItem={(blockId: number, itemId: number) =>
+        onRemoveListItem?.(blockId, itemId)
+      }
+    >
+      {content}
+    </Listes.Ol>
   ) : (
     <Text placeholder='Appuyez sur "/" pour afficher les commandes' {...props}>
       {content as string}

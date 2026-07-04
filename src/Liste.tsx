@@ -113,5 +113,45 @@ function Ul({
   );
 }
 
-const Listes = { Ul };
+function Ol({
+  id,
+  children: content,
+  onChange,
+  onKeyDown,
+  registerRef,
+  onAddItem,
+  onRemoveItem,
+}: {
+  id: number;
+  children: Liste;
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: number,
+    itemId?: number,
+  ) => void;
+  onKeyDown?: (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    itemId: number,
+  ) => void;
+  registerRef?: (id: number, el: HTMLInputElement | null) => void;
+  onAddItem: (afterId: number) => void;
+  onRemoveItem: (blockId: number, itemId: number) => void;
+}) {
+  return (
+    <ol className="Liste">
+      <List
+        id={id}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        registerRef={registerRef}
+        onAddItem={onAddItem}
+        onRemoveItem={onRemoveItem}
+      >
+        {content}
+      </List>
+    </ol>
+  );
+}
+
+const Listes = { Ul, Ol };
 export default Listes;
