@@ -6,17 +6,29 @@ import drag from "./assets/Img/drag.svg";
 import "./styles/Block.scss";
 import { type MakeState } from "./types/Set";
 import { STATE, menu, type TYPE } from "./types/menu";
-import type { EditorState, TextBlock } from "./types/Wrapper";
+import type {
+  ColumnBlock,
+  EditorState,
+  RowBlock,
+  TextBlock,
+} from "./types/Wrapper";
 import { useDraggable, useDroppable } from "@dnd-kit/react";
+import Listes from "./Liste";
 
 interface BlockProps {
-  onChange: (e: React.ChangeEvent<HTMLInputElement>, id: number) => void;
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: number,
+    itemId?: number,
+  ) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>, id: number) => void;
   children: EditorState;
   settype: MakeState<{ newType: TYPE; targetId: number }>;
   onAddItem: MakeState<number>;
   onRemoveItem: MakeState<number>;
   registerRef: (id: number, el: HTMLInputElement | null) => void;
+  onAddListItem: (blockId: number, afterId: number) => void;
+  onRemoveListItem: (blockId: number, itemId: number) => void;
 }
 
 const Block = forwardRef<HTMLDivElement, BlockProps>(
@@ -29,6 +41,8 @@ const Block = forwardRef<HTMLDivElement, BlockProps>(
       onAddItem,
       onRemoveItem,
       registerRef,
+      onAddListItem,
+      onRemoveListItem,
     } = props;
 
     const [showMenu, setshowMenu] = useState<boolean>(false);
@@ -78,6 +92,8 @@ const Block = forwardRef<HTMLDivElement, BlockProps>(
               onAddItem={onAddItem}
               onRemoveItem={onRemoveItem}
               registerRef={registerRef}
+              onAddListItem={onAddListItem}
+              onRemoveListItem={onRemoveListItem}
             >
               {e}
             </Block>
@@ -95,8 +111,10 @@ const Block = forwardRef<HTMLDivElement, BlockProps>(
             </div>
             <Contenu
               registerRef={(el) => registerRef(content.id, el)}
-              onChange={(e) => onChange(e, content.id)}
+              onChange={onChange}
               onKeyDown={(e) => onKeyDown(e, content.id)}
+              onAddListItem={onAddListItem}
+              onRemoveListItem={onRemoveListItem}
             >
               {content as TextBlock}
             </Contenu>
@@ -120,15 +138,31 @@ function Contenu({
   onChange,
   onKeyDown,
   registerRef,
+  onAddListItem,
+  onRemoveListItem,
 }: {
-  children: TextBlock;
-  onChange: MakeState<React.ChangeEvent<HTMLInputElement>>;
-  onKeyDown: MakeState<React.KeyboardEvent<HTMLInputElement>>;
+  children: Exclude<EditorState, RowBlock | ColumnBlock>;
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: number,
+    itemId?: number,
+  ) => void;
+  onKeyDown: (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    id?: number,
+    itemId?: number,
+  ) => void;
   registerRef: (el: HTMLInputElement | null) => void;
+  onAddListItem?: (blockId: number, afterId: number) => void;
+  onRemoveListItem?: (blockId: number, itemId: number) => void;
 }) {
-  const { type, content } = contenu;
+  const { id, type, content } = contenu;
 
-  const props = { onChange, onKeyDown, registerRef };
+  const props = {
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => onChange(e, id),
+    onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => onKeyDown(e, id),
+    registerRef,
+  };
 
   return type === STATE.h1 ? (
     <Titres.H1 {...props}>{content}</Titres.H1>
@@ -142,9 +176,22 @@ function Contenu({
     <Titres.H5 {...props}>{content}</Titres.H5>
   ) : type === STATE.h6 ? (
     <Titres.H6 {...props}>{content}</Titres.H6>
+  ) : type === STATE.ul ? (
+    <Listes.Ul
+      id={id}
+      onChange={(e, id, itemId) => onChange(e, id, itemId)}
+      onKeyDown={(e, itemId) => onKeyDown(e, id, itemId)}
+      registerRef={(_, el) => registerRef(el)}
+      onAddItem={(afterId: number) => onAddListItem?.(id, afterId)}
+      onRemoveItem={(blockId: number, itemId: number) =>
+        onRemoveListItem?.(blockId, itemId)
+      }
+    >
+      {content}
+    </Listes.Ul>
   ) : (
     <Text placeholder='Appuyez sur "/" pour afficher les commandes' {...props}>
-      {content}
+      {content as string}
     </Text>
   );
 }

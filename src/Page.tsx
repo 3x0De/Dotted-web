@@ -1,7 +1,7 @@
 import { STATE } from "./types/menu";
 import Wrapper from "./Wrapper";
 import "./styles/Page.scss";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { Categories } from "./types/Categories";
 import MenuIcons from "./MenuIcons";
 
@@ -36,6 +36,11 @@ function Page() {
                   ],
                 },
               ],
+            },
+            {
+              id: Math.random(),
+              type: STATE.ul,
+              content: [{ Id: Math.random(), contenu: "d" }],
             },
           ],
         }}
@@ -118,10 +123,13 @@ function Path({ titre }: { titre: string }) {
     <p>
       {displayedPath.map((el, idx) => {
         return (
-          <>
-            <a href={el.path}>{el.nom}</a>
+          <React.Fragment key={idx}>
+            {" "}
+            <a href={el.path} key={idx}>
+              {el.nom}
+            </a>
             {idx != path.length - 1 ? "/" : ""}
-          </>
+          </React.Fragment>
         );
       })}
     </p>

@@ -6,7 +6,12 @@ import {
   useRef,
 } from "react";
 import { STATE, type TYPE } from "./types/menu";
-import type { EditorState, EditorAction, ColumnBlock } from "./types/Wrapper";
+import type {
+  EditorState,
+  EditorAction,
+  ColumnBlock,
+  TextBlock,
+} from "./types/Wrapper";
 import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
 
 function updateBlock(
@@ -23,6 +28,7 @@ function updateBlock(
       ),
     } as EditorState;
   }
+
   return state;
 }
 
@@ -183,7 +189,7 @@ function wrapInColumns(
 function reducer(state: EditorState, action: EditorAction): EditorState {
   switch (action.type) {
     case "SET_TYPE":
-      return updateBlock(state, action.targetId, (block) => {
+      return updateBlock(state, action.targetId, (block): EditorState => {
         if (action.payload === STATE.col) {
           return {
             id: block.id,
@@ -198,12 +204,28 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
             content: [] as ColumnBlock[],
           };
         }
+
+        if (action.payload === STATE.ul || action.payload === STATE.ol) {
+          return {
+            id: block.id,
+            type: action.payload,
+            content: [{ Id: Math.random(), contenu: "" }],
+          };
+        }
+        if (action.payload === STATE.todo) {
+          return {
+            id: block.id,
+            type: action.payload,
+            content: [{ Id: Math.random(), contenu: "" }],
+          };
+        }
+
         return { id: Math.random(), type: action.payload, content: "" };
       });
 
     case "SET_CONTENT":
       if (state.type === STATE.col || state.type === STATE.row) return state;
-      return { ...state, content: action.payload };
+      return { ...state, content: action.payload } as TextBlock;
 
     case "CLEAR_TYPE":
       return updateBlock(state, action.targetId, (block) => ({
@@ -213,28 +235,48 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
       }));
 
     case "HANDLE_CHANGE":
-      return updateBlock(state, action.targetId, (block) => {
+      return updateBlock(state, action.targetId, (block): EditorState => {
         if (block.type === STATE.col || block.type === STATE.row) return block;
+        if (block.type === STATE.ul || block.type === STATE.ol)
+          return {
+            ...block,
+            content: block.content.map((el) =>
+              el.Id === action.itemId ? { ...el, contenu: action.payload } : el,
+            ),
+          };
+        if (block.type === STATE.todo)
+          return {
+            ...block,
+            content: block.content.map((el) =>
+              el.Id === action.itemId ? { ...el, contenu: action.payload } : el,
+            ),
+          };
 
         const val = action.payload;
         if (val === "" && block.content !== "")
-          return { ...block, content: "" };
+          return { ...block, content: "" } as TextBlock;
 
         if (/^#{1,6}\s/.test(val)) {
           if (/^#\s/.test(val))
-            return { id: Math.random(), type: STATE.h1, content: "" };
+            return { id: block.id, type: STATE.h1, content: "" };
           if (/^#{2}\s/.test(val))
-            return { id: Math.random(), type: STATE.h2, content: "" };
+            return { id: block.id, type: STATE.h2, content: "" };
           if (/^#{3}\s/.test(val))
-            return { id: Math.random(), type: STATE.h3, content: "" };
+            return { id: block.id, type: STATE.h3, content: "" };
           if (/^#{4}\s/.test(val))
-            return { id: Math.random(), type: STATE.h4, content: "" };
+            return { id: block.id, type: STATE.h4, content: "" };
           if (/^#{5}\s/.test(val))
-            return { id: Math.random(), type: STATE.h5, content: "" };
+            return { id: block.id, type: STATE.h5, content: "" };
           if (/^#{6}\s/.test(val))
-            return { id: Math.random(), type: STATE.h6, content: "" };
-        }
-        return { ...block, content: val };
+            return { id: block.id, type: STATE.h6, content: "" };
+        } else if (/^.\s/.test(val))
+          return {
+            id: block.id,
+            type: STATE.ul,
+            content: [{ Id: Math.random(), contenu: "" }],
+          };
+
+        return { ...block, content: val } as TextBlock;
       });
 
     case "ADD_ITEM": {
@@ -251,12 +293,53 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
       });
     }
 
+    case "ADD_LIST_ITEM":
+      return updateBlock(state, action.blockId, (block): EditorState => {
+        if (
+          block.type !== STATE.ul &&
+          block.type !== STATE.ol &&
+          block.type !== STATE.todo
+        )
+          return block;
+
+        const items = block.content as { Id: number; contenu: string }[];
+        const idx = items.findIndex((el) => el.Id === action.afterId);
+        const insertAt = idx === -1 ? items.length : idx + 1;
+
+        return {
+          ...block,
+          content: [
+            ...items.slice(0, insertAt),
+            { Id: Math.random(), contenu: "" },
+            ...items.slice(insertAt),
+          ],
+        } as EditorState;
+      });
+
     case "REMOVE_ITEM": {
       const afterRemoval = updateParentList(state, action.payload, (siblings) =>
         siblings.filter((b) => b.id !== action.payload),
       );
       return collapseEmpty(afterRemoval);
     }
+
+    case "REMOVE_LIST_ITEM":
+      return updateBlock(state, action.blockId, (block): EditorState => {
+        if (
+          block.type !== STATE.ul &&
+          block.type !== STATE.ol &&
+          block.type !== STATE.todo
+        )
+          return block;
+
+        const items = block.content as { Id: number; contenu: string }[];
+        const updatedItems = items.filter((el) => el.Id !== action.itemId);
+
+        return {
+          ...block,
+          content: updatedItems,
+        } as EditorState;
+      });
 
     case "CLEAR_ITEMS":
       if (state.type !== STATE.col) return state;
@@ -297,9 +380,19 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
 function Wrapper({ init }: { init: EditorState }) {
   const [state, dispatch] = useReducer(reducer, init);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>, targetId: number) => {
-    dispatch({ type: "HANDLE_CHANGE", payload: e.target.value, targetId });
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    targetId: number,
+    itemId?: number,
+  ) => {
+    dispatch({
+      type: "HANDLE_CHANGE",
+      payload: e.target.value,
+      targetId,
+      itemId,
+    });
   };
+
   const inputRefs = useRef<Map<number, HTMLInputElement>>(new Map());
 
   const registerRef = (id: number, el: HTMLInputElement | null) => {
@@ -392,6 +485,12 @@ function Wrapper({ init }: { init: EditorState }) {
             dispatch({ type: "REMOVE_ITEM", payload: blockId })
           }
           registerRef={registerRef}
+          onAddListItem={(blockId: number, afterId: number) => {
+            dispatch({ type: "ADD_LIST_ITEM", blockId, afterId });
+          }}
+          onRemoveListItem={(blockId: number, itemId: number) => {
+            dispatch({ type: "REMOVE_LIST_ITEM", blockId, itemId });
+          }}
         >
           {state}
         </Block>

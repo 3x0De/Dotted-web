@@ -7,6 +7,9 @@ export const enum STATE {
   h4 = "Titre 4",
   h5 = "Titre 5",
   h6 = "Titre 6",
+  ul = "Liste Non Ordonée",
+  ol = "Liste Ordonée",
+  todo = "Todolist",
 }
 
 export type TYPE = STATE | null;
@@ -20,4 +23,7 @@ export const menu: MenuEntry[] = [
   ["h4", STATE.h4],
   ["h5", STATE.h5],
   ["h6", STATE.h6],
+  ["ul", STATE.ul],
+  ["ol", STATE.ol],
+  ["todo", STATE.todo],
 ];
