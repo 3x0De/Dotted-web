@@ -13,7 +13,6 @@ import type {
   TextBlock,
 } from "./types/Wrapper";
 import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
-import type { Listede, TodoListItem } from "./types/Liste";
 
 function updateBlock(
   state: EditorState,
@@ -22,7 +21,11 @@ function updateBlock(
 ): EditorState {
   if (state.id === targetId) return updater(state);
 
-  if (state.type === STATE.col || state.type === STATE.row) {
+  if (
+    state.type === STATE.col ||
+    state.type === STATE.row ||
+    state.type === STATE.cdr
+  ) {
     return {
       ...state,
       content: (state.content as EditorState[]).map((child) =>
@@ -56,7 +59,11 @@ export function findSiblings(
 ): EditorState[] | null {
   let list: EditorState[] | null = null;
 
-  if (state.type === STATE.col || state.type === STATE.row) {
+  if (
+    state.type === STATE.col ||
+    state.type === STATE.row ||
+    state.type === STATE.cdr
+  ) {
     list = state.content as EditorState[];
   } else if (state.type === STATE.menu) {
     list = (state.content as { nom: string; content: EditorState[] }).content;
@@ -77,7 +84,11 @@ function updateParentList(
   targetId: number,
   updater: (list: EditorState[]) => EditorState[],
 ): EditorState {
-  if (state.type === STATE.col || state.type === STATE.row) {
+  if (
+    state.type === STATE.col ||
+    state.type === STATE.row ||
+    state.type === STATE.cdr
+  ) {
     const list = state.content as EditorState[];
     if (list.some((b) => b.id === targetId)) {
       return { ...state, content: updater(list) } as EditorState;
@@ -324,6 +335,13 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
             },
           };
         }
+        if (action.payload == STATE.cdr) {
+          return {
+            id: block.id,
+            type: action.payload,
+            content: [{ id: Math.random(), type: null, content: "" }],
+          };
+        }
 
         return { id: Math.random(), type: action.payload, content: "" };
       });
@@ -341,7 +359,12 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
 
     case "HANDLE_CHANGE":
       return updateBlock(state, action.targetId, (block): EditorState => {
-        if (block.type === STATE.col || block.type === STATE.row) return block;
+        if (
+          block.type === STATE.col ||
+          block.type === STATE.row ||
+          block.type === STATE.cdr
+        )
+          return block;
 
         if (block.type === STATE.menu) {
           return {

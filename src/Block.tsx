@@ -9,13 +9,13 @@ import { STATE, menu, type TYPE } from "./types/menu";
 import type {
   ColumnBlock,
   EditorState,
-  MenuBlock,
   RowBlock,
   TextBlock,
 } from "./types/Wrapper";
 import { useDraggable, useDroppable } from "@dnd-kit/react";
 import Listes from "./Liste";
 import SelectionMenu from "./Menu";
+import Cadre from "./Cadre";
 
 interface BlockProps {
   onChange: (
@@ -244,6 +244,20 @@ function Contenu({
     >
       {content}
     </SelectionMenu>
+  ) : type === STATE.cdr ? (
+    <Cadre
+      id={id}
+      registerRef={registerRef}
+      onChange={onChange}
+      onKeyDown={onKeyDown}
+      settype={settype}
+      onAddItem={onAddItem}
+      onRemoveItem={onRemoveItem}
+      onAddListItem={onAddListItem}
+      onRemoveListItem={onRemoveListItem}
+    >
+      {content}
+    </Cadre>
   ) : (
     <Text placeholder='Appuyez sur "/" pour afficher les commandes' {...props}>
       {content as string}

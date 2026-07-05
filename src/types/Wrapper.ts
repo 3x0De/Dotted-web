@@ -37,12 +37,19 @@ export interface MenuBlock extends Block {
   content: { nom: string; content: EditorState[] };
 }
 
+export interface CadreBlock extends Block {
+  id: number;
+  type: STATE.cdr;
+  content: EditorState[];
+}
+
 export type EditorState =
   | RowBlock
   | ColumnBlock
   | TextBlock
   | ListBlock
-  | MenuBlock;
+  | MenuBlock
+  | CadreBlock;
 
 export type EditorAction =
   | { type: "SET_TYPE"; payload: TYPE; targetId: number }
