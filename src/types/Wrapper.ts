@@ -31,7 +31,18 @@ export interface ListBlock extends Block {
   content: Liste;
 }
 
-export type EditorState = RowBlock | ColumnBlock | TextBlock | ListBlock;
+export interface MenuBlock extends Block {
+  id: number;
+  type: STATE.menu;
+  content: { nom: string; content: EditorState[] };
+}
+
+export type EditorState =
+  | RowBlock
+  | ColumnBlock
+  | TextBlock
+  | ListBlock
+  | MenuBlock;
 
 export type EditorAction =
   | { type: "SET_TYPE"; payload: TYPE; targetId: number }

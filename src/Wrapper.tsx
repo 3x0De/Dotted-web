@@ -21,12 +21,29 @@ function updateBlock(
   updater: (b: EditorState) => EditorState,
 ): EditorState {
   if (state.id === targetId) return updater(state);
+
   if (state.type === STATE.col || state.type === STATE.row) {
     return {
       ...state,
       content: (state.content as EditorState[]).map((child) =>
         updateBlock(child, targetId, updater),
       ),
+    } as EditorState;
+  }
+
+  if (state.type === STATE.menu) {
+    const menuContent = state.content as {
+      nom: string;
+      content: EditorState[];
+    };
+    return {
+      ...state,
+      content: {
+        ...menuContent,
+        content: menuContent.content.map((child) =>
+          updateBlock(child, targetId, updater),
+        ),
+      },
     } as EditorState;
   }
 
@@ -37,8 +54,16 @@ export function findSiblings(
   state: EditorState,
   targetId: number,
 ): EditorState[] | null {
-  if (state.type !== STATE.col && state.type !== STATE.row) return null;
-  const list = state.content as EditorState[];
+  let list: EditorState[] | null = null;
+
+  if (state.type === STATE.col || state.type === STATE.row) {
+    list = state.content as EditorState[];
+  } else if (state.type === STATE.menu) {
+    list = (state.content as { nom: string; content: EditorState[] }).content;
+  } else {
+    return null;
+  }
+
   if (list.some((b) => b.id === targetId)) return list;
   for (const child of list) {
     const found = findSiblings(child, targetId);
@@ -52,18 +77,58 @@ function updateParentList(
   targetId: number,
   updater: (list: EditorState[]) => EditorState[],
 ): EditorState {
-  if (state.type !== STATE.col && state.type !== STATE.row) return state;
-  const list = state.content as EditorState[];
-  if (list.some((b) => b.id === targetId)) {
-    return { ...state, content: updater(list) } as EditorState;
+  if (state.type === STATE.col || state.type === STATE.row) {
+    const list = state.content as EditorState[];
+    if (list.some((b) => b.id === targetId)) {
+      return { ...state, content: updater(list) } as EditorState;
+    }
+    return {
+      ...state,
+      content: list.map((child) => updateParentList(child, targetId, updater)),
+    } as EditorState;
   }
-  return {
-    ...state,
-    content: list.map((child) => updateParentList(child, targetId, updater)),
-  } as EditorState;
+
+  if (state.type === STATE.menu) {
+    const menuContent = state.content as {
+      nom: string;
+      content: EditorState[];
+    };
+    const list = menuContent.content;
+    if (list.some((b) => b.id === targetId)) {
+      return {
+        ...state,
+        content: { ...menuContent, content: updater(list) },
+      } as EditorState;
+    }
+    return {
+      ...state,
+      content: {
+        ...menuContent,
+        content: list.map((child) =>
+          updateParentList(child, targetId, updater),
+        ),
+      },
+    } as EditorState;
+  }
+
+  return state;
 }
 
 function collapseEmpty(state: EditorState): EditorState {
+  if (state.type === STATE.menu) {
+    const menuContent = state.content as {
+      nom: string;
+      content: EditorState[];
+    };
+    return {
+      ...state,
+      content: {
+        ...menuContent,
+        content: menuContent.content.map(collapseEmpty),
+      },
+    } as EditorState;
+  }
+
   if (state.type !== STATE.col && state.type !== STATE.row) return state;
 
   const children = (state.content as EditorState[]).map(collapseEmpty);
@@ -92,46 +157,39 @@ function collapseEmpty(state: EditorState): EditorState {
 function removeBlock(
   state: EditorState,
   targetId: number,
-): {
-  tree: EditorState;
-  removed: EditorState | null;
-} {
-  if (state.type !== STATE.col && state.type !== STATE.row) {
-    return {
-      tree: state,
-      removed: null,
-    };
+): { tree: EditorState; removed: EditorState | null } {
+  const isRowCol = state.type === STATE.col || state.type === STATE.row;
+  const isMenu = state.type === STATE.menu;
+
+  if (!isRowCol && !isMenu) {
+    return { tree: state, removed: null };
   }
 
-  let removed: EditorState | null = null;
+  const menuContent = isMenu
+    ? (state.content as { nom: string; content: EditorState[] })
+    : null;
+  const children = isMenu
+    ? menuContent!.content
+    : (state.content as EditorState[]);
 
+  let removed: EditorState | null = null;
   const newChildren: EditorState[] = [];
 
-  for (const child of state.content as EditorState[]) {
+  for (const child of children) {
     if (child.id === targetId) {
       removed = child;
       continue;
     }
-
     const result = removeBlock(child, targetId);
-
-    if (result.removed) {
-      removed = result.removed;
-    }
-
+    if (result.removed) removed = result.removed;
     newChildren.push(result.tree);
   }
 
-  return {
-    tree: {
-      ...state,
-      content: newChildren,
-    },
-    removed,
-  } as {
-    tree: EditorState;
-    removed: EditorState | null;
-  };
+  const tree = isMenu
+    ? { ...state, content: { ...menuContent!, content: newChildren } }
+    : { ...state, content: newChildren };
+
+  return { tree: tree as EditorState, removed };
 }
 
 function insertBlock(
@@ -139,14 +197,23 @@ function insertBlock(
   parentId: number,
   block: EditorState,
 ): EditorState {
-  if (
-    state.id === parentId &&
-    (state.type === STATE.col || state.type === STATE.row)
-  ) {
-    return {
-      ...state,
-      content: [...(state.content as EditorState[]), block],
-    } as EditorState;
+  if (state.id === parentId) {
+    if (state.type === STATE.col || state.type === STATE.row) {
+      return {
+        ...state,
+        content: [...(state.content as EditorState[]), block],
+      } as EditorState;
+    }
+    if (state.type === STATE.menu) {
+      const menuContent = state.content as {
+        nom: string;
+        content: EditorState[];
+      };
+      return {
+        ...state,
+        content: { ...menuContent, content: [...menuContent.content, block] },
+      } as EditorState;
+    }
   }
 
   if (state.type === STATE.col || state.type === STATE.row) {
@@ -158,17 +225,44 @@ function insertBlock(
     } as EditorState;
   }
 
+  if (state.type === STATE.menu) {
+    const menuContent = state.content as {
+      nom: string;
+      content: EditorState[];
+    };
+    return {
+      ...state,
+      content: {
+        ...menuContent,
+        content: menuContent.content.map((child) =>
+          insertBlock(child, parentId, block),
+        ),
+      },
+    } as EditorState;
+  }
+
   return state;
 }
 
 function findNode(state: EditorState, targetId: number): EditorState | null {
   if (state.id === targetId) return state;
+
   if (state.type === STATE.col || state.type === STATE.row) {
     for (const child of state.content as EditorState[]) {
       const found = findNode(child, targetId);
       if (found) return found;
     }
   }
+
+  if (state.type === STATE.menu) {
+    const list = (state.content as { nom: string; content: EditorState[] })
+      .content;
+    for (const child of list) {
+      const found = findNode(child, targetId);
+      if (found) return found;
+    }
+  }
+
   return null;
 }
 
@@ -220,6 +314,16 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
             content: [{ Id: Math.random(), contenu: "", state: false }],
           };
         }
+        if (action.payload == STATE.menu) {
+          return {
+            id: block.id,
+            type: action.payload,
+            content: {
+              nom: "",
+              content: [{ id: Math.random(), type: null, content: "" }],
+            },
+          };
+        }
 
         return { id: Math.random(), type: action.payload, content: "" };
       });
@@ -238,17 +342,29 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
     case "HANDLE_CHANGE":
       return updateBlock(state, action.targetId, (block): EditorState => {
         if (block.type === STATE.col || block.type === STATE.row) return block;
+
+        if (block.type === STATE.menu) {
+          return {
+            ...block,
+            content: {
+              ...block.content,
+              nom: action.payload,
+            },
+          } as EditorState;
+        }
+
         if (block.type === STATE.ul || block.type === STATE.ol)
           return {
             ...block,
-            content: block.content.map((el) =>
+            content: (block.content as any[]).map((el) =>
               el.Id === action.itemId ? { ...el, contenu: action.payload } : el,
             ),
           };
+
         if (block.type === STATE.todo) {
           return {
             ...block,
-            content: (block.content as Listede<TodoListItem>).map((el) =>
+            content: (block.content as any[]).map((el) =>
               el.Id === action.itemId
                 ? {
                     ...el,

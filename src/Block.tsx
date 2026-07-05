@@ -9,11 +9,13 @@ import { STATE, menu, type TYPE } from "./types/menu";
 import type {
   ColumnBlock,
   EditorState,
+  MenuBlock,
   RowBlock,
   TextBlock,
 } from "./types/Wrapper";
 import { useDraggable, useDroppable } from "@dnd-kit/react";
 import Listes from "./Liste";
+import SelectionMenu from "./Menu";
 
 interface BlockProps {
   onChange: (
@@ -31,7 +33,7 @@ interface BlockProps {
   onRemoveListItem: (blockId: number, itemId: number) => void;
 }
 
-const Block = forwardRef<HTMLDivElement, BlockProps>(
+export const Block = forwardRef<HTMLDivElement, BlockProps>(
   function BlockComponent(props, forwardedRef) {
     const {
       onChange,
@@ -110,11 +112,14 @@ const Block = forwardRef<HTMLDivElement, BlockProps>(
               <img src={drag} alt="Drag" />
             </div>
             <Contenu
-              registerRef={(el) => registerRef(content.id, el)}
+              registerRef={registerRef}
               onChange={onChange}
-              onKeyDown={(e) => onKeyDown(e, content.id)}
+              onKeyDown={onKeyDown}
               onAddListItem={onAddListItem}
               onRemoveListItem={onRemoveListItem}
+              settype={settype}
+              onAddItem={onAddItem}
+              onRemoveItem={onRemoveItem}
             >
               {content as TextBlock}
             </Contenu>
@@ -140,6 +145,9 @@ function Contenu({
   registerRef,
   onAddListItem,
   onRemoveListItem,
+  settype,
+  onAddItem,
+  onRemoveItem,
 }: {
   children: Exclude<EditorState, RowBlock | ColumnBlock>;
   onChange: (
@@ -149,19 +157,22 @@ function Contenu({
   ) => void;
   onKeyDown: (
     e: React.KeyboardEvent<HTMLInputElement>,
-    id?: number,
+    id: number,
     itemId?: number,
   ) => void;
-  registerRef: (el: HTMLInputElement | null) => void;
+  registerRef: (id: number, el: HTMLInputElement | null) => void;
   onAddListItem?: (blockId: number, afterId: number) => void;
   onRemoveListItem?: (blockId: number, itemId: number) => void;
+  settype: MakeState<{ newType: TYPE; targetId: number }>;
+  onAddItem: MakeState<number>;
+  onRemoveItem: MakeState<number>;
 }) {
   const { id, type, content } = contenu;
 
   const props = {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => onChange(e, id),
     onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => onKeyDown(e, id),
-    registerRef,
+    registerRef: (el: HTMLInputElement | null) => registerRef(id, el),
   };
 
   return type === STATE.h1 ? (
@@ -181,7 +192,7 @@ function Contenu({
       id={id}
       onChange={(e, id, itemId) => onChange(e, id, itemId)}
       onKeyDown={(e, itemId) => onKeyDown(e, id, itemId)}
-      registerRef={(_, el) => registerRef(el)}
+      registerRef={(_, el) => registerRef(id, el)}
       onAddItem={(afterId: number) => onAddListItem?.(id, afterId)}
       onRemoveItem={(blockId: number, itemId: number) =>
         onRemoveListItem?.(blockId, itemId)
@@ -194,7 +205,7 @@ function Contenu({
       id={id}
       onChange={(e, id, itemId) => onChange(e, id, itemId)}
       onKeyDown={(e, itemId) => onKeyDown(e, id, itemId)}
-      registerRef={(_, el) => registerRef(el)}
+      registerRef={(_, el) => registerRef(id, el)}
       onAddItem={(afterId: number) => onAddListItem?.(id, afterId)}
       onRemoveItem={(blockId: number, itemId: number) =>
         onRemoveListItem?.(blockId, itemId)
@@ -207,7 +218,7 @@ function Contenu({
       id={id}
       onChange={(e, id, itemId) => onChange(e, id, itemId)}
       onKeyDown={(e, itemId) => onKeyDown(e, id, itemId)}
-      registerRef={(_, el) => registerRef(el)}
+      registerRef={(_, el) => registerRef(id, el)}
       onAddItem={(afterId: number) => onAddListItem?.(id, afterId)}
       onRemoveItem={(blockId: number, itemId: number) =>
         onRemoveListItem?.(blockId, itemId)
@@ -219,6 +230,20 @@ function Contenu({
         state: (item as any).state ?? false,
       }))}
     </Listes.Todo>
+  ) : type === STATE.menu ? (
+    <SelectionMenu
+      id={id}
+      registerRef={registerRef}
+      onChange={onChange}
+      onKeyDown={onKeyDown}
+      settype={settype}
+      onAddItem={onAddItem}
+      onRemoveItem={onRemoveItem}
+      onAddListItem={onAddListItem}
+      onRemoveListItem={onRemoveListItem}
+    >
+      {content}
+    </SelectionMenu>
   ) : (
     <Text placeholder='Appuyez sur "/" pour afficher les commandes' {...props}>
       {content as string}
