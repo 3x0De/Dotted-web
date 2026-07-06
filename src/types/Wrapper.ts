@@ -21,7 +21,15 @@ export interface ColumnBlock extends Block {
 
 export interface TextBlock extends Block {
   id: number;
-  type: STATE.h1 | STATE.h2 | STATE.h3 | STATE.h4 | STATE.h5 | STATE.h6 | null;
+  type:
+    | STATE.h1
+    | STATE.h2
+    | STATE.h3
+    | STATE.h4
+    | STATE.h5
+    | STATE.h6
+    | null
+    | STATE.cite;
   content: string;
 }
 

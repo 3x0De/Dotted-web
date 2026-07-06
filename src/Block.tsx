@@ -16,6 +16,7 @@ import { useDraggable, useDroppable } from "@dnd-kit/react";
 import Listes from "./Liste";
 import SelectionMenu from "./Menu";
 import Cadre from "./Cadre";
+import Cite from "./Cite";
 
 interface BlockProps {
   onChange: (
@@ -258,6 +259,8 @@ function Contenu({
     >
       {content}
     </Cadre>
+  ) : type === STATE.cite ? (
+    <Cite {...props}>{content}</Cite>
   ) : (
     <Text placeholder='Appuyez sur "/" pour afficher les commandes' {...props}>
       {content as string}

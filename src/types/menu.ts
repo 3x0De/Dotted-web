@@ -12,6 +12,7 @@ export const enum STATE {
   todo = "Todolist",
   menu = "Menu",
   cdr = "Cadre",
+  cite = "Citation"
 }
 
 export type TYPE = STATE | null;
@@ -30,4 +31,5 @@ export const menu: MenuEntry[] = [
   ["todo", STATE.todo],
   ["menu", STATE.menu],
   ["cdr", STATE.cdr],
+  ["cite", STATE.cite]
 ];
