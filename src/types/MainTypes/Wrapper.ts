@@ -82,4 +82,5 @@ export type EditorAction =
   | { type: "REMOVE_ITEM"; payload: number }
   | { type: "REMOVE_LIST_ITEM"; blockId: number; itemId: number }
   | { type: "CLEAR_ITEMS" }
-  | { type: "MOVE_BLOCK"; targetId: number; sourceId: number };
+  | { type: "MOVE_BLOCK"; targetId: number; sourceId: number }
+  | { type: "UNDO"; payload?: EditorState };

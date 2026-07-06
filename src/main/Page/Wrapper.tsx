@@ -1,6 +1,7 @@
 import {
   type ChangeEvent,
   type KeyboardEvent,
+  useEffect,
   useReducer,
   useRef,
 } from "react";
@@ -14,6 +15,8 @@ import type {
   TextBlock,
 } from "../../types/MainTypes/Wrapper";
 import { STATE, type TYPE } from "../../types/MainTypes/BlockTypes/menu";
+
+import usePile from "../../hooks/usePile";
 
 import Block from "./Block/Block";
 
@@ -562,6 +565,9 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
       return collapseEmpty(result);
     }
 
+    case "UNDO":
+      return action.payload ?? state;
+
     default:
       return state;
   }
@@ -569,6 +575,42 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
 
 function Wrapper({ init }: { init: EditorState }) {
   const [state, dispatch] = useReducer(reducer, init);
+
+  const { empile: actionEmpile, depile: actionDepile } = usePile<EditorState>();
+
+  const lastStateRef = useRef(state);
+  const isUndoingRef = useRef(false);
+
+  useEffect(() => {
+    if (lastStateRef.current !== state) {
+      if (!isUndoingRef.current) {
+        actionEmpile(lastStateRef.current);
+      }
+      isUndoingRef.current = false;
+      lastStateRef.current = state;
+    }
+  }, [state]);
+
+  const depileRef = useRef(actionDepile);
+  useEffect(() => {
+    depileRef.current = actionDepile;
+  });
+
+  useEffect(() => {
+    const handleUndo = (e: globalThis.KeyboardEvent) => {
+      if (e.ctrlKey && e.key.toLowerCase() === "z") {
+        e.preventDefault();
+        const prev = depileRef.current();
+        if (prev) {
+          isUndoingRef.current = true;
+          dispatch({ type: "UNDO", payload: prev });
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleUndo);
+    return () => window.removeEventListener("keydown", handleUndo);
+  }, []);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement>,
