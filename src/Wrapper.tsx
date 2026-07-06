@@ -423,11 +423,44 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
             type: STATE.ul,
             content: [{ Id: Math.random(), contenu: "" }],
           };
-        else if (/^([0-9]+\.|\$\.?)\s/.test(val))
+        if (/^([0-9]+\.|\$\.?)\s/.test(val))
           return {
             id: block.id,
             type: STATE.ol,
             content: [{ Id: Math.random(), contenu: "" }],
+          };
+        if (/^\[\]\s/.test(val))
+          return {
+            id: block.id,
+            type: STATE.todo,
+            content: [{ Id: Math.random(), contenu: "", state: false }],
+          };
+        if (/^\>\s/.test(val))
+          return {
+            id: block.id,
+            type: STATE.menu,
+            content: {
+              nom: "",
+              content: [{ id: block.id, type: null, content: "" }],
+            },
+          };
+        if (/^\{\}\s/.test(val))
+          return {
+            id: block.id,
+            type: STATE.cdr,
+            content: [{ id: block.id, type: null, content: "" }],
+          };
+        if (/^(\||"|')\s/.test(val))
+          return {
+            id: block.id,
+            type: STATE.cite,
+            content: "",
+          };
+        else if (/^(_{1,3}|-{1,3})\s/.test(val))
+          return {
+            id: block.id,
+            type: STATE.sprt,
+            content: undefined,
           };
 
         return { ...block, content: val } as TextBlock;
