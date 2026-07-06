@@ -39,6 +39,8 @@ function Header() {
 
   const [visible, setvisible] = useState<boolean>(true);
 
+  let userName = "MMM";
+
   return (
     <div id="Header" style={{ minWidth: visible ? "25vw" : "10px" }}>
       {visible && (
@@ -46,6 +48,7 @@ function Header() {
           <a href="#">
             <img src={logo} />
           </a>
+          <h1>Bonjour {userName}</h1>
           <span>Projets</span>
           <ul>
             {collection[0].Projets.map((el, idx) => (
