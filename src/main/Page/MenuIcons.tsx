@@ -1,6 +1,8 @@
-import useFolder from "./hooks/useFolder";
-import "./styles/MenuIcons.scss";
-import type { MakeState } from "./types/Set";
+import type { MakeState } from "../../types/Set";
+
+import useFolder from "../../hooks/useFolder";
+
+import "/src/styles/main/Page/MenuIcons.scss";
 
 function MenuIcons({
   seticonPath,
@@ -12,7 +14,7 @@ function MenuIcons({
   return (
     <nav>
       <div className="bin" onClick={() => seticonPath(undefined)}>
-        <img src="/src/assets/Img/bin.svg" />
+        <img src="/src/assets/Img/Page/Block/bin.svg" />
       </div>
       {courant?.inside?.map(
         (el) =>

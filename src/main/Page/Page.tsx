@@ -1,9 +1,12 @@
-import { STATE } from "./types/menu";
-import Wrapper from "./Wrapper";
-import "./styles/Page.scss";
 import React, { useEffect, useState } from "react";
-import type { Categories } from "./types/Categories";
+
+import type { Categories } from "../../types/MainTypes/Categories";
+import { STATE } from "../../types/MainTypes/BlockTypes/menu";
+
+import Wrapper from "./Wrapper";
 import MenuIcons from "./MenuIcons";
+
+import "/src/styles/main/Page/Page.scss";
 
 function Page() {
   return (

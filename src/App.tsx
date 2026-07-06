@@ -1,4 +1,6 @@
-import Principal from "./Principal";
+import Principal from "./main/Principal";
+
+import "./styles/App.scss";
 
 function App() {
   return <Principal />;

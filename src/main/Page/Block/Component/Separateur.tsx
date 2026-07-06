@@ -1,4 +1,4 @@
-import "./styles/Separateur.scss";
+import "/src/styles/main/Page/Block/Component/Separateur.scss";
 
 function Separateur() {
   return <div className="Separateur" />;

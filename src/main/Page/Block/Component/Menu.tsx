@@ -1,9 +1,11 @@
-import Block from "./Block";
-import { Text } from "./Text";
-import type { MakeState } from "./types/Set";
-import type { EditorState } from "./types/Wrapper";
-import type { TYPE } from "./types/menu";
-import "./styles/Menu.scss";
+import type { MakeState } from "../../../../types/Set";
+import type { EditorState } from "../../../../types/MainTypes/Wrapper";
+import type { TYPE } from "../../../../types/MainTypes/BlockTypes/menu";
+
+import { Text } from "./ComponentDeBase/Text";
+import Block from "../Block";
+
+import "/src/styles/main/Page/Block/Component/Menu.scss";
 
 function BlockMenu({
   id,

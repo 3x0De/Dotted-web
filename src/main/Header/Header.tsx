@@ -1,10 +1,13 @@
-import add from "./assets/Img/Add.svg";
-import logo from "/Icons/logo_max.svg";
-import left from "./assets/Img/LeftDoubleArrow.svg";
-import right from "./assets/Img/RightDoubleArrow.svg";
-import "./styles/Header.scss";
-import { useHeader } from "./hooks/useHeader";
 import { useState } from "react";
+
+import { useHeader } from "/src/hooks/useHeader";
+
+import "/src/styles/main/Header/Header.scss";
+
+import add from "/src/assets/Img/Header/Add.svg";
+import logo from "/Icons/logo_max.svg";
+import left from "/src/assets/Img/Header/LeftDoubleArrow.svg";
+import right from "/src/assets/Img/Header/RightDoubleArrow.svg";
 
 function Header() {
   const {

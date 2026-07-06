@@ -1,8 +1,10 @@
-import Block from "./Block";
-import type { TYPE } from "./types/menu";
-import type { MakeState } from "./types/Set";
-import type { EditorState } from "./types/Wrapper";
-import "./styles/Cadre.scss";
+import type { MakeState } from "../../../../types/Set";
+import type { EditorState } from "../../../../types/MainTypes/Wrapper";
+import type { TYPE } from "../../../../types/MainTypes/BlockTypes/menu";
+
+import Block from "../Block";
+
+import "/src/styles/main/Page/Block/Component/Cadre.scss";
 
 function Cadre({
   children: content,

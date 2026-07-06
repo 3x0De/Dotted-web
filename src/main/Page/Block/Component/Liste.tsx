@@ -1,11 +1,13 @@
-import { Text } from "./Text";
 import type {
   Liste,
   Listede,
   OrdreListItem,
   TodoListItem,
-} from "./types/Liste";
-import "./styles/Liste.scss";
+} from "../../../../types/MainTypes/BlockTypes/Liste";
+
+import { Text } from "./ComponentDeBase/Text";
+
+import "/src/styles/main/Page/Block/Component/Liste.scss";
 
 function List({
   id,

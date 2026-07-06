@@ -1,4 +1,4 @@
-@use "variables" as v;
+@use "/src/styles/variables.scss" as v;
 
 .Separateur {
   border: 1px solid rgba(v.$Smoke, 0.8);

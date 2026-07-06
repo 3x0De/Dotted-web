@@ -1,23 +1,32 @@
 import { useState, forwardRef } from "react";
-import Titres from "./Titres";
-import { Text } from "./Text";
-import bin from "./assets/Img/bin.svg";
-import drag from "./assets/Img/drag.svg";
-import "./styles/Block.scss";
-import { type MakeState } from "./types/Set";
-import { STATE, menu, type TYPE } from "./types/menu";
+
+import { useDraggable, useDroppable } from "@dnd-kit/react";
+
 import type {
   ColumnBlock,
   EditorState,
   RowBlock,
   TextBlock,
-} from "./types/Wrapper";
-import { useDraggable, useDroppable } from "@dnd-kit/react";
-import Listes from "./Liste";
-import SelectionMenu from "./Menu";
-import Cadre from "./Cadre";
-import Cite from "./Cite";
-import Separateur from "./Separateur";
+} from "../../../types/MainTypes/Wrapper";
+import {
+  type TYPE,
+  STATE,
+  menu,
+} from "../../../types/MainTypes/BlockTypes/menu";
+import type { MakeState } from "../../../types/Set";
+
+import { Text } from "./Component/ComponentDeBase/Text";
+import Titres from "./Component/Titres";
+import Listes from "./Component/Liste";
+import SelectionMenu from "./Component/Menu";
+import Cadre from "./Component/Cadre";
+import Cite from "./Component/Cite";
+import Separateur from "./Component/Separateur";
+
+import bin from "/src/assets/Img/Page/Block/bin.svg";
+import drag from "/src/assets/Img/Page/Block/drag.svg";
+
+import "/src/styles/main/Page/Block/Block.scss";
 
 interface BlockProps {
   onChange: (
@@ -285,7 +294,9 @@ function Menu({
           <li
             key={key}
             onClick={() => settype(value)}
-            style={{ listStyle: `url('/../src/assets/Img/${key}.svg')` }}
+            style={{
+              listStyle: `url('/src/assets/Img/Page/Block/MenuIcons/${key}.svg')`,
+            }}
           >
             {value}
           </li>

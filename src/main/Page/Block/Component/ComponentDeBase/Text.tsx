@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import "./styles/Texte.scss";
-import type { MakeState } from "./types/Set";
+
+import type { MakeState } from "../../../../../types/Set";
+
+import "/src/styles/main/Page/Block/Component/ComponentDeBase/Text.scss";
 
 export function Text({
   placeholder,

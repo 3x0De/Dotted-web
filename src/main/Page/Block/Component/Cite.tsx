@@ -1,6 +1,8 @@
-import { Text } from "./Text";
-import type { MakeState } from "./types/Set";
-import "./styles/Cite.scss";
+import type { MakeState } from "../../../../types/Set";
+
+import { Text } from "./ComponentDeBase/Text";
+
+import "/src/styles/main/Page/Block/Component/Cite.scss";
 
 function Cite({
   children: content,

@@ -1,6 +1,7 @@
-import Header from "./Header";
-import Page from "./Page";
-import "./styles/Principal.scss";
+import Header from "./Header/Header";
+import Page from "./Page/Page";
+
+import "/src/styles/main/Principal.scss";
 
 function Principal() {
   return (

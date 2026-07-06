@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { CollectionHeader } from "../types/Header";
+import type { CollectionHeader } from "../types/MainTypes/Header";
 
 export function useHeader(init: CollectionHeader) {
   const [header, setheader] = useState<CollectionHeader>(init);

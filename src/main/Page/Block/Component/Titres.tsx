@@ -1,6 +1,8 @@
-import { Text } from "./Text";
-import "./styles/Titres.scss";
-import type { MakeState } from "./types/Set";
+import type { MakeState } from "../../../../types/Set";
+
+import { Text } from "./ComponentDeBase/Text";
+
+import "/src/styles/main/Page/Block/Component/Titres.scss";
 
 function Titre({
   Size,

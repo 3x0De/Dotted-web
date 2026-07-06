@@ -1,5 +1,5 @@
-import type { Liste } from "./Liste";
-import { STATE, type TYPE } from "./menu";
+import type { Liste } from "./BlockTypes/Liste";
+import { STATE, type TYPE } from "./BlockTypes/menu";
 
 interface Block {
   id: number;

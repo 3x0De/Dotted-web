@@ -1,18 +1,21 @@
-import Block from "./Block";
 import {
-  useReducer,
   type ChangeEvent,
   type KeyboardEvent,
+  useReducer,
   useRef,
 } from "react";
-import { STATE, type TYPE } from "./types/menu";
+
+import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
+
 import type {
   EditorState,
   EditorAction,
   ColumnBlock,
   TextBlock,
-} from "./types/Wrapper";
-import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
+} from "../../types/MainTypes/Wrapper";
+import { STATE, type TYPE } from "../../types/MainTypes/BlockTypes/menu";
+
+import Block from "./Block/Block";
 
 function updateBlock(
   state: EditorState,
