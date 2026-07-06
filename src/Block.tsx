@@ -17,6 +17,7 @@ import Listes from "./Liste";
 import SelectionMenu from "./Menu";
 import Cadre from "./Cadre";
 import Cite from "./Cite";
+import Separateur from "./Separateur";
 
 interface BlockProps {
   onChange: (
@@ -261,6 +262,8 @@ function Contenu({
     </Cadre>
   ) : type === STATE.cite ? (
     <Cite {...props}>{content}</Cite>
+  ) : type === STATE.sprt ? (
+    <Separateur />
   ) : (
     <Text placeholder='Appuyez sur "/" pour afficher les commandes' {...props}>
       {content as string}

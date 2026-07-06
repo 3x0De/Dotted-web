@@ -51,13 +51,19 @@ export interface CadreBlock extends Block {
   content: EditorState[];
 }
 
+export interface EmptyBlock extends Block {
+  id: number;
+  type: STATE.sprt;
+}
+
 export type EditorState =
   | RowBlock
   | ColumnBlock
   | TextBlock
   | ListBlock
   | MenuBlock
-  | CadreBlock;
+  | CadreBlock
+  | EmptyBlock;
 
 export type EditorAction =
   | { type: "SET_TYPE"; payload: TYPE; targetId: number }
