@@ -577,19 +577,28 @@ function Wrapper({ init }: { init: EditorState }) {
   const [state, dispatch] = useReducer(reducer, init);
 
   const { empile: actionEmpile, depile: actionDepile } = usePile<EditorState>();
+  const {
+    empile: redoEmpile,
+    depile: redoDepile,
+    vide: redoVide,
+  } = usePile<EditorState>();
 
   const lastStateRef = useRef(state);
   const isUndoingRef = useRef(false);
 
   useEffect(() => {
-    if (lastStateRef.current !== state) {
-      if (!isUndoingRef.current) {
-        actionEmpile(lastStateRef.current);
-      }
+    if (isUndoingRef.current) {
       isUndoingRef.current = false;
       lastStateRef.current = state;
+      return;
     }
-  }, [state]);
+
+    if (lastStateRef.current !== state) {
+      actionEmpile(lastStateRef.current);
+      redoVide();
+      lastStateRef.current = state;
+    }
+  }, [state, actionEmpile, redoVide]);
 
   const depileRef = useRef(actionDepile);
   useEffect(() => {
@@ -598,19 +607,43 @@ function Wrapper({ init }: { init: EditorState }) {
 
   useEffect(() => {
     const handleUndo = (e: globalThis.KeyboardEvent) => {
-      if (e.ctrlKey && e.key.toLowerCase() === "z") {
+      if (e.ctrlKey && e.key.toLowerCase() === "z" && !e.shiftKey) {
         e.preventDefault();
-        const prev = depileRef.current();
-        if (prev) {
+
+        const previousState = depileRef.current();
+        if (previousState) {
+          redoEmpile(state);
+
           isUndoingRef.current = true;
-          dispatch({ type: "UNDO", payload: prev });
+          dispatch({ type: "UNDO", payload: previousState });
+        }
+      }
+    };
+
+    const handleRedo = (e: globalThis.KeyboardEvent) => {
+      if (
+        (e.ctrlKey && e.key.toLowerCase() === "y") ||
+        (e.ctrlKey && e.shiftKey && e.key.toLocaleLowerCase() === "z")
+      ) {
+        e.preventDefault();
+
+        const nextState = redoDepile();
+        if (nextState) {
+          actionEmpile(state);
+
+          isUndoingRef.current = true;
+          dispatch({ type: "UNDO", payload: nextState });
         }
       }
     };
 
     window.addEventListener("keydown", handleUndo);
-    return () => window.removeEventListener("keydown", handleUndo);
-  }, []);
+    window.addEventListener("keydown", handleRedo);
+    return () => {
+      window.removeEventListener("keydown", handleUndo);
+      window.removeEventListener("keydown", handleRedo);
+    };
+  }, [state, actionEmpile, redoEmpile, redoDepile]);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement>,
