@@ -8,7 +8,7 @@ import logo from "/public/Icons/logo_max.svg";
 
 import "../styles/auth/Auth.scss";
 
-function LogIn() {
+function SignUp() {
   const navigate = useNavigate();
 
   const [formInput, formInputState] = useState<{ name: string; mdp: string }>({
@@ -30,10 +30,10 @@ function LogIn() {
           <h1>Dotted</h1>
           <h2>Let's make point</h2>
         </div>
-        <img src={logo} />
+        <img src={logo} alt="" />
       </div>
-      <h1>Log In</h1>
-      {error && <span>Mauvais mot de passe ou mauvais nom d'utilisateur</span>}
+      <h1>Sign Up</h1>
+      {error && <span>Ce nom est déjà pris</span>}
       <form>
         <Field
           htmlFor="name"
@@ -52,12 +52,14 @@ function LogIn() {
           Mot de passe :
         </Field>
         <div>
-          <button id="submit">Se connecter</button>
-          <button onClick={() => navigate("/signup")}>Créer un compte</button>
+          <button id="submit">S'inscrire</button>
+          <button onClick={() => navigate("/login")}>
+            J'ai déjà un compte
+          </button>
         </div>
       </form>
     </div>
   );
 }
 
-export default LogIn;
+export default SignUp;
