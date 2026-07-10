@@ -23,6 +23,20 @@ function SignUp() {
     formInputState((prev) => ({ ...prev, [name]: value }));
   }
 
+  async function Submit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const request = await fetch(`${import.meta.env.VITE_API_URL}/User`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ...formInput, username: formInput.name }),
+    });
+
+    if (request.status == 409) errorState(true);
+    else navigate("/login");
+  }
+
   return (
     <div className="Auth">
       <div className="logos">
@@ -34,7 +48,7 @@ function SignUp() {
       </div>
       <h1>Sign Up</h1>
       {error && <span>Ce nom est déjà pris</span>}
-      <form>
+      <form onSubmit={Submit}>
         <Field
           htmlFor="name"
           type="text"

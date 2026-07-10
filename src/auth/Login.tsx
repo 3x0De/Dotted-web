@@ -23,6 +23,20 @@ function LogIn() {
     formInputState((prev) => ({ ...prev, [name]: value }));
   }
 
+  async function Submit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const request = await fetch(`${import.meta.env.VITE_API_URL}/User/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ...formInput, username: formInput.name }),
+    });
+
+    if (request.status == 401) errorState(true);
+    else navigate("/");
+  }
+
   return (
     <div className="Auth">
       <div className="logos">
@@ -34,7 +48,7 @@ function LogIn() {
       </div>
       <h1>Log In</h1>
       {error && <span>Mauvais mot de passe ou mauvais nom d'utilisateur</span>}
-      <form>
+      <form onSubmit={Submit}>
         <Field
           htmlFor="name"
           type="text"
