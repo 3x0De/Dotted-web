@@ -27,6 +27,7 @@ function LogIn() {
     e.preventDefault();
     const request = await fetch(`${import.meta.env.VITE_API_URL}/User/login`, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },

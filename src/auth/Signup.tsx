@@ -27,6 +27,7 @@ function SignUp() {
     e.preventDefault();
     const request = await fetch(`${import.meta.env.VITE_API_URL}/User`, {
       method: "PUT",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },

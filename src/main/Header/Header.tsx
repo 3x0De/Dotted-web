@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { useHeader } from "/src/hooks/useHeader";
+import { useHeader } from "../../hooks/useHeader";
 
 import "/src/styles/main/Header/Header.scss";
 
@@ -10,6 +11,8 @@ import left from "/src/assets/Img/Header/LeftDoubleArrow.svg";
 import right from "/src/assets/Img/Header/RightDoubleArrow.svg";
 
 function Header() {
+  const navigate = useNavigate();
+
   const {
     header: collection,
     setInput,
@@ -42,7 +45,29 @@ function Header() {
 
   const [visible, setvisible] = useState<boolean>(true);
 
-  let userName = "MMM";
+  const [bonjour, setbonjour] = useState<string>("eeee");
+
+  useEffect(() => {
+    async function handleBonjour() {
+      const request = await fetch(
+        `${import.meta.env.VITE_API_URL}/User/bonjour`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      const data = await request.json();
+
+      if (request.status === 404) navigate("/404");
+      else setbonjour(data.message);
+    }
+
+    handleBonjour();
+  }, []);
 
   return (
     <div id="Header" style={{ minWidth: visible ? "25vw" : "10px" }}>
@@ -51,7 +76,7 @@ function Header() {
           <a href="#">
             <img src={logo} />
           </a>
-          <h1>Bonjour {userName}</h1>
+          <h1>{bonjour}</h1>
           <span>Projets</span>
           <ul>
             {collection[0].Projets.map((el, idx) => (
