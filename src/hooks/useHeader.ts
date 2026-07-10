@@ -56,14 +56,14 @@ export function useHeader() {
     setheader((prev) => [prev[0], { ...prev[1], visibilite: e }]);
   };
 
-  const setInput = (cont: string, idx: number, invisible?: true) => {
+  const setInput = async (cont: string, idx: string, invisible?: true) => {
     if (invisible)
       setheader((prev) => [
         prev[0],
         {
-          Projets: prev[1].Projets.map((el, id) => ({
+          Projets: prev[1].Projets.map((el) => ({
             ...el,
-            title: id === idx ? cont : el.title,
+            title: el.lien.slice(6) === idx ? cont : el.title,
           })),
           visibilite: prev[1].visibilite,
         },
@@ -71,14 +71,23 @@ export function useHeader() {
     else
       setheader((prev) => [
         {
-          Projets: prev[0].Projets.map((el, id) => ({
+          Projets: prev[0].Projets.map((el) => ({
             ...el,
-            title: id === idx ? cont : el.title,
+            title: el.lien.slice(6) === idx ? cont : el.title,
           })),
           visibilite: true,
         },
         prev[1],
       ]);
+
+    await fetch(`${import.meta.env.VITE_API_URL}/Page/${idx}`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ type: "titre", nouveau: cont }),
+    });
   };
 
   const addPage = async (invisible: boolean) => {

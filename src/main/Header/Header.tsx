@@ -69,7 +69,7 @@ function Header() {
                   type="text"
                   value={el.title}
                   placeholder="Nom du Projet..."
-                  onChange={(e) => setInput(e.target.value, idx)}
+                  onChange={(e) => setInput(e.target.value, el.lien.slice(6))}
                 />
                 <a href={el.lien}>
                   <img src={el.icon ? el.icon : "/Icons/logo_mini.svg"} />
@@ -94,7 +94,9 @@ function Header() {
                       type="text"
                       value={el.title}
                       placeholder="N0m dU Pr0j3t..."
-                      onChange={(e) => setInput(e.target.value, idx, true)}
+                      onChange={(e) =>
+                        setInput(e.target.value, el.lien.slice(6), true)
+                      }
                     />
                     <a href={el.lien}>
                       <img src={el.icon ? el.icon : "/Icons/logo_mini.svg"} />
