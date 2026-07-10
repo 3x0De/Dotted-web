@@ -13,35 +13,7 @@ import right from "/src/assets/Img/Header/RightDoubleArrow.svg";
 function Header() {
   const navigate = useNavigate();
 
-  const {
-    header: collection,
-    setInput,
-    setVisibilite,
-    addPage,
-  } = useHeader([
-    {
-      Projets: [
-        { icon: null, title: "z", lien: "z" },
-        {
-          icon: "chrome://branding/content/about-logo@2x.png",
-          title: "",
-          lien: "z",
-        },
-      ],
-      visibilite: true,
-    },
-    {
-      Projets: [
-        { icon: null, title: "z", lien: "z" },
-        {
-          icon: "chrome://branding/content/about-logo@2x.png",
-          title: "",
-          lien: "z",
-        },
-      ],
-      visibilite: false,
-    },
-  ]);
+  const { header: collection, setInput, setVisibilite, addPage } = useHeader();
 
   const [visible, setvisible] = useState<boolean>(true);
 
@@ -69,6 +41,18 @@ function Header() {
     handleBonjour();
   }, []);
 
+  async function diconnect() {
+    await fetch(`${import.meta.env.VITE_API_URL}/User/logout`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    navigate("/login");
+  }
+
   return (
     <div id="Header" style={{ minWidth: visible ? "25vw" : "10px" }}>
       {visible && (
@@ -92,7 +76,7 @@ function Header() {
                 </a>
               </li>
             ))}
-            <li onClick={() => addPage()}>
+            <li onClick={() => addPage(false)}>
               <img src={add} />
             </li>
           </ul>
@@ -123,7 +107,7 @@ function Header() {
               </ul>
             </>
           )}
-          <button>Se déconnecter</button>
+          <button onClick={diconnect}>Se déconnecter</button>
         </>
       )}
       <img
