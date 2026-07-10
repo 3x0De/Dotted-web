@@ -24,7 +24,11 @@ function Header() {
 
   const [visible, setvisible] = useState<boolean>(true);
 
-  const [bonjour, setbonjour] = useState<string>("eeee");
+  const [bonjour, setbonjour] = useState<string>("");
+
+  const [username, setUsername] = useState<string>("");
+
+  const [password, setpassword] = useState<string>("");
 
   useEffect(() => {
     async function handleBonjour() {
@@ -42,7 +46,10 @@ function Header() {
       const data = await request.json();
 
       if (request.status === 404) navigate("/404");
-      else setbonjour(data.message);
+      else {
+        setbonjour(data.message);
+        setUsername(data.message.slice(8));
+      }
     }
 
     handleBonjour();
@@ -59,6 +66,28 @@ function Header() {
 
     navigate("/login");
   }
+
+  useEffect(() => {
+    async function connectpassword() {
+      const request = await fetch(
+        `${import.meta.env.VITE_API_URL}/User/login`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username: username, mdp: password }),
+        },
+      );
+
+      return request.status == 200;
+    }
+
+    connectpassword().then((success) => {
+      setVisibilite(success);
+    });
+  }, [password]);
 
   return (
     <div id="Header" style={{ minWidth: visible ? "25vw" : "10px" }}>
@@ -92,7 +121,8 @@ function Header() {
           </ul>
           <input
             type="password"
-            onChange={() => setVisibilite(!collection[1].visibilite)}
+            value={password}
+            onChange={(e) => setpassword(e.currentTarget.value)}
           />
           {collection[1].visibilite && (
             <>
