@@ -151,8 +151,8 @@ export const Block = forwardRef<HTMLDivElement, BlockProps>(
 
 function Contenu({
   children: contenu,
-  onChange,
-  onKeyDown,
+  onChange: onChangeGlobal,
+  onKeyDown: onKeyDownGlobal,
   registerRef,
   onAddListItem,
   onRemoveListItem,
@@ -181,8 +181,9 @@ function Contenu({
   const { id, type, content } = contenu;
 
   const props = {
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => onChange(e, id),
-    onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => onKeyDown(e, id),
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => onChangeGlobal(e, id),
+    onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) =>
+      onKeyDownGlobal(e, id),
     registerRef: (el: HTMLInputElement | null) => registerRef(id, el),
   };
 
@@ -201,8 +202,8 @@ function Contenu({
   ) : type === STATE.ul ? (
     <Listes.Ul
       id={id}
-      onChange={(e, id, itemId) => onChange(e, id, itemId)}
-      onKeyDown={(e, itemId) => onKeyDown(e, id, itemId)}
+      onChange={(e, id, itemId) => onChangeGlobal(e, id, itemId)}
+      onKeyDown={(e, itemId) => onKeyDownGlobal(e, id, itemId)}
       registerRef={(_, el) => registerRef(id, el)}
       onAddItem={(afterId: number) => onAddListItem?.(id, afterId)}
       onRemoveItem={(blockId: number, itemId: number) =>
@@ -214,8 +215,8 @@ function Contenu({
   ) : type === STATE.ol ? (
     <Listes.Ol
       id={id}
-      onChange={(e, id, itemId) => onChange(e, id, itemId)}
-      onKeyDown={(e, itemId) => onKeyDown(e, id, itemId)}
+      onChange={(e, id, itemId) => onChangeGlobal(e, id, itemId)}
+      onKeyDown={(e, itemId) => onKeyDownGlobal(e, id, itemId)}
       registerRef={(_, el) => registerRef(id, el)}
       onAddItem={(afterId: number) => onAddListItem?.(id, afterId)}
       onRemoveItem={(blockId: number, itemId: number) =>
@@ -227,8 +228,8 @@ function Contenu({
   ) : type === STATE.todo ? (
     <Listes.Todo
       id={id}
-      onChange={(e, id, itemId) => onChange(e, id, itemId)}
-      onKeyDown={(e, itemId) => onKeyDown(e, id, itemId)}
+      onChange={(e, id, itemId) => onChangeGlobal(e, id, itemId)}
+      onKeyDown={(e, itemId) => onKeyDownGlobal(e, id, itemId)}
       registerRef={(_, el) => registerRef(id, el)}
       onAddItem={(afterId: number) => onAddListItem?.(id, afterId)}
       onRemoveItem={(blockId: number, itemId: number) =>
@@ -245,8 +246,8 @@ function Contenu({
     <SelectionMenu
       id={id}
       registerRef={registerRef}
-      onChange={onChange}
-      onKeyDown={onKeyDown}
+      onChange={onChangeGlobal}
+      onKeyDown={onKeyDownGlobal}
       settype={settype}
       onAddItem={onAddItem}
       onRemoveItem={onRemoveItem}
@@ -259,8 +260,8 @@ function Contenu({
     <Cadre
       id={id}
       registerRef={registerRef}
-      onChange={onChange}
-      onKeyDown={onKeyDown}
+      onChange={onChangeGlobal}
+      onKeyDown={onKeyDownGlobal}
       settype={settype}
       onAddItem={onAddItem}
       onRemoveItem={onRemoveItem}
