@@ -35,7 +35,7 @@ function List({
 }) {
   return (
     <>
-      {"state" in content[0]
+      {content[0] && "state" in content[0]
         ? (content as Listede<TodoListItem>).map((el, idx) => (
             <div className="li" key={el.Id}>
               <div className="checkbox">
