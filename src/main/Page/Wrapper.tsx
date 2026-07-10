@@ -447,7 +447,7 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
             type: STATE.menu,
             content: {
               nom: "",
-              content: [{ id: block.id, type: null, content: "" }],
+              content: [{ id: Math.random(), type: null, content: "" }],
             },
           };
         if (/^\{\}\s/.test(val))
