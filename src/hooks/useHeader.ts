@@ -142,5 +142,35 @@ export function useHeader() {
     }
   };
 
-  return { header, setVisibilite, setInput, addPage };
+  const delPage = async (invisible: boolean, idx: string) => {
+    const requete = await fetch(`${import.meta.env.VITE_API_URL}/Page/${idx}`, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (requete.status == 200) {
+      if (invisible) {
+        setheader((prev) => [
+          prev[0],
+          {
+            ...prev[1],
+            Projets: prev[1].Projets.filter((el) => el.lien.slice(6) != idx),
+          },
+        ]);
+      } else {
+        setheader((prev) => [
+          {
+            ...prev[0],
+            Projets: prev[0].Projets.filter((el) => el.lien.slice(6) != idx),
+          },
+          prev[1],
+        ]);
+      }
+    }
+  };
+
+  return { header, setVisibilite, setInput, addPage, delPage };
 }

@@ -6,6 +6,7 @@ import { useHeader } from "../../hooks/useHeader";
 import "/src/styles/main/Header/Header.scss";
 
 import add from "/src/assets/Img/Header/Add.svg";
+import bin from "/src/assets/Img/Header/bin.svg";
 import logo from "/Icons/logo_max.svg";
 import left from "/src/assets/Img/Header/LeftDoubleArrow.svg";
 import right from "/src/assets/Img/Header/RightDoubleArrow.svg";
@@ -13,7 +14,13 @@ import right from "/src/assets/Img/Header/RightDoubleArrow.svg";
 function Header() {
   const navigate = useNavigate();
 
-  const { header: collection, setInput, setVisibilite, addPage } = useHeader();
+  const {
+    header: collection,
+    setInput,
+    setVisibilite,
+    addPage,
+    delPage,
+  } = useHeader();
 
   const [visible, setvisible] = useState<boolean>(true);
 
@@ -74,6 +81,9 @@ function Header() {
                 <a href={el.lien}>
                   <img src={el.icon ? el.icon : "/Icons/logo_mini.svg"} />
                 </a>
+                <div onClick={() => delPage(false, el.lien.slice(6))}>
+                  <img src={bin} />
+                </div>
               </li>
             ))}
             <li onClick={() => addPage(false)}>
@@ -101,6 +111,9 @@ function Header() {
                     <a href={el.lien}>
                       <img src={el.icon ? el.icon : "/Icons/logo_mini.svg"} />
                     </a>
+                    <div onClick={() => delPage(true, el.lien.slice(6))}>
+                      <img src={bin} />
+                    </div>
                   </li>
                 ))}
                 <li onClick={() => addPage(true)}>
