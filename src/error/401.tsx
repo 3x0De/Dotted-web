@@ -1,7 +1,7 @@
 import Error from "./Error";
 
-function Error404() {
+function Error401() {
   return <Error msg="Erreur 401 - Unauthorized" />;
 }
 
-export default Error404;
+export default Error401;
