@@ -45,7 +45,7 @@ function Header() {
 
       const data = await request.json();
 
-      if (request.status === 404) navigate("/404");
+      if (request.status === 404) navigate("/logIn");
       else {
         setbonjour(data.message);
         setUsername(data.message.slice(8));
@@ -95,7 +95,7 @@ function Header() {
     <div id="Header" style={{ minWidth: visible ? "25vw" : "10px" }}>
       {visible && (
         <>
-          <a href="#">
+          <a href="/">
             <img src={logo} />
           </a>
           <h1>{bonjour}</h1>

@@ -18,7 +18,7 @@ function Error({ msg }: { msg: string }) {
       </div>
       <h1>{msg}</h1>
       <div className="bouttons">
-        <button>Aller a l'accueil</button>
+        <button onClick={() => navigate("/")}>Aller a l'accueil</button>
         <button onClick={() => navigate("/login")}>Se connecter</button>
       </div>
     </div>
