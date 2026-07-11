@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import type { Categories } from "../../types/MainTypes/Categories";
 
@@ -6,7 +6,7 @@ import Wrapper from "./Wrapper";
 import MenuIcons from "./MenuIcons";
 
 import "/src/styles/main/Page/Page.scss";
-import { data, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Page() {
   const navigate = useNavigate();
@@ -48,8 +48,50 @@ function Header() {
   const [afficheIcons, setafficheIcons] = useState<boolean>(false);
   const [iconPath, seticonPath] = useState<string | undefined>();
 
+  const hasLoadedTitre = useRef(false);
+
+  useEffect(() => {
+    const getTitle = async () => {
+      const request = await fetch(
+        `${import.meta.env.VITE_API_URL}${window.location.pathname}`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      return await request.json();
+    };
+
+    getTitle().then((list) => {
+      settitre(list.title ?? "");
+      hasLoadedTitre.current = true;
+    });
+  }, []);
+
   useEffect(() => {
     document.title = titre == "" ? "Dotted" : `${titre} | Dotted`;
+
+    if (!hasLoadedTitre.current) return;
+
+    const sendTitle = async () => {
+      await fetch(
+        `${import.meta.env.VITE_API_URL}${window.location.pathname}`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ type: "titre", nouveau: titre }),
+        },
+      );
+    };
+
+    sendTitle();
   }, [titre]);
 
   useEffect(() => {
@@ -143,20 +185,7 @@ function Path({ titre }: { titre: string }) {
 }
 
 function Categories() {
-  const [categories, setcategories] = useState<Categories>([
-    {
-      icon: "/Icons/logo_mini.svg",
-      categorie: "Categorie1",
-      type: "Texte",
-      value: "ACAB",
-    },
-    {
-      icon: "/Icons/logo_mini.svg",
-      categorie: "Categorie2",
-      type: "Texte",
-      value: "",
-    },
-  ]);
+  const [categories, setcategories] = useState<Categories>([]);
 
   return (
     <table>
