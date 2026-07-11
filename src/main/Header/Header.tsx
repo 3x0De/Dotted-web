@@ -68,6 +68,8 @@ function Header() {
   }
 
   useEffect(() => {
+    if (!password) return;
+
     async function connectpassword() {
       const request = await fetch(
         `${import.meta.env.VITE_API_URL}/User/login`,

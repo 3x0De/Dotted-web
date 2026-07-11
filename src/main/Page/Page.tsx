@@ -1,53 +1,43 @@
 import React, { useEffect, useState } from "react";
 
 import type { Categories } from "../../types/MainTypes/Categories";
-import { STATE } from "../../types/MainTypes/BlockTypes/menu";
 
 import Wrapper from "./Wrapper";
 import MenuIcons from "./MenuIcons";
 
 import "/src/styles/main/Page/Page.scss";
+import { useNavigate } from "react-router-dom";
 
 function Page() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    async function getPages() {
+      const request = await fetch(`${import.meta.env.VITE_API_URL}/Page`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prive: true, racine: false }),
+      });
+
+      return await request.json();
+    }
+
+    getPages().then((list) => {
+      if (
+        !list.includes(window.location.pathname) &&
+        window.location.pathname !== "/"
+      )
+        navigate("/404");
+    });
+  }, []);
+
   return (
     <div id="Page">
       <Header />
-      <Wrapper
-        init={{
-          id: 0,
-          type: STATE.col,
-          content: [
-            { id: Math.random(), type: STATE.h1, content: "1" },
-            { id: Math.random(), type: STATE.h1, content: "2" },
-            {
-              id: Math.random(),
-              type: STATE.row,
-              content: [
-                {
-                  id: Math.random(),
-                  type: STATE.col,
-                  content: [
-                    { id: Math.random(), type: STATE.h1, content: "1" },
-                    { id: Math.random(), type: STATE.h1, content: "2" },
-                  ],
-                },
-                {
-                  id: Math.random(),
-                  type: STATE.col,
-                  content: [
-                    { id: Math.random(), type: STATE.h1, content: "1" },
-                  ],
-                },
-              ],
-            },
-            {
-              id: Math.random(),
-              type: STATE.ul,
-              content: [{ Id: Math.random(), contenu: "d" }],
-            },
-          ],
-        }}
-      />
+      <Wrapper />
     </div>
   );
 }

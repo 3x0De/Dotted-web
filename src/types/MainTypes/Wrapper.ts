@@ -66,6 +66,7 @@ export type EditorState =
   | EmptyBlock;
 
 export type EditorAction =
+  | { type: "INIT"; payload: EditorState }
   | { type: "SET_TYPE"; payload: TYPE; targetId: number }
   | { type: "SET_CONTENT"; payload: string }
   | { type: "CLEAR_TYPE"; targetId: number }

@@ -4,6 +4,7 @@ import {
   useEffect,
   useReducer,
   useRef,
+  useState,
 } from "react";
 
 import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
@@ -300,6 +301,9 @@ function wrapInColumns(
 
 function reducer(state: EditorState, action: EditorAction): EditorState {
   switch (action.type) {
+    case "INIT":
+      return action.payload;
+
     case "SET_TYPE":
       return updateBlock(state, action.targetId, (block): EditorState => {
         if (action.payload === STATE.col) {
@@ -573,8 +577,54 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
   }
 }
 
-function Wrapper({ init }: { init: EditorState }) {
-  const [state, dispatch] = useReducer(reducer, init);
+async function getInit() {
+  const request = await fetch(
+    `${import.meta.env.VITE_API_URL}${window.location.pathname}`,
+    {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  const data = await request.json();
+
+  return data.contenu;
+}
+
+async function save(nouveau: EditorState) {
+  await fetch(`${import.meta.env.VITE_API_URL}${window.location.pathname}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ type: "contenu", nouveau: nouveau }),
+  });
+}
+
+function Wrapper() {
+  const [state, dispatch] = useReducer(reducer, {
+    id: 0,
+    type: STATE.col,
+    content: [{ id: Math.random(), type: null, content: "" }],
+  });
+
+  const hasLoaded = useRef(false);
+
+  useEffect(() => {
+    getInit().then((data: EditorState) => {
+      dispatch({ type: "INIT", payload: data });
+      hasLoaded.current = true;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!hasLoaded.current) return;
+    save(state);
+  }, [state]);
 
   const { empile: actionEmpile, depile: actionDepile } = usePile<EditorState>();
   const {

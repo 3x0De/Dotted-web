@@ -22,7 +22,7 @@ async function GetData(prive: boolean): Promise<Projet[]> {
     });
     const data = await request.json();
     return {
-      title: data.title,
+      title: data.title ?? "",
       icon: data.icon,
       lien: el,
     };
