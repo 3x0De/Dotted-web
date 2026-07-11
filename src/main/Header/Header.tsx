@@ -22,7 +22,7 @@ function Header() {
     delPage,
   } = useHeader();
 
-  const [visible, setvisible] = useState<boolean>(true);
+  const [visible, setvisible] = useState<boolean>(false);
 
   const [bonjour, setbonjour] = useState<string>("");
 

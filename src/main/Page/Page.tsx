@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState, useRef } from "react";
 
 import type { Categories } from "../../types/MainTypes/Categories";
@@ -6,7 +7,6 @@ import Wrapper from "./Wrapper";
 import MenuIcons from "./MenuIcons";
 
 import "/src/styles/main/Page/Page.scss";
-import { useNavigate } from "react-router-dom";
 
 function Page() {
   const navigate = useNavigate();
@@ -47,11 +47,12 @@ function Header() {
   const [afficheBanniere, setafficheBanniere] = useState<boolean>(false);
   const [afficheIcons, setafficheIcons] = useState<boolean>(false);
   const [iconPath, seticonPath] = useState<string | undefined>();
+  const [bannierePath, setbannierePath] = useState<string | undefined>();
 
   const hasLoadedTitre = useRef(false);
 
   useEffect(() => {
-    const getTitle = async () => {
+    const getData = async () => {
       const request = await fetch(
         `${import.meta.env.VITE_API_URL}${window.location.pathname}`,
         {
@@ -66,9 +67,11 @@ function Header() {
       return await request.json();
     };
 
-    getTitle().then((list) => {
+    getData().then((list) => {
       settitre(list.title ?? "");
       hasLoadedTitre.current = true;
+      seticonPath(list.icon);
+      setbannierePath(`${import.meta.env.VITE_API_URL}${list.banniere}`);
     });
   }, []);
 
@@ -103,19 +106,55 @@ function Header() {
     }
   }, [iconPath]);
 
+  async function sendBanniere(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const request = await fetch(`${import.meta.env.VITE_API_URL}/Image`, {
+      method: "PUT",
+      credentials: "include",
+      body: formData,
+    });
+
+    if (request.status === 200) {
+      const data = await request.json();
+      await fetch(
+        `${import.meta.env.VITE_API_URL}${window.location.pathname}`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ type: "banniere", nouveau: data.data }),
+        },
+      );
+
+      setbannierePath(`${import.meta.env.VITE_API_URL}${data.data}`);
+    }
+  }
+
   return (
     <header>
       <div
         id="Banniere"
         style={
           {
-            "--Baniere-Image": `url('/Icons/logo_max.svg')`,
+            "--Baniere-Image": `url('${bannierePath != `${import.meta.env.VITE_API_URL}null` ? bannierePath : "/Icons/logo_max.svg"}')`,
           } as React.CSSProperties
         }
         onClick={() => setafficheBanniere((e) => !e)}
       >
         {afficheBanniere && (
-          <input onClick={(e) => e.stopPropagation()} type="file" />
+          <input
+            onClick={(e) => e.stopPropagation()}
+            type="file"
+            accept="image/*"
+            onChange={sendBanniere}
+          />
         )}
       </div>
       <input

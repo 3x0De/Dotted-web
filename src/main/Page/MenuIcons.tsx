@@ -11,6 +11,19 @@ function MenuIcons({
 }) {
   const { courant } = useFolder("/src/assets/Icons");
 
+  async function sendIcon(path: string) {
+    await fetch(`${import.meta.env.VITE_API_URL}${window.location.pathname}`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ type: "icon", nouveau: path }),
+    });
+
+    seticonPath(path);
+  }
+
   return (
     <nav>
       <div className="bin" onClick={() => seticonPath(undefined)}>
@@ -29,7 +42,7 @@ function MenuIcons({
                         src={`/src/assets/Icons/${el.name}/${elt}`}
                         key={elt}
                         onClick={() =>
-                          seticonPath(`/src/assets/Icons/${el.name}/${elt}`)
+                          sendIcon(`/src/assets/Icons/${el.name}/${elt}`)
                         }
                       />
                     ),

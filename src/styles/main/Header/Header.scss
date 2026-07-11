@@ -128,7 +128,8 @@
     left: 25vw;
     top: 40px;
     z-index: 1000;
-    background-color: rgba(v.$Groove, 0.4);
+    background:
+      linear-gradient(rgba(v.$Groove, 0.4), rgba(v.$Groove, 0.4)), v.$WhiteBase;
     border-radius: 0 5px 5px 0;
     cursor: pointer;
   }
