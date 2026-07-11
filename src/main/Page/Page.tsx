@@ -6,7 +6,7 @@ import Wrapper from "./Wrapper";
 import MenuIcons from "./MenuIcons";
 
 import "/src/styles/main/Page/Page.scss";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 
 function Page() {
   const navigate = useNavigate();
@@ -102,29 +102,42 @@ function Header() {
 }
 
 function Path({ titre }: { titre: string }) {
-  const path = [
-    { nom: "a", path: "google.com" },
-    { nom: "b", path: "google.com" },
-    { nom: "", path: "https://google.com" },
-  ];
+  const [path, setPath] = useState<{ name: string; path: string }[]>([]);
+
+  useEffect(() => {
+    async function getPath() {
+      const request = await fetch(
+        `${import.meta.env.VITE_API_URL}${window.location.pathname}/Path`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (request.status === 200) {
+        const data = await request.json();
+        setPath(data);
+      }
+    }
+
+    getPath();
+  }, []);
 
   const displayedPath = path.map((el, idx) =>
-    idx === path.length - 1 ? { ...el, nom: titre } : el,
+    idx === path.length - 1 ? { ...el, name: titre } : el,
   );
 
   return (
     <p>
-      {displayedPath.map((el, idx) => {
-        return (
-          <React.Fragment key={idx}>
-            {" "}
-            <a href={el.path} key={idx}>
-              {el.nom}
-            </a>
-            {idx != path.length - 1 ? "/" : ""}
-          </React.Fragment>
-        );
-      })}
+      {displayedPath.map((el, idx) => (
+        <React.Fragment key={idx}>
+          <a href={el.path}>{el.name}</a>
+          {idx !== displayedPath.length - 1 ? "/" : ""}
+        </React.Fragment>
+      ))}
     </p>
   );
 }
