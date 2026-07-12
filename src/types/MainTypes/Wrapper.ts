@@ -56,6 +56,12 @@ export interface EmptyBlock extends Block {
   type: STATE.sprt;
 }
 
+export interface LinkBlock extends Block {
+  id: number;
+  type: STATE.doc;
+  content: string;
+}
+
 export type EditorState =
   | RowBlock
   | ColumnBlock
@@ -63,12 +69,13 @@ export type EditorState =
   | ListBlock
   | MenuBlock
   | CadreBlock
-  | EmptyBlock;
+  | EmptyBlock
+  | LinkBlock;
 
 export type EditorAction =
   | { type: "INIT"; payload: EditorState }
   | { type: "SET_TYPE"; payload: TYPE; targetId: number }
-  | { type: "SET_CONTENT"; payload: string }
+  | { type: "SET_CONTENT"; payload: string; targetId: number }
   | { type: "CLEAR_TYPE"; targetId: number }
   | {
       type: "HANDLE_CHANGE";

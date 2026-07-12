@@ -4,7 +4,6 @@ import {
   useEffect,
   useReducer,
   useRef,
-  useState,
 } from "react";
 
 import { DragDropProvider, type DragEndEvent } from "@dnd-kit/react";
@@ -299,6 +298,24 @@ function wrapInColumns(
   }));
 }
 
+async function createNewDocument() {
+  const requete = await fetch(`${import.meta.env.VITE_API_URL}/Page`, {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      visibilite: true,
+      parent: window.location.pathname.slice(6),
+    }),
+  });
+
+  const data = await requete.json();
+
+  return data.data;
+}
+
 function reducer(state: EditorState, action: EditorAction): EditorState {
   switch (action.type) {
     case "INIT":
@@ -352,13 +369,21 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
             content: [{ id: Math.random(), type: null, content: "" }],
           };
         }
+        if (action.payload == STATE.doc) {
+          return {
+            id: block.id,
+            type: action.payload,
+            content: "",
+          };
+        }
 
         return { id: Math.random(), type: action.payload, content: "" };
       });
 
     case "SET_CONTENT":
-      if (state.type === STATE.col || state.type === STATE.row) return state;
-      return { ...state, content: action.payload } as TextBlock;
+      return updateBlock(state, action.targetId, (block): EditorState => {
+        return { ...block, content: action.payload } as EditorState;
+      });
 
     case "CLEAR_TYPE":
       return updateBlock(state, action.targetId, (block) => ({
@@ -372,7 +397,8 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
         if (
           block.type === STATE.col ||
           block.type === STATE.row ||
-          block.type === STATE.cdr
+          block.type === STATE.cdr ||
+          block.type === STATE.doc
         )
           return block;
 
@@ -784,13 +810,24 @@ function Wrapper() {
         <Block
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          settype={({
+          settype={async ({
             newType,
             targetId,
           }: {
             newType: TYPE;
             targetId: number;
-          }) => dispatch({ type: "SET_TYPE", payload: newType, targetId })}
+          }) => {
+            dispatch({ type: "SET_TYPE", payload: newType, targetId });
+            if (newType === STATE.doc) {
+              try {
+                const result = await createNewDocument();
+
+                dispatch({ type: "SET_CONTENT", targetId, payload: result });
+              } catch (error) {
+                console.error("Échec de la création du document", error);
+              }
+            }
+          }}
           onAddItem={(targetId: number) =>
             dispatch({
               type: "ADD_ITEM",

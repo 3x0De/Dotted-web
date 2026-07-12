@@ -22,6 +22,7 @@ import SelectionMenu from "./Component/Menu";
 import Cadre from "./Component/Cadre";
 import Cite from "./Component/Cite";
 import Separateur from "./Component/Separateur";
+import Document from "./Component/Document";
 
 import bin from "/src/assets/Img/Page/Block/bin.svg";
 import drag from "/src/assets/Img/Page/Block/drag.svg";
@@ -274,8 +275,10 @@ function Contenu({
     <Cite {...props}>{content}</Cite>
   ) : type === STATE.sprt ? (
     <Separateur />
+  ) : type === STATE.doc ? (
+    <Document {...props}>{content}</Document>
   ) : (
-    <Text placeholder='Appuyez sur "/" pour afficher les commandes' {...props}>
+    <Text placeholder="Appuyez sur ⋮⋮ pour afficher les commandes" {...props}>
       {content as string}
     </Text>
   );
