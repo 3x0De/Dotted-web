@@ -492,6 +492,12 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
             type: STATE.cite,
             content: "",
           };
+        if (/^\/\/\s/.test(val))
+          return {
+            id: block.id,
+            type: STATE.link,
+            content: "",
+          };
         else if (/^(_{1,3}|-{1,3})\s/.test(val))
           return {
             id: block.id,

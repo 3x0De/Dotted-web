@@ -1,0 +1,23 @@
+@use "../../../../variables.scss" as v;
+
+.Lien {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease-in-out;
+    border-radius: 5px;
+
+    &:nth-child(2) {
+      cursor: pointer;
+    }
+
+    &:hover {
+      background-color: rgba(v.$Groove, 0.2);
+    }
+  }
+}

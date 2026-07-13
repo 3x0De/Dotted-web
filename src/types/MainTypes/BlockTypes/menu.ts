@@ -15,6 +15,7 @@ export const enum STATE {
   cite = "Citation",
   sprt = "Séparateur",
   doc = "Document",
+  link = "Lien",
 }
 
 export type TYPE = STATE | null;
@@ -36,4 +37,5 @@ export const menu: MenuEntry[] = [
   ["cite", STATE.cite],
   ["sprt", STATE.sprt],
   ["doc", STATE.doc],
+  ["link", STATE.link],
 ];

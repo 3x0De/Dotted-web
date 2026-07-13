@@ -58,7 +58,7 @@ export interface EmptyBlock extends Block {
 
 export interface LinkBlock extends Block {
   id: number;
-  type: STATE.doc;
+  type: STATE.doc | STATE.link;
   content: string;
 }
 
