@@ -62,6 +62,12 @@ export interface LinkBlock extends Block {
   content: string;
 }
 
+export interface ImageBlock extends Block {
+  id: number;
+  type: STATE.img;
+  content: { width?: number; lien?: string };
+}
+
 export type EditorState =
   | RowBlock
   | ColumnBlock
@@ -70,7 +76,8 @@ export type EditorState =
   | MenuBlock
   | CadreBlock
   | EmptyBlock
-  | LinkBlock;
+  | LinkBlock
+  | ImageBlock;
 
 export type EditorAction =
   | { type: "INIT"; payload: EditorState }

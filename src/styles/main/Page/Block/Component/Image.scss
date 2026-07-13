@@ -1,0 +1,15 @@
+.Image {
+  border-radius: 0 !important;
+  opacity: 1 !important;
+  width: 100%;
+  position: relative;
+
+  img {
+    display: block;
+    height: auto !important;
+  }
+
+  input {
+    width: 100%;
+  }
+}

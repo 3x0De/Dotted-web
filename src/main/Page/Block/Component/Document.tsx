@@ -18,8 +18,6 @@ function Document({
   const [icon, seticon] = useState<string | null>(null);
   const [titre, settitre] = useState<string | null>(null);
 
-  console.log(children);
-
   useEffect(() => {
     const getData = async () => {
       const request = await fetch(

@@ -376,6 +376,13 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
             content: "",
           };
         }
+        if (action.payload == STATE.img) {
+          return {
+            id: block.id,
+            type: action.payload,
+            content: {},
+          };
+        }
 
         return { id: Math.random(), type: action.payload, content: "" };
       });

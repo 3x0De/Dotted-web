@@ -24,6 +24,7 @@ import Cite from "./Component/Cite";
 import Separateur from "./Component/Separateur";
 import Document from "./Component/Document";
 import Link from "./Component/Lien";
+import Image from "./Component/Image";
 
 import bin from "/src/assets/Img/Page/Block/bin.svg";
 import drag from "/src/assets/Img/Page/Block/drag.svg";
@@ -280,6 +281,8 @@ function Contenu({
     <Document {...props}>{content}</Document>
   ) : type === STATE.link ? (
     <Link {...props}>{content}</Link>
+  ) : type === STATE.img ? (
+    <Image {...props}>{content}</Image>
   ) : (
     <Text placeholder="Appuyez sur ⋮⋮ pour afficher les commandes" {...props}>
       {content as string}

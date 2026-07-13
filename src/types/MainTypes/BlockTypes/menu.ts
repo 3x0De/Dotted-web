@@ -16,6 +16,7 @@ export const enum STATE {
   sprt = "Séparateur",
   doc = "Document",
   link = "Lien",
+  img = "Image",
 }
 
 export type TYPE = STATE | null;
@@ -38,4 +39,5 @@ export const menu: MenuEntry[] = [
   ["sprt", STATE.sprt],
   ["doc", STATE.doc],
   ["link", STATE.link],
+  ["img", STATE.img],
 ];
