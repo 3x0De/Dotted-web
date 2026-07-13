@@ -17,6 +17,7 @@ export const enum STATE {
   doc = "Document",
   link = "Lien",
   img = "Image",
+  tbl = "Tableur",
 }
 
 export type TYPE = STATE | null;
@@ -40,4 +41,5 @@ export const menu: MenuEntry[] = [
   ["doc", STATE.doc],
   ["link", STATE.link],
   ["img", STATE.img],
+  ["tbl", STATE.tbl],
 ];

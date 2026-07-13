@@ -3,9 +3,8 @@ import { useState, useRef } from "react";
 import type { MakeState } from "../../../../types/Set";
 import "../../../../styles/main/Page/Block/Component/Image.scss";
 
-// Typage des propriétés (Ajout de onUpload pour le resize)
 interface ImageProps {
-  children: { width?: number; lien?: string };
+  children: string;
   onChange: MakeState<React.ChangeEvent<HTMLInputElement>>;
   onUpload?: (data: {
     img?: string;
@@ -66,13 +65,13 @@ function Image({ children: content, onChange, registerRef }: ImageProps) {
 
   return (
     <div className="Image" ref={registerRef}>
-      {content.lien ? (
+      {content ? (
         <>
           <img
             ref={imgRef}
-            src={`${import.meta.env.VITE_API_URL}${content.lien}`}
+            src={`${import.meta.env.VITE_API_URL}${content}`}
             alt="Image introuvable"
-            width={content.width ?? "100%"}
+            width="100%"
           />
         </>
       ) : (

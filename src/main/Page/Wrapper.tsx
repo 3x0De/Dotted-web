@@ -380,7 +380,17 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
           return {
             id: block.id,
             type: action.payload,
-            content: {},
+            content: "",
+          };
+        }
+        if (action.payload == STATE.tbl) {
+          return {
+            id: block.id,
+            type: action.payload,
+            content: [
+              ["", ""],
+              ["", ""],
+            ],
           };
         }
 

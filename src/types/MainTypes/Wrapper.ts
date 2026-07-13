@@ -58,14 +58,14 @@ export interface EmptyBlock extends Block {
 
 export interface LinkBlock extends Block {
   id: number;
-  type: STATE.doc | STATE.link;
+  type: STATE.doc | STATE.link | STATE.img;
   content: string;
 }
 
-export interface ImageBlock extends Block {
+export interface TableurBlock extends Block {
   id: number;
-  type: STATE.img;
-  content: { width?: number; lien?: string };
+  type: STATE.tbl;
+  content: string[][];
 }
 
 export type EditorState =
@@ -77,7 +77,7 @@ export type EditorState =
   | CadreBlock
   | EmptyBlock
   | LinkBlock
-  | ImageBlock;
+  | TableurBlock;
 
 export type EditorAction =
   | { type: "INIT"; payload: EditorState }

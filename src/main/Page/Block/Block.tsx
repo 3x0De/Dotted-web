@@ -25,6 +25,7 @@ import Separateur from "./Component/Separateur";
 import Document from "./Component/Document";
 import Link from "./Component/Lien";
 import Image from "./Component/Image";
+import Tableur from "./Component/Tableur";
 
 import bin from "/src/assets/Img/Page/Block/bin.svg";
 import drag from "/src/assets/Img/Page/Block/drag.svg";
@@ -283,6 +284,8 @@ function Contenu({
     <Link {...props}>{content}</Link>
   ) : type === STATE.img ? (
     <Image {...props}>{content}</Image>
+  ) : type === STATE.tbl ? (
+    <Tableur />
   ) : (
     <Text placeholder="Appuyez sur ⋮⋮ pour afficher les commandes" {...props}>
       {content as string}
