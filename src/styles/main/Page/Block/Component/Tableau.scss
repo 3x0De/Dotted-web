@@ -47,6 +47,7 @@
     }
 
     th {
+      overflow: hidden;
       .propriete {
         opacity: 1 !important;
         display: flex;
@@ -56,6 +57,11 @@
 
         &:hover {
           background-color: transparent;
+        }
+
+        input {
+          width: auto;
+          max-width: 100%;
         }
 
         img {
