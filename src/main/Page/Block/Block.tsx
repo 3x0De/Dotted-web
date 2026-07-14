@@ -26,6 +26,7 @@ import Document from "./Component/Document";
 import Link from "./Component/Lien";
 import Image from "./Component/Image";
 import Tableur from "./Component/Tableur";
+import Graphe from "./Component/Graphe";
 
 import bin from "/src/assets/Img/Page/Block/bin.svg";
 import drag from "/src/assets/Img/Page/Block/drag.svg";
@@ -69,6 +70,7 @@ export const Block = forwardRef<HTMLDivElement, BlockProps>(
 
     const { isDropTarget, ref: dropRef } = useDroppable({
       id: content.id,
+      disabled: isContainer,
       data: {
         blockId: content.id,
         type: content.type,
@@ -81,6 +83,7 @@ export const Block = forwardRef<HTMLDivElement, BlockProps>(
       ref: dragRef,
     } = useDraggable({
       id: content.id,
+      disabled: isContainer,
       data: {
         blockId: content.id,
         type: content.type,
@@ -88,8 +91,10 @@ export const Block = forwardRef<HTMLDivElement, BlockProps>(
     });
 
     const setElementRef = (el: HTMLDivElement | null) => {
-      dragRef(el);
-      dropRef(el);
+      if (!isContainer) {
+        dragRef(el);
+        dropRef(el);
+      }
       if (typeof forwardedRef === "function") forwardedRef(el);
       else if (forwardedRef) forwardedRef.current = el;
     };
@@ -120,24 +125,30 @@ export const Block = forwardRef<HTMLDivElement, BlockProps>(
             <div onClick={() => onRemoveItem(content.id)}>
               <img src={bin} alt="Delete" />
             </div>
+
             <div
-              onPointerDown={() => setshowMenu((prev) => !prev)}
               ref={handleRef}
+              onPointerDown={() => setshowMenu((prev) => !prev)}
+              style={{ cursor: "grab" }}
             >
               <img src={drag} alt="Drag" />
             </div>
-            <Contenu
-              registerRef={registerRef}
-              onChange={onChange}
-              onKeyDown={onKeyDown}
-              onAddListItem={onAddListItem}
-              onRemoveListItem={onRemoveListItem}
-              settype={settype}
-              onAddItem={onAddItem}
-              onRemoveItem={onRemoveItem}
-            >
-              {content as TextBlock}
-            </Contenu>
+
+            <div style={{ flexGrow: 1, width: "100%" }}>
+              <Contenu
+                registerRef={registerRef}
+                onChange={onChange}
+                onKeyDown={onKeyDown}
+                onAddListItem={onAddListItem}
+                onRemoveListItem={onRemoveListItem}
+                settype={settype}
+                onAddItem={onAddItem}
+                onRemoveItem={onRemoveItem}
+              >
+                {content as TextBlock}
+              </Contenu>
+            </div>
+
             {showMenu && (
               <Menu
                 leave={() => setshowMenu(false)}
@@ -286,6 +297,8 @@ function Contenu({
     <Image {...props}>{content}</Image>
   ) : type === STATE.tbl ? (
     <Tableur {...props}>{content}</Tableur>
+  ) : type === STATE.grph ? (
+    <Graphe {...props}>{content}</Graphe>
   ) : (
     <Text placeholder="Appuyez sur ⋮⋮ pour afficher les commandes" {...props}>
       {content as string}

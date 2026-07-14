@@ -13,6 +13,7 @@
     "@dnd-kit/react": "^0.5.0",
     "@handsontable/react": "^16.2.0",
     "@handsontable/react-wrapper": "^18.0.0",
+    "@xyflow/react": "^12.11.2",
     "handsontable": "^18.0.0",
     "hyperformula": "^3.3.0",
     "react": "^19.2.7",

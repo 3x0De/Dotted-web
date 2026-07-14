@@ -16,13 +16,17 @@
       opacity: 1;
     }
 
-    input {
-      border-radius: 5px;
-      padding: 5px;
+    &:last-child {
+      width: 100%;
 
-      &:hover {
-        background-color: rgba(v.$Groove, 0.2);
-        mask-image: none;
+      input {
+        border-radius: 5px;
+        padding: 5px;
+
+        &:hover {
+          background-color: rgba(v.$Groove, 0.2);
+          mask-image: none;
+        }
       }
     }
 
@@ -76,6 +80,7 @@
   scrollbar-gutter: stable;
   background-color: v.$WhiteBase;
   z-index: 10;
+  width: min-content;
 
   ul {
     width: max-content;

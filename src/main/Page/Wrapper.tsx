@@ -19,6 +19,8 @@ import { STATE, type TYPE } from "../../types/MainTypes/BlockTypes/menu";
 import usePile from "../../hooks/usePile";
 
 import Block from "./Block/Block";
+import type { InputNodeType } from "../../types/MainTypes/BlockTypes/Graphe";
+import type { Edge } from "@xyflow/react";
 
 function updateBlock(
   state: EditorState,
@@ -394,6 +396,14 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
           };
         }
 
+        if (action.payload == STATE.grph) {
+          return {
+            id: block.id,
+            type: action.payload,
+            content: { Node: [], Edge: [] },
+          };
+        }
+
         return { id: Math.random(), type: action.payload, content: "" };
       });
 
@@ -450,6 +460,16 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
                 : el,
             ),
           };
+        }
+
+        if (block.type === STATE.grph) {
+          return {
+            ...block,
+            content: action.payload as unknown as {
+              Node: InputNodeType[];
+              Edge: Edge[];
+            },
+          } as EditorState;
         }
 
         const val = action.payload;

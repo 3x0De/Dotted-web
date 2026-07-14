@@ -1,0 +1,41 @@
+@use "../../../../variables.scss" as v;
+
+.Graphe {
+  aspect-ratio: 2/1;
+  width: 100%;
+  border: 3px solid v.$Void;
+  position: relative;
+  opacity: 1 !important;
+  background-color: transparent !important;
+
+  > img {
+    position: absolute;
+    left: 0;
+    top: 0;
+    cursor: pointer;
+  }
+
+  .react-flow__node {
+    width: 200px !important;
+    border: 1px solid v.$Void;
+
+    .node-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+
+      gap: 10px;
+      padding: 10px;
+
+      input {
+        max-width: 100%;
+        all: unset;
+
+        &[type="color"] {
+          width: 100%;
+          height: 1rem;
+        }
+      }
+    }
+  }
+}

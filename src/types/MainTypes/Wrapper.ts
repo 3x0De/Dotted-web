@@ -1,3 +1,5 @@
+import type { Edge } from "@xyflow/react";
+import type { InputNodeType } from "./BlockTypes/Graphe";
 import type { Liste } from "./BlockTypes/Liste";
 import type { TableurType } from "./BlockTypes/Tableur";
 import { STATE, type TYPE } from "./BlockTypes/menu";
@@ -69,6 +71,12 @@ export interface TableurBlock extends Block {
   content: TableurType;
 }
 
+export interface GraphBlock extends Block {
+  id: number;
+  type: STATE.grph;
+  content: { Node: InputNodeType[]; Edge: Edge[] };
+}
+
 export type EditorState =
   | RowBlock
   | ColumnBlock
@@ -78,7 +86,8 @@ export type EditorState =
   | CadreBlock
   | EmptyBlock
   | LinkBlock
-  | TableurBlock;
+  | TableurBlock
+  | GraphBlock;
 
 export type EditorAction =
   | { type: "INIT"; payload: EditorState }
