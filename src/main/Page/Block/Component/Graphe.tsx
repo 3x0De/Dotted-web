@@ -72,8 +72,6 @@ function Graphe({
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   registerRef?: (el: HTMLInputElement | null) => void;
 }) {
-  // Défense contre un content corrompu/incomplet venant du serveur
-  // (bloc créé avant une correction du reducer, par ex.).
   const { Node = [], Edge = [] } = children ?? {};
 
   const inputChangeRef = useRef<(nodeId: string, value: string) => void>(
@@ -106,8 +104,6 @@ function Graphe({
     useNodesState<InputNodeType>(seededNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(Edge);
 
-  // ... reste inchangé
-
   const handleInputChange = useCallback(
     (nodeId: string, newValue: string) => {
       setNodes((nds) =>
@@ -134,7 +130,6 @@ function Graphe({
     [setNodes],
   );
 
-  // Garde les refs à jour avec la dernière version des callbacks réels.
   useEffect(() => {
     inputChangeRef.current = handleInputChange;
     colorChangeRef.current = handleColorChange;
