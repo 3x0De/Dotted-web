@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.0] - GRAND REFACTO - 14/07/2026
+
+- Réorganisation de tout les dossier
+- Réorganisation des routes
+- Utilisation des flèches
+- Suppresion du resize des images, du block file et du block moodboard
+- Superssion de la navigation avec les fleches dans le menu
+
 ## [0.3.4] - 19/06/2026
 
 - Ajout du bloc de Fichier
