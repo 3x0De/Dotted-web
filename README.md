@@ -4,16 +4,15 @@ Interface web de [Dotted](https://github.com/3x0De/Dotted-docs), développée av
 
 ## Stack
 
-| Techno                                        | Usage                 |
-| --------------------------------------------- | --------------------- |
-| [Vite](https://vite.dev/)                     | Bundler / dev server  |
-| [React](https://fr.react.dev/)                | UI                    |
-| [TypeScript](https://www.typescriptlang.org/) | Typage                |
-| [Sass](https://sass-lang.com/)                | Styles                |
-| [@dnd-kit](https://dndkit.com/)               | Drag & drop des blocs |
-
-|[@handsontable/react](https://handsontable.com/docs/react-data-grid/)
-| [@xyflow/react](https://reactflow.dev/) | Graphes (blocs `Graphe`) |
+| Techno                                                                | Usage                      |
+| --------------------------------------------------------------------- | -------------------------- |
+| [Vite](https://vite.dev/)                                             | Bundler / dev server       |
+| [React](https://fr.react.dev/)                                        | UI                         |
+| [TypeScript](https://www.typescriptlang.org/)                         | Typage                     |
+| [Sass](https://sass-lang.com/)                                        | Styles                     |
+| [@dnd-kit](https://dndkit.com/)                                       | Drag & drop des blocs      |
+| [@handsontable/react](https://handsontable.com/docs/react-data-grid/) | Tableurs (blocs `Tableur`) |
+| [@xyflow/react](https://reactflow.dev/)                               | Graphes (blocs `Graphe`)   |
 
 ## Prérequis
 

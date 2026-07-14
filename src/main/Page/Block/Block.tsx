@@ -27,6 +27,7 @@ import Link from "./Component/Lien";
 import Image from "./Component/Image";
 import Tableur from "./Component/Tableur";
 import Graphe from "./Component/Graphe";
+import Tableau from "./Component/Tableau";
 
 import bin from "/src/assets/Img/Page/Block/bin.svg";
 import drag from "/src/assets/Img/Page/Block/drag.svg";
@@ -299,6 +300,8 @@ function Contenu({
     <Tableur {...props}>{content}</Tableur>
   ) : type === STATE.grph ? (
     <Graphe {...props}>{content}</Graphe>
+  ) : type === STATE.tabl ? (
+    <Tableau />
   ) : (
     <Text placeholder="Appuyez sur ⋮⋮ pour afficher les commandes" {...props}>
       {content as string}

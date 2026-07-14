@@ -1,0 +1,106 @@
+@use "../../../../variables" as v;
+
+.Tableau {
+  overflow-x: auto;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+
+    a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px;
+
+      border-radius: 5px;
+
+      &:hover {
+        background-color: rgba(v.$Groove, 0.2);
+      }
+    }
+    button {
+      all: unset;
+      gap: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px;
+
+      border-radius: 5px;
+      cursor: pointer;
+
+      img {
+        height: 1rem;
+      }
+
+      &:hover {
+        background-color: rgba(v.$Smoke, 0.4);
+      }
+    }
+
+    th,
+    td {
+      width: 100%;
+      white-space: nowrap;
+    }
+
+    th {
+      .propriete {
+        opacity: 1 !important;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        width: max-content;
+
+        &:hover {
+          background-color: transparent;
+        }
+
+        img {
+          padding: 0.3rem 2px;
+          border-radius: 5px;
+          cursor: pointer;
+
+          &:hover {
+            background-color: rgba(v.$Groove, 0.2);
+          }
+        }
+      }
+
+      &:first-child .propriete {
+        align-items: start;
+
+        img {
+          padding: inherit;
+          border-radius: inherit;
+          background-color: inherit;
+        }
+      }
+    }
+
+    tbody {
+      td {
+        border: 1px solid v.$Groove;
+
+        input {
+          flex: 1;
+          padding: 5px 0 !important;
+        }
+
+        .title {
+          display: flex;
+        }
+
+        &:first-child {
+          border-left: none;
+        }
+
+        &:last-child {
+          border-right: none;
+        }
+      }
+    }
+  }
+}

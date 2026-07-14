@@ -19,6 +19,7 @@ export const enum STATE {
   img = "Image",
   tbl = "Tableur",
   grph = "Graphe",
+  tabl = "Tableau",
 }
 
 export type TYPE = STATE | null;
@@ -44,4 +45,5 @@ export const menu: MenuEntry[] = [
   ["img", STATE.img],
   ["tbl", STATE.tbl],
   ["grph", STATE.grph],
+  ["tabl", STATE.tabl],
 ];
