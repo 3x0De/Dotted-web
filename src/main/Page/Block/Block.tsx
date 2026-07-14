@@ -285,7 +285,7 @@ function Contenu({
   ) : type === STATE.img ? (
     <Image {...props}>{content}</Image>
   ) : type === STATE.tbl ? (
-    <Tableur />
+    <Tableur {...props}>{content}</Tableur>
   ) : (
     <Text placeholder="Appuyez sur ⋮⋮ pour afficher les commandes" {...props}>
       {content as string}

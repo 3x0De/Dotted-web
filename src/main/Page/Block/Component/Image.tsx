@@ -6,10 +6,6 @@ import "../../../../styles/main/Page/Block/Component/Image.scss";
 interface ImageProps {
   children: string;
   onChange: MakeState<React.ChangeEvent<HTMLInputElement>>;
-  onUpload?: (data: {
-    img?: string;
-    size: { width: number; height: number };
-  }) => void;
   registerRef?: (el: HTMLInputElement | null) => void;
 }
 

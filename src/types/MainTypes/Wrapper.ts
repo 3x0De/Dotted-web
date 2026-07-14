@@ -1,4 +1,5 @@
 import type { Liste } from "./BlockTypes/Liste";
+import type { TableurType } from "./BlockTypes/Tableur";
 import { STATE, type TYPE } from "./BlockTypes/menu";
 
 interface Block {
@@ -65,7 +66,7 @@ export interface LinkBlock extends Block {
 export interface TableurBlock extends Block {
   id: number;
   type: STATE.tbl;
-  content: string[][];
+  content: TableurType;
 }
 
 export type EditorState =
