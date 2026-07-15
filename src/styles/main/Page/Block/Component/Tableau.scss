@@ -97,6 +97,12 @@
 
         .title {
           display: flex;
+          align-items: stretch;
+          max-width: 100%;
+          img {
+            aspect-ratio: 1;
+            height: 1rem;
+          }
         }
 
         &:first-child {
