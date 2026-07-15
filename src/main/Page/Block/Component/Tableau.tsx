@@ -9,15 +9,22 @@ import {
   DataTypeTableau,
   type TableauType,
 } from "../../../../types/MainTypes/BlockTypes/Tableau";
+import type React from "react";
+import type { MakeState } from "../../../../types/Set";
 
-function Tableau() {
-  const [content, setcontent] = useState<TableauType>({
-    entete: [],
-    Pages: [],
-  });
+function Tableau({
+  children,
+  onChange,
+  registerRef,
+}: {
+  children: TableauType;
+  onChange: MakeState<React.ChangeEvent<HTMLInputElement>>;
+  registerRef?: (el: HTMLInputElement | null) => void;
+}) {
+  const [content, setcontent] = useState<TableauType>(children);
 
   return (
-    <div className="Tableau">
+    <div className="Tableau" ref={registerRef}>
       <table>
         <thead>
           <tr>
@@ -27,8 +34,8 @@ function Tableau() {
                 Page
               </div>
             </th>
-            {content.entete.map((el) => (
-              <th>
+            {content.entete.map((el, id) => (
+              <th key={id}>
                 <div className="propriete">
                   <img src={el.type == DataTypeTableau.Text ? Texte : Texte} />
                   <Text
@@ -45,11 +52,22 @@ function Tableau() {
               <button
                 onClick={() =>
                   setcontent((prev) => {
+                    onChange({
+                      target: {
+                        value: {
+                          ...prev,
+                          entete: [
+                            ...prev.entete,
+                            { type: DataTypeTableau.Text, nom: "Propriété" },
+                          ],
+                        },
+                      },
+                    } as unknown as React.ChangeEvent<HTMLInputElement>);
                     return {
                       ...prev,
                       entete: [
                         ...prev.entete,
-                        { type: DataTypeTableau.Text, nom: "Data 2" },
+                        { type: DataTypeTableau.Text, nom: "Propriété" },
                       ],
                     };
                   })
@@ -62,19 +80,18 @@ function Tableau() {
         </thead>
         <tbody>
           {content.Pages.map((el, idx) => (
-            <tr>
+            <tr key={idx}>
               <td>
                 <div className="title">
-                  <button>
-                    <img
-                      src={bin}
-                      onClick={() =>
-                        setcontent((prev) => ({
-                          ...prev,
-                          Pages: prev.Pages.filter((e, i) => i !== idx),
-                        }))
-                      }
-                    />
+                  <button
+                    onClick={() =>
+                      setcontent((prev) => ({
+                        ...prev,
+                        Pages: prev.Pages.filter((_, i) => i !== idx),
+                      }))
+                    }
+                  >
+                    <img src={bin} />
                   </button>
                   <Text
                     placeholder="Titre..."
@@ -90,8 +107,8 @@ function Tableau() {
                 </div>
               </td>
 
-              {content.entete.map((e) => (
-                <td>
+              {content.entete.map((e, i) => (
+                <td key={i}>
                   <Text
                     placeholder={e.nom}
                     onChange={(
@@ -113,7 +130,12 @@ function Tableau() {
               <button
                 onClick={() =>
                   setcontent((prev) => {
-                    return { ...prev, Pages: [...prev.Pages, "Titrce 6"] };
+                    onChange({
+                      target: {
+                        value: { ...prev, Pages: [...prev.Pages, ""] },
+                      },
+                    } as unknown as React.ChangeEvent<HTMLInputElement>);
+                    return { ...prev, Pages: [...prev.Pages, ""] };
                   })
                 }
               >

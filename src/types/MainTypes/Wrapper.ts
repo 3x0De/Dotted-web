@@ -3,6 +3,7 @@ import type { InputNodeType } from "./BlockTypes/Graphe";
 import type { Liste } from "./BlockTypes/Liste";
 import type { TableurType } from "./BlockTypes/Tableur";
 import { STATE, type TYPE } from "./BlockTypes/menu";
+import type { TableauType } from "./BlockTypes/Tableau";
 
 interface Block {
   id: number;
@@ -77,6 +78,12 @@ export interface GraphBlock extends Block {
   content: { Node: InputNodeType[]; Edge: Edge[] };
 }
 
+export interface TableauBlock extends Block {
+  id: number;
+  type: STATE.tabl;
+  content: TableauType;
+}
+
 export type EditorState =
   | RowBlock
   | ColumnBlock
@@ -87,7 +94,8 @@ export type EditorState =
   | EmptyBlock
   | LinkBlock
   | TableurBlock
-  | GraphBlock;
+  | GraphBlock
+  | TableauBlock;
 
 export type EditorAction =
   | { type: "INIT"; payload: EditorState }

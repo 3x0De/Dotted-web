@@ -21,6 +21,7 @@ import usePile from "../../hooks/usePile";
 import Block from "./Block/Block";
 import type { InputNodeType } from "../../types/MainTypes/BlockTypes/Graphe";
 import type { Edge } from "@xyflow/react";
+import type { TableauType } from "../../types/MainTypes/BlockTypes/Tableau";
 
 function updateBlock(
   state: EditorState,
@@ -404,6 +405,14 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
           };
         }
 
+        if (action.payload == STATE.tabl) {
+          return {
+            id: block.id,
+            type: action.payload,
+            content: { entete: [], Pages: [""] },
+          };
+        }
+
         return { id: Math.random(), type: action.payload, content: "" };
       });
 
@@ -470,6 +479,13 @@ function reducer(state: EditorState, action: EditorAction): EditorState {
               Edge: Edge[];
             },
           } as EditorState;
+        }
+
+        if (block.type === STATE.tabl) {
+          return {
+            ...block,
+            content: action.payload as unknown as TableauType,
+          };
         }
 
         const val = action.payload;

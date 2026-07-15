@@ -301,7 +301,7 @@ function Contenu({
   ) : type === STATE.grph ? (
     <Graphe {...props}>{content}</Graphe>
   ) : type === STATE.tabl ? (
-    <Tableau />
+    <Tableau {...props}>{content}</Tableau>
   ) : (
     <Text placeholder="Appuyez sur ⋮⋮ pour afficher les commandes" {...props}>
       {content as string}
