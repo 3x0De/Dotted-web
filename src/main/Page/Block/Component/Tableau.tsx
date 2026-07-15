@@ -23,6 +23,15 @@ function Tableau({
 }) {
   const [content, setcontent] = useState<TableauType>(children);
 
+  function handleChange(param: any) {
+    onChange({
+      target: {
+        value: param,
+      },
+    } as unknown as React.ChangeEvent<HTMLInputElement>);
+    return param;
+  }
+
   return (
     <div className="Tableau" ref={registerRef}>
       <table>
@@ -41,7 +50,16 @@ function Tableau({
                   <Text
                     onChange={(
                       e: React.ChangeEvent<HTMLInputElement, Element>,
-                    ) => console.log(e)}
+                    ) =>
+                      setcontent((prev) =>
+                        handleChange({
+                          ...prev,
+                          entete: prev.entete.map((elt, i) =>
+                            i === id ? { ...elt, nom: e.target.value } : elt,
+                          ),
+                        }),
+                      )
+                    }
                   >
                     {el.nom}
                   </Text>
@@ -51,26 +69,15 @@ function Tableau({
             <th>
               <button
                 onClick={() =>
-                  setcontent((prev) => {
-                    onChange({
-                      target: {
-                        value: {
-                          ...prev,
-                          entete: [
-                            ...prev.entete,
-                            { type: DataTypeTableau.Text, nom: "Propriété" },
-                          ],
-                        },
-                      },
-                    } as unknown as React.ChangeEvent<HTMLInputElement>);
-                    return {
+                  setcontent((prev) =>
+                    handleChange({
                       ...prev,
                       entete: [
                         ...prev.entete,
                         { type: DataTypeTableau.Text, nom: "Propriété" },
                       ],
-                    };
-                  })
+                    }),
+                  )
                 }
               >
                 <img src={Add} alt="" /> Ajouter une propriété
@@ -85,10 +92,12 @@ function Tableau({
                 <div className="title">
                   <button
                     onClick={() =>
-                      setcontent((prev) => ({
-                        ...prev,
-                        Pages: prev.Pages.filter((_, i) => i !== idx),
-                      }))
+                      setcontent((prev) =>
+                        handleChange({
+                          ...prev,
+                          Pages: prev.Pages.filter((_, i) => i !== idx),
+                        }),
+                      )
                     }
                   >
                     <img src={bin} />
@@ -129,14 +138,9 @@ function Tableau({
             <td colSpan={content.entete.length + 2}>
               <button
                 onClick={() =>
-                  setcontent((prev) => {
-                    onChange({
-                      target: {
-                        value: { ...prev, Pages: [...prev.Pages, ""] },
-                      },
-                    } as unknown as React.ChangeEvent<HTMLInputElement>);
-                    return { ...prev, Pages: [...prev.Pages, ""] };
-                  })
+                  setcontent((prev) =>
+                    handleChange({ ...prev, Pages: [...prev.Pages, ""] }),
+                  )
                 }
               >
                 <img src={Add} alt="" /> Ajouter une page
