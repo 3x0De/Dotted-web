@@ -93,7 +93,7 @@ function Row({
     };
   }, [path]);
 
-  async function handleChange(e: string) {
+  async function handleChangeTitre(e: string) {
     try {
       const request = await fetch(
         `${import.meta.env.VITE_API_URL}/Page/${path}`,
@@ -113,6 +113,36 @@ function Row({
     }
   }
 
+  async function handleChangeValue(
+    nom: string,
+    type: DataTypeTableau,
+    value: string,
+  ) {
+    try {
+      // ⚠️ TODO : si la catégorie existe déjà, il faudra une route de MODIFICATION
+      // (ex: POST /Page/:id/Categories/:catId) plutôt que ce PUT qui recrée une ligne.
+      const request = await fetch(
+        `${import.meta.env.VITE_API_URL}/Page/${path}/Categories`,
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nom, type, value }),
+        },
+      );
+      if (!request.ok) throw new Error(`Erreur ${request.status}`);
+
+      setcate((prev) => {
+        const exists = prev.some((c) => c.nom === nom);
+        return exists
+          ? prev.map((c) => (c.nom === nom ? { ...c, value } : c))
+          : [...prev, { nom, type, value }];
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   return (
     <>
       <td>
@@ -122,7 +152,7 @@ function Row({
           </button>
           <Text
             placeholder="Titre..."
-            onChange={(e) => handleChange(e.target.value)}
+            onChange={(e) => handleChangeTitre(e.target.value)}
           >
             {title}
           </Text>
@@ -137,28 +167,17 @@ function Row({
         const found = cate.find((c) => c.nom === col.nom);
         return (
           <td key={i}>
-            {found ? (
-              Number(found.type) == DataTypeTableau.Text ? (
-                <Text
-                  placeholder={col.nom}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement, Element>) =>
-                    console.log(e)
-                  }
-                >
-                  {found.value}
-                </Text>
-              ) : (
-                <p>Incorrect</p>
-              )
-            ) : (
+            {Number(col.type) == DataTypeTableau.Text ? (
               <Text
                 placeholder={col.nom}
                 onChange={(e: React.ChangeEvent<HTMLInputElement, Element>) =>
-                  console.log(e)
+                  handleChangeValue(col.nom, col.type, e.target.value)
                 }
               >
-                {""}
+                {found ? found.value : "inu"}
               </Text>
+            ) : (
+              <p>Incorrect</p>
             )}
           </td>
         );

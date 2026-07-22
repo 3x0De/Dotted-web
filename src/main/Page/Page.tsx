@@ -6,6 +6,7 @@ import Wrapper from "./Wrapper";
 import MenuIcons from "./MenuIcons";
 
 import "/src/styles/main/Page/Page.scss";
+import { DataTypeTableau } from "../../types/MainTypes/BlockTypes/Tableau";
 
 function Page() {
   return (
@@ -199,31 +200,111 @@ function Path({ titre }: { titre: string }) {
 
 function Categories() {
   const [categories, setcategories] = useState<Categories>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    // Flag de sécurité si le composant est démonte pendant les requêtes
+    let isMounted = true;
+
+    const fetchCategories = async () => {
+      try {
+        setLoading(true);
+
+        // 1. Première requête : récupérer la liste des slugs / noms
+        const resp = await fetch(
+          `${import.meta.env.VITE_API_URL}${window.location.pathname}/Categories`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+          },
+        );
+
+        if (!resp.ok) {
+          throw new Error(`Erreur HTTP: ${resp.status}`);
+        }
+
+        const categoryList: string[] = await resp.json();
+
+        if (!Array.isArray(categoryList)) return;
+
+        // 2. Préparation de toutes les requêtes secondaires en parallèle
+        const categoryPromises = categoryList.map(async (el) => {
+          try {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/${el}`, {
+              method: "GET",
+              credentials: "include",
+              headers: { "Content-Type": "application/json" },
+            });
+            if (!res.ok) return null;
+            return await res.json();
+          } catch (err) {
+            console.error(`Chargement de ${el} impossible`, err);
+            return null;
+          }
+        });
+
+        // 3. On attend que TOUTES les promesses soient résolues
+        const results = await Promise.all(categoryPromises);
+
+        // 4. On filtre les requêtes qui auraient échoué (les `null`)
+        const validCategories = results.filter((item) => item !== null);
+
+        // 5. Une seule mise à jour de state globale
+        if (isMounted) {
+          setcategories(validCategories);
+        }
+      } catch (error) {
+        console.error("Erreur du chargement des catégories :", error);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    fetchCategories();
+
+    return () => {
+      isMounted = false; // Annulation propre si le composant est démonté
+    };
+  }, []);
+
+  if (loading) {
+    return <p>Chargement des catégories...</p>;
+  }
 
   return (
     <table>
       <tbody>
-        {categories.map((el) => {
+        {categories.map((el, index) => {
+          if (!el) return null;
+
           return (
-            <tr key={el.categorie}>
+            <tr key={index}>
               <td>
-                <img src={el.icon} />
+                {el.nom && (
+                  <img
+                    src={
+                      el.type == DataTypeTableau.Text
+                        ? "/src/assets/Img/Page/Block/Tableau/Categories/text.svg"
+                        : "/Icons/logo_mini.svg"
+                    }
+                  />
+                )}
               </td>
-              <td>{el.categorie}</td>
+              <td>{el.nom ?? ""}</td>
               <td>
                 <input
-                  type={el.type}
-                  value={el.value}
-                  placeholder={`${el.type}...`}
-                  onChange={(e) =>
+                  type={el.type == DataTypeTableau.Text ? "text" : "text"}
+                  value={el.value ?? ""}
+                  placeholder={`${el.nom ?? ""}...`}
+                  onChange={(e) => {
+                    const val = e.target.value;
                     setcategories((prev) =>
-                      prev.map((elt) =>
-                        elt.categorie == el.categorie
-                          ? { ...el, value: e.target.value }
-                          : elt,
+                      prev.map((item) =>
+                        item.nom === el.nom ? { ...item, value: val } : item,
                       ),
-                    )
-                  }
+                    );
+                  }}
                 />
               </td>
             </tr>

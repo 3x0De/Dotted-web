@@ -1,6 +1,7 @@
-type typesCate = { type: "Texte"; value: string };
+import type { DataTypeTableau } from "./BlockTypes/Tableau";
+
+type typesCate = { type: DataTypeTableau; value: string };
 
 export type Categories = ({
-  icon: string;
-  categorie: string;
+  nom: string;
 } & typesCate)[];
